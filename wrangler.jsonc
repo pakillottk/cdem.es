@@ -1,6 +1,6 @@
 {
 	"main": "dist/_worker.js/index.js",
-	"name": "cdem.es",
+	"name": "cdem-es",
   "compatibility_date": "2025-12-10",
   "compatibility_flags": [
     "nodejs_compat",
