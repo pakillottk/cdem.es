@@ -1,0 +1,91 @@
+---
+import CdemHeader from '../components/CdemHeader.astro';
+import CdemFooter from '../components/CdemFooter.astro';
+import '../styles/global.css';
+---
+	<div class="min-h-screen bg-black text-white font-sans">
+		<!-- Hero eventos -->
+		<section
+			class="relative min-h-[340px] flex flex-col justify-end text-center overflow-hidden"
+		>
+			<div
+				class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center opacity-50"
+				aria-hidden="true"
+			></div>
+			<div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black"></div>
+
+			<CdemHeader />
+
+			<div class="relative z-10 max-w-5xl mx-auto px-6 pb-10 pt-24">
+				<p class="text-sm sm:text-base md:text-lg tracking-[0.35em] uppercase text-primary">
+					La música como experiencia, el directo como lenguaje
+				</p>
+				<div class="mt-6 border-t border-cyan-400/70 pt-4">
+					<p class="text-left text-sm sm:text-base md:text-lg tracking-[0.3em] uppercase">
+						Festivales
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Listado de festivales -->
+		<section class="bg-black py-12 px-6 lg:px-0">
+			<div class="max-w-5xl mx-auto space-y-10">
+				<!-- Vive Linares Fest -->
+				<article class="grid gap-6 md:grid-cols-[1.2fr,1fr] items-center">
+					<div class="relative h-24 sm:h-28 md:h-32 overflow-hidden">
+						<div
+							class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center"
+						></div>
+					</div>
+					<div class="text-left">
+						<h2 class="text-xl sm:text-2xl tracking-[0.25em] uppercase font-semibold">
+							Vive Linares Fest
+						</h2>
+						<p class="mt-2 text-xs sm:text-sm text-white/80 max-w-md">
+							Festival urbano con una programación que une artistas consolidados y nuevas propuestas,
+							convirtiendo la ciudad en un gran escenario al aire libre.
+						</p>
+					</div>
+				</article>
+
+				<!-- Ibero Joven -->
+				<article class="grid gap-6 md:grid-cols-[1.2fr,1fr] items-center">
+					<div class="relative h-24 sm:h-28 md:h-32 overflow-hidden">
+						<div
+							class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518895949257-7621c3c786d4?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center"
+						></div>
+					</div>
+					<div class="text-left">
+						<h2 class="text-xl sm:text-2xl tracking-[0.25em] uppercase font-semibold">
+							Ibero Joven
+						</h2>
+						<p class="mt-2 text-xs sm:text-sm text-white/80 max-w-md">
+							Un punto de encuentro para las nuevas generaciones, donde se mezclan sonidos actuales,
+							actividades paralelas y una fuerte identidad de territorio.
+						</p>
+					</div>
+				</article>
+
+				<!-- Sarao Late -->
+				<article class="grid gap-6 md:grid-cols-[1.2fr,1fr] items-center">
+					<div class="relative h-24 sm:h-28 md:h-32 overflow-hidden">
+						<div
+							class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518976024611-28bf4b48222e?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center"
+						></div>
+					</div>
+					<div class="text-left">
+						<h2 class="text-xl sm:text-2xl tracking-[0.25em] uppercase font-semibold">
+							Sarao Late
+						</h2>
+						<p class="mt-2 text-xs sm:text-sm text-white/80 max-w-md">
+							Ciclos de conciertos en formato club, pensados para acercar propuestas singulares al público en
+							un entorno cercano y cuidado al detalle.
+						</p>
+					</div>
+				</article>
+			</div>
+		</section>
+
+		<CdemFooter />
+	</div>

@@ -1,0 +1,9 @@
+@utility font-primary {
+  font-family: var(--font-primary);
+}
+
+@utility text-primary {
+  color: var(--color-primary);
+}
+
+

@@ -1,1 +1,71 @@
 @import "tailwindcss";
+@import "./utilities.css";
+@import "./style.css";
+@import "./header.css";
+
+:root {
+  --font-primary: "ITC Eras", sans-serif;
+  --color-primary: #59a1dc;
+}
+
+@font-face {
+  font-family: "ITC Eras";
+  src: url("/fonts/itc-eras-ultra/ITC Eras Light Regular.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Eras";
+  src: url("/fonts/itc-eras-ultra/ITC Eras Book Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Eras";
+  src: url("/fonts/itc-eras-ultra/ITC Eras Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Eras";
+  src: url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Eras";
+  src: url("/fonts/itc-eras-ultra/ITC Eras Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ITC Eras";
+  src: url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.otf") format("opentype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-primary);
+}

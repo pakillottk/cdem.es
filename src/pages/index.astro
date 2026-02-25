@@ -1,11 +1,105 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import CdemHeader from '../components/CdemHeader.astro';
+import CdemFooter from '../components/CdemFooter.astro';
+import '../styles/global.css';
 ---
+<Layout>
+	<div class="min-h-screen bg-black text-white font-sans">
+		<!-- Hero -->
+		<section
+			class="relative h-[90vh] min-h-[640px] flex items-center justify-center text-center overflow-hidden"
+		>
+			<div
+				class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center opacity-40"
+				aria-hidden="true"
+			></div>
+			<div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div>
 
-<Layout>	
-	<Welcome />
+			<CdemHeader />
+
+			<div class="relative z-10 px-6 lg:px-0 max-w-5xl mx-auto">
+				<h1
+					class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-wide drop-shadow-xl"
+				>
+					CREACIÓN Y DISEÑO<br />
+					DE EVENTOS MUSICALES
+				</h1>
+				<p class="mt-4 text-lg sm:text-xl tracking-[0.3em] uppercase text-primary">
+					La creatividad que mueve la música
+				</p>
+
+				<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
+					<a
+						href="#contacto"
+						class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
+					>
+						Contrata tu evento
+					</a>
+					<a
+						href="#producciones"
+						class="inline-flex items-center justify-center rounded-full border border-white/60 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-colors"
+					>
+						Descubre nuestros proyectos
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Claim -->
+		<section
+			id="servicio"
+			class="bg-black py-16 px-6 lg:px-0 border-y border-white/5 flex items-center justify-center"
+		>
+			<div class="max-w-4xl text-center">
+				<p class="text-lg sm:text-2xl leading-relaxed font-medium">
+					"Creación, diseño y producción de experiencias musicales. Trabajamos con artistas, instituciones y
+					festivales para llevar la música en vivo a otro nivel."
+				</p>
+			</div>
+		</section>
+
+		<!-- Servicios -->
+		<section
+			id="eventos"
+			class="bg-[#050811] py-16 px-6 lg:px-0 flex items-center justify-center"
+		>
+			<div class="max-w-5xl grid gap-10 md:grid-cols-4 text-center">
+				<div class="flex flex-col items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
+						<span class="text-3xl">⚙️</span>
+					</div>
+					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+						Organización integral de<br />festivales, conciertos y ciclos musicales
+					</h3>
+				</div>
+				<div class="flex flex-col items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
+						<span class="text-3xl">🎵</span>
+					</div>
+					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+						Gestión directa con artistas<br />y oficinas de booking
+					</h3>
+				</div>
+				<div class="flex flex-col items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
+						<span class="text-3xl">🎛️</span>
+					</div>
+					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+						Coordinación técnica,<br />logística y producción escénica
+					</h3>
+				</div>
+				<div class="flex flex-col items-center gap-4">
+					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
+						<span class="text-3xl">📝</span>
+					</div>
+					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+						Curaduría y asesoramiento<br />artístico
+					</h3>
+				</div>
+			</div>
+		</section>
+
+		<CdemFooter />
+	</div>
 </Layout>

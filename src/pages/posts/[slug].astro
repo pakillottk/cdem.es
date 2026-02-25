@@ -1,34 +1,31 @@
 ---
 import { Image } from 'astro:assets';
-import Layout from '../../layouts/Layout.astro';
 import { getCollection, getEntry, render } from 'astro:content';
+import '../../styles/global.css';
 
 export async function getStaticPaths() {
-    const posts = await getCollection('posts');
-    console.log(posts);
-    return posts.map((post) => ({
-        params: { slug: post.id },
-    }));
+  const posts = await getCollection('posts');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+  }));
 }
 
 const post = await getEntry('posts', Astro.params.slug!);
 
 if (!post) {
-    return Astro.redirect('/posts');
+  return Astro.redirect('/posts');
 }
 
 const { Content, headings } = await render(post);
 ---
 
-<Layout>	
-    <h1>{post.data.title}</h1>
-    {post.data.image && <Image src={post.data.image} alt={post.data.title} />}
-    <Content />
-    <ul>
-        {headings.map((heading) => (
-            <li>
-                <a href={`#${heading.slug}`}>{heading.text}</a>
-            </li>
-        ))}
-    </ul>
-</Layout>
+<h1>{post.data.title}</h1>
+{post.data.image && <Image src={post.data.image} alt={post.data.title} />}
+<Content />
+<ul>
+  {headings.map((heading) => (
+    <li>
+      <a href={`#${heading.slug}`}>{heading.text}</a>
+    </li>
+  ))}
+</ul>

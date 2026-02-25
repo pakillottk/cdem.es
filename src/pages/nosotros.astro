@@ -1,0 +1,182 @@
+---
+import CdemHeader from '../components/CdemHeader.astro';
+import CdemFooter from '../components/CdemFooter.astro';
+import '../styles/global.css';
+---
+	<div class="min-h-screen bg-black text-white font-sans">
+		<!-- Barra superior con navegación -->
+		<section class="relative bg-black text-white h-24">
+			<CdemHeader />
+		</section>
+
+		<!-- Hero / Claim principal -->
+		<section
+			class="bg-black py-12 px-6 lg:px-0 border-y border-white/5 flex items-center justify-center"
+		>
+			<div class="max-w-5xl w-full space-y-8">
+				<h1
+					class="text-2xl sm:text-3xl md:text-4xl tracking-[0.35em] uppercase font-semibold text-center"
+				>
+					Creemos en la música.
+				</h1>
+
+				<div class="border-y border-white/10 py-6 sm:py-8">
+					<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium text-center">
+						CDEM Producciones es una productora especializada en la creación, diseño y gestión de eventos
+						musicales y experiencias en vivo. Nuestra visión integral combina creatividad, planificación y
+						producción, cuidando cada detalle para que la música se escuche, se vea y se viva como merece.
+					</p>
+					<p class="mt-4 text-sm sm:text-base md:text-lg leading-relaxed font-medium text-center">
+						Apostamos por el talento nacional e internacional, ofreciendo producciones con identidad propia
+						y una mirada contemporánea del directo. Profesionalidad, pasión y creatividad se unen para
+						poner la música en el centro de cada experiencia.
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Lo que nos define -->
+		<section class="bg-black py-12 px-6 lg:px-0 flex items-center justify-center">
+			<div class="max-w-5xl w-full space-y-8 text-center">
+				<h2 class="text-sm sm:text-base tracking-[0.35em] uppercase font-semibold">
+					Lo que nos define
+				</h2>
+
+				<div class="space-y-4 text-sm sm:text-base md:text-lg font-semibold leading-relaxed">
+					<p>
+						<span class="text-primary">Creatividad</span> con criterio
+					</p>
+					<p>
+						Rigor en la <span class="text-primary">producción</span>
+					</p>
+					<p>
+						Respeto por la <span class="text-primary">música</span>
+					</p>
+					<p class="uppercase tracking-[0.20em] text-xs sm:text-sm md:text-base font-medium">
+						Experiencias pensadas para el público
+					</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- Equipo -->
+		<section class="bg-black py-12 px-6 lg:px-0 border-y border-white/5 flex justify-center">
+			<div class="max-w-5xl w-full space-y-10">
+				<div class="text-center space-y-3">
+					<h2 class="text-sm sm:text-base tracking-[0.35em] uppercase font-semibold">
+						Equipo
+					</h2>
+					<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium">
+						Detrás de CDEM hay un equipo multidisciplinar con experiencia en producción, dirección técnica
+						y gestión cultural, unido por una misma forma de entender la música en directo.
+					</p>
+				</div>
+
+				<div class="grid gap-8 md:grid-cols-2">
+					<!-- Miembro -->
+					<div class="flex gap-4 items-start">
+						<div
+							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
+						></div>
+						<div class="space-y-1 text-sm">
+							<p class="font-semibold uppercase tracking-[0.18em]">Francisco Gzuaz</p>
+							<p class="text-xs sm:text-sm text-white/80">
+								Dirección / Administración
+							</p>
+							<p class="text-xs text-primary">cdemfinanzas@gmail.com</p>
+						</div>
+					</div>
+
+					<div class="flex gap-4 items-start">
+						<div
+							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
+						></div>
+						<div class="space-y-1 text-sm">
+							<p class="font-semibold uppercase tracking-[0.18em]">Juan Martínez</p>
+							<p class="text-xs sm:text-sm text-white/80">
+								Production Manager / Riesgos laborales
+							</p>
+							<p class="text-xs text-primary">cdemproduccion@gmail.com</p>
+						</div>
+					</div>
+
+					<div class="flex gap-4 items-start">
+						<div
+							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
+						></div>
+						<div class="space-y-1 text-sm">
+							<p class="font-semibold uppercase tracking-[0.18em]">Rocío García Pérez</p>
+							<p class="text-xs sm:text-sm text-white/80">
+								Comunicación y diseño
+							</p>
+							<p class="text-xs text-primary">cdemdesigncreativo@gmail.com</p>
+						</div>
+					</div>
+
+					<div class="flex gap-4 items-start">
+						<div
+							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
+						></div>
+						<div class="space-y-1 text-sm">
+							<p class="font-semibold uppercase tracking-[0.18em]">Juan Carlos Mendieta</p>
+							<p class="text-xs sm:text-sm text-white/80">
+								RRPP / Gestión de taquillas
+							</p>
+							<p class="text-xs text-primary">cdemscenografia@gmail.com</p>
+						</div>
+					</div>
+
+					<div class="flex gap-4 items-start">
+						<div
+							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
+						></div>
+						<div class="space-y-1 text-sm">
+							<p class="font-semibold uppercase tracking-[0.18em]">Raquel Urrutia</p>
+							<p class="text-xs sm:text-sm text-white/80">
+								Administración / Contratación
+							</p>
+							<p class="text-xs text-primary">cdemcontratacion@gmail.com</p>
+						</div>
+					</div>
+
+					<div class="flex gap-4 items-start">
+						<div
+							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
+						></div>
+						<div class="space-y-1 text-sm">
+							<p class="font-semibold uppercase tracking-[0.18em]">Antonio Gzuaz</p>
+							<p class="text-xs sm:text-sm text-white/80">
+								Production Assistant
+							</p>
+							<p class="text-xs text-primary">cdemtecnico@gmail.com</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- CTA final -->
+		<section class="bg-black py-12 px-6 lg:px-0 flex items-center justify-center">
+			<div class="max-w-5xl w-full text-center space-y-6">
+				<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium">
+					Entendemos cada proyecto como un proceso creativo, desde la idea inicial hasta el último acorde.
+					Diseñamos experiencias que conectan con artistas y público.
+				</p>
+				<p
+					class="text-xs sm:text-sm md:text-base uppercase tracking-[0.25em] text-primary font-semibold"
+				>
+					¿Hablamos de tu próximo proyecto?
+				</p>
+				<div class="mt-4">
+					<a
+						href="/contacto"
+						class="inline-flex items-center justify-center rounded-full border border-cyan-400 bg-cyan-500/90 px-10 py-3 text-sm tracking-[0.25em] uppercase text-black hover:bg-white hover:border-white transition-colors"
+					>
+						Contactar
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<CdemFooter />
+	</div>

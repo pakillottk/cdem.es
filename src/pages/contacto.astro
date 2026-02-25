@@ -1,0 +1,144 @@
+---
+import CdemHeader from '../components/CdemHeader.astro';
+import CdemFooter from '../components/CdemFooter.astro';
+import '../styles/global.css';
+---
+	<div class="min-h-screen bg-black text-white font-sans">
+		<!-- Barra superior con navegación -->
+		<section class="relative bg-black text-white h-24">
+			<CdemHeader />
+		</section>
+
+		<!-- Franja superior con claim -->
+		<section class="bg-black border-y border-white/5">
+			<div class="max-w-5xl mx-auto">
+				<!-- Banda azul / imagen -->
+				<div class="h-40 sm:h-52 md:h-64 bg-gradient-to-r from-cyan-500 via-cyan-400 to-sky-500"></div>
+
+				<!-- Claim principal -->
+				<div class="bg-black py-8 sm:py-10 text-center border-t border-white/10">
+					<h1
+						class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-[0.25em] uppercase leading-snug"
+					>
+						Cada proyecto empieza con una conversación.
+					</h1>
+				</div>
+			</div>
+		</section>
+
+		<!-- Bloque contacto -->
+		<section class="bg-black py-12 sm:py-16 px-6 lg:px-0">
+			<div
+				class="max-w-5xl mx-auto grid gap-10 lg:gap-16 md:grid-cols-[minmax(0,1.3fr),minmax(0,1fr)] items-start"
+			>
+				<!-- Formulario -->
+				<div class="border-2 border-white px-6 sm:px-8 py-8 sm:py-10 space-y-6">
+					<div class="space-y-1">
+						<label
+							for="nombre"
+							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
+						>
+							Nombre
+						</label>
+						<input
+							id="nombre"
+							name="nombre"
+							type="text"
+							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
+						/>
+					</div>
+
+					<div class="space-y-1">
+						<label
+							for="email"
+							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
+						>
+							Email
+						</label>
+						<input
+							id="email"
+							name="email"
+							type="email"
+							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
+						/>
+					</div>
+
+					<div class="space-y-1">
+						<label
+							for="telefono"
+							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
+						>
+							Teléfono (opcional)
+						</label>
+						<input
+							id="telefono"
+							name="telefono"
+							type="tel"
+							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
+						/>
+					</div>
+
+					<div class="space-y-1">
+						<label
+							for="mensaje"
+							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
+						>
+							Mensaje
+						</label>
+						<textarea
+							id="mensaje"
+							name="mensaje"
+							rows="5"
+							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none resize-none focus:border-cyan-400 transition-colors"
+						></textarea>
+					</div>
+
+					<button
+						type="submit"
+						class="inline-flex items-center justify-center rounded-full border border-white/80 bg-white/10 px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
+					>
+						Enviar mensaje
+					</button>
+				</div>
+
+				<!-- Datos de contacto -->
+				<div class="space-y-6">
+					<div class="space-y-2 text-xs sm:text-sm uppercase tracking-[0.25em]">
+						<p class="font-semibold">Creación y Diseño de Eventos Musicales S.L.</p>
+						<p>C/ Fernando el Católico, 28 Linares (Jaén)</p>
+						<p>+34 953 66 69 04</p>
+						<p>cdemcontratacion@gmail.com</p>
+					</div>
+
+					<div class="flex gap-4 text-xl">
+						<a href="#" aria-label="Instagram" class="hover:text-primary transition-colors">?</a>
+						<a href="#" aria-label="LinkedIn" class="hover:text-primary transition-colors">?</a>
+						<a href="#" aria-label="Facebook" class="hover:text-primary transition-colors">?</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Triángulo azul con CTAs -->
+			<div class="mt-16 flex flex-col items-center gap-8">
+				<div
+					class="w-48 h-48 sm:w-56 sm:h-56 bg-cyan-400 rotate-45 shadow-[0_0_60px_rgba(34,211,238,0.6)]"
+				></div>
+				<div class="flex flex-col sm:flex-row gap-6 justify-center">
+					<a
+						href="/contacto"
+						class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-8 sm:px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
+					>
+						Contrata tu evento
+					</a>
+					<a
+						href="/producciones"
+						class="inline-flex items-center justify-center rounded-full border border-white/60 px-8 sm:px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-colors"
+					>
+						Descubre nuestros proyectos
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<CdemFooter />
+	</div>

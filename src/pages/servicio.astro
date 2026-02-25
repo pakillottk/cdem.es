@@ -1,0 +1,117 @@
+---
+import CdemHeader from '../components/CdemHeader.astro';
+import CdemFooter from '../components/CdemFooter.astro';
+import '../styles/global.css';
+---
+	<div class="min-h-screen bg-black text-white font-sans">
+		<!-- Barra superior con navegación -->
+		<section class="relative bg-black text-white h-24">
+			<CdemHeader />
+		</section>
+
+		<!-- Intro servicios -->
+		<section
+			class="bg-black py-10 px-6 lg:px-0 border-y border-white/5 flex items-center justify-center"
+		>
+			<div class="max-w-5xl text-center space-y-4">
+				<h1 class="text-xl sm:text-2xl md:text-3xl tracking-[0.25em] uppercase font-semibold">
+					Servicio
+				</h1>
+				<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium">
+					CDEM Producciones diseña, produce y gestiona eventos musicales con una mirada integral, dándoles una
+					identidad propia. Trabajamos con artistas, instituciones y festivales para crear experiencias sólidas,
+					cuidadas y memorables, donde la música en vivo es la protagonista. Desde la idea inicial hasta el
+					directo, cuidamos cada detalle para que la música suene como debe.
+				</p>
+			</div>
+		</section>
+
+		<!-- Bloque de servicios principales -->
+		<section class="bg-black py-14 px-6 lg:px-0">
+			<div class="max-w-5xl mx-auto grid gap-8 md:grid-cols-2">
+				<!-- Columna izquierda (azul) -->
+				<div class="space-y-6">
+					<div class="bg-cyan-500 text-black p-6 sm:p-7 md:p-8 shadow-lg">
+						<h2 class="text-sm sm:text-base font-extrabold tracking-[0.2em] uppercase">
+							Organización integral de festivales, conciertos y ciclos musicales
+						</h2>
+						<p class="mt-3 text-xs sm:text-sm leading-relaxed font-medium">
+							Organización de festivales, conciertos y ciclos musicales desde la planificación hasta la
+							ejecución final.
+						</p>
+					</div>
+
+					<div class="bg-cyan-500 text-black p-6 sm:p-7 md:p-8 shadow-lg">
+						<h2 class="text-sm sm:text-base font-extrabold tracking-[0.2em] uppercase">
+							Gestión directa con artistas y oficinas de booking
+						</h2>
+						<p class="mt-3 text-xs sm:text-sm leading-relaxed font-medium">
+							Planificación técnica completa: riders, montajes, necesidades escénicas, sonido, iluminación y
+							coordinación de equipos.
+						</p>
+					</div>
+
+					<div class="bg-cyan-500 text-black p-6 sm:p-7 md:p-8 shadow-lg">
+						<h2 class="text-sm sm:text-base font-extrabold tracking-[0.2em] uppercase">
+							Producción ejecutiva y coordinación general
+						</h2>
+						<p class="mt-3 text-xs sm:text-sm leading-relaxed font-medium">
+							Supervisión global del proyecto: presupuestos, equipos, tiempos y relación con todos los
+							interlocutores implicados.
+						</p>
+					</div>
+				</div>
+
+				<!-- Columna derecha (blanca) -->
+				<div class="space-y-6">
+					<div class="bg-white text-black p-6 sm:p-7 md:p-8 shadow-lg">
+						<h2 class="text-sm sm:text-base font-extrabold tracking-[0.2em] uppercase">
+							Coordinación técnica, logística y producción escénica
+						</h2>
+						<p class="mt-3 text-xs sm:text-sm leading-relaxed font-medium">
+							Relación directa con artistas y agencias nacionales e internacionales. Coordinamos
+							negociaciones, contratos y logística.
+						</p>
+					</div>
+
+					<div class="bg-white text-black p-6 sm:p-7 md:p-8 shadow-lg">
+						<h2 class="text-sm sm:text-base font-extrabold tracking-[0.2em] uppercase">
+							Curaduría y asesoramiento artístico
+						</h2>
+						<p class="mt-3 text-xs sm:text-sm leading-relaxed font-medium">
+							Conceptualizamos y diseñamos la programación de tu evento con coherencia artística, identidad
+							propia y calidad musical.
+						</p>
+					</div>
+
+					<div class="bg-white text-black p-6 sm:p-7 md:p-8 shadow-lg">
+						<h2 class="text-sm sm:text-base font-extrabold tracking-[0.2em] uppercase">
+							Diseño conceptual y dirección creativa
+						</h2>
+						<p class="mt-3 text-xs sm:text-sm leading-relaxed font-medium">
+							Desarrollo del concepto creativo y narrativo del evento. Definimos identidad, formato y
+							experiencia para que cada proyecto tenga un carácter único.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- CTAs -->
+			<div class="max-w-5xl mx-auto mt-10 flex flex-col sm:flex-row gap-6 justify-center">
+				<a
+					href="/contacto"
+					class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
+				>
+					Contrata tu evento
+				</a>
+				<a
+					href="/producciones"
+					class="inline-flex items-center justify-center rounded-full border border-white/60 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-colors"
+				>
+					Descubre nuestros proyectos
+				</a>
+			</div>
+		</section>
+
+		<CdemFooter />
+	</div>
