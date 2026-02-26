@@ -14,7 +14,7 @@ const currentPath = normalizePath(Astro.url.pathname);
 ---
 
 <header
-	class="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-8 lg:px-16 py-6"
+	class="relative z-20 flex items-center justify-between bg-black px-8 lg:px-16 py-6"
 >
 	<div class="flex items-center gap-3 w-30">
 		<a href="/"><img src="/src/assets/cdemLogo.png" alt="CDEM" class="h-full w-full" /></a>
@@ -27,7 +27,7 @@ const currentPath = normalizePath(Astro.url.pathname);
 				return (
 					<a
 						href={item.href}
-						class:list={['nav-link transition-colors hover:text-primary', { 'is-active': isActive }]}
+						class:list={['nav-link transition-colors text-white hover:text-primary', { 'is-active': isActive }]}
 					>
 						<span class="text-center">{item.label}</span>
 					</a>
@@ -39,7 +39,7 @@ const currentPath = normalizePath(Astro.url.pathname);
 	<details class="relative md:hidden">
 		<summary class="list-none flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/50 bg-black/30 [&::-webkit-details-marker]:hidden">
 			<span class="sr-only">Abrir menu</span>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="h-5 w-5">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
 			</svg>
 		</summary>
@@ -50,7 +50,7 @@ const currentPath = normalizePath(Astro.url.pathname);
 					return (
 						<a
 							href={item.href}
-							class:list={['nav-link-mobile block rounded px-3 py-2 transition-colors hover:text-primary', { 'is-active': isActive }]}
+							class:list={['nav-link-mobile block rounded px-3 py-2 transition-colors text-white hover:text-primary', { 'is-active': isActive }]}
 						>
 							<span>{item.label}</span>
 						</a>
@@ -60,4 +60,3 @@ const currentPath = normalizePath(Astro.url.pathname);
 		</nav>
 	</details>
 </header>
-

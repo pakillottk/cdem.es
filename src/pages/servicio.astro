@@ -1,14 +1,8 @@
 ---
-import CdemHeader from '../components/CdemHeader.astro';
-import CdemFooter from '../components/CdemFooter.astro';
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 ---
+<Layout>
 	<div class="min-h-screen bg-black text-white font-sans">
-		<!-- Barra superior con navegación -->
-		<section class="relative bg-black text-white h-24">
-			<CdemHeader />
-		</section>
-
 		<!-- Intro servicios -->
 		<section
 			class="bg-black py-10 px-6 lg:px-0 border-y border-white/5 flex items-center justify-center"
@@ -113,5 +107,5 @@ import '../styles/global.css';
 			</div>
 		</section>
 
-		<CdemFooter />
 	</div>
+</Layout>

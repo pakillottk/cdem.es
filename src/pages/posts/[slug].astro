@@ -1,7 +1,7 @@
 ---
+import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 import { getCollection, getEntry, render } from 'astro:content';
-import '../../styles/global.css';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
@@ -19,13 +19,15 @@ if (!post) {
 const { Content, headings } = await render(post);
 ---
 
-<h1>{post.data.title}</h1>
-{post.data.image && <Image src={post.data.image} alt={post.data.title} />}
-<Content />
-<ul>
-  {headings.map((heading) => (
-    <li>
-      <a href={`#${heading.slug}`}>{heading.text}</a>
-    </li>
-  ))}
-</ul>
+<Layout>
+  <h1>{post.data.title}</h1>
+  {post.data.image && <Image src={post.data.image} alt={post.data.title} />}
+  <Content />
+  <ul>
+    {headings.map((heading) => (
+      <li>
+        <a href={`#${heading.slug}`}>{heading.text}</a>
+      </li>
+    ))}
+  </ul>
+</Layout>

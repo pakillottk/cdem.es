@@ -1,8 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import CdemHeader from '../components/CdemHeader.astro';
-import CdemFooter from '../components/CdemFooter.astro';
-import '../styles/global.css';
 ---
 <Layout>
 	<div class="min-h-screen bg-black text-white font-sans">
@@ -15,8 +12,6 @@ import '../styles/global.css';
 				aria-hidden="true"
 			></div>
 			<div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div>
-
-			<CdemHeader />
 
 			<div class="relative z-10 px-6 lg:px-0 max-w-5xl mx-auto">
 				<h1
@@ -32,7 +27,7 @@ import '../styles/global.css';
 				<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
 					<a
 						href="#contacto"
-						class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
+						class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-primary hover:text-black hover:border-cyan-400 transition-colors"
 					>
 						Contrata tu evento
 					</a>
@@ -100,6 +95,5 @@ import '../styles/global.css';
 			</div>
 		</section>
 
-		<CdemFooter />
 	</div>
 </Layout>

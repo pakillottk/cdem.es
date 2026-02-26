@@ -1,8 +1,7 @@
 ---
-import CdemHeader from '../components/CdemHeader.astro';
-import CdemFooter from '../components/CdemFooter.astro';
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 ---
+<Layout>
 	<div class="min-h-screen bg-black text-white font-sans">
 		<!-- Hero eventos -->
 		<section
@@ -13,8 +12,6 @@ import '../styles/global.css';
 				aria-hidden="true"
 			></div>
 			<div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black"></div>
-
-			<CdemHeader />
 
 			<div class="relative z-10 max-w-5xl mx-auto px-6 pb-10 pt-24">
 				<p class="text-sm sm:text-base md:text-lg tracking-[0.35em] uppercase text-primary">
@@ -87,5 +84,5 @@ import '../styles/global.css';
 			</div>
 		</section>
 
-		<CdemFooter />
 	</div>
+</Layout>

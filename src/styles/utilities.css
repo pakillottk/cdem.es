@@ -6,4 +6,8 @@
   color: var(--color-primary);
 }
 
+@utility bg-primary {
+  background-color: var(--color-primary);
+}
+
 
