@@ -1,5 +1,6 @@
 ---
 import subrayado from '../assets/subrayado.png';
+import cdemLogo from '../assets/cdemLogo.png';
 
 const navItems = [
   { href: '/servicio', label: 'Servicio' },
@@ -17,7 +18,7 @@ const currentPath = normalizePath(Astro.url.pathname);
 	class="relative z-20 flex items-center justify-between bg-black px-8 lg:px-16 py-6"
 >
 	<div class="flex items-center gap-3 w-30">
-		<a href="/"><img src="/src/assets/cdemLogo.png" alt="CDEM" class="h-full w-full" /></a>
+		<a href="/"><img src={cdemLogo.src} alt="CDEM" class="h-full w-full" /></a>
 	</div>
 
 	<nav class="hidden md:flex gap-6 text-sm tracking-[0.25em] uppercase" style={`--underline-url: url('${subrayado.src}')`}>
