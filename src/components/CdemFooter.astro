@@ -1,74 +1,105 @@
 ---
+import cdemLogo from '../assets/cdemLogo.png';
 ---
 
 <footer
-	id="contacto"
-	class="bg-black border-t border-white/10 px-6 lg:px-0 py-12"
+  id="contacto"
+  class="bg-black border-t border-white/10 px-6 lg:px-0 py-12"
 >
-	<div class="max-w-5xl mx-auto grid gap-10 md:grid-cols-[1.5fr,1fr] items-start">
-		<div class="space-y-4 text-sm">
-			<div class="text-3xl tracking-[0.3em] font-semibold">CDEM</div>
-			<div class="space-y-1 text-xs uppercase tracking-[0.25em] text-white/70">
-				<p>Contacto</p>
-				<p>Aviso legal</p>
-				<p>Poltica de cookies</p>
-				<p>Poltica de privacidad</p>
-			</div>
-			<div class="flex gap-4 pt-4 text-xl">
-				<a href="#" aria-label="Instagram" class="hover:text-primary transition-colors">?</a>
-				<a href="#" aria-label="LinkedIn" class="hover:text-primary transition-colors">?</a>
-				<a href="#" aria-label="Facebook" class="hover:text-primary transition-colors">?</a>
-			</div>
-			<p class="pt-4 text-[10px] text-white/50 uppercase tracking-[0.25em]">
-				Todos los derechos reservados  {new Date().getFullYear()} CDEM Creación de Eventos Musicales
-			</p>
-		</div>
+  <div
+    class="max-w-5xl mx-auto flex flex-col items-center lg:flex-row justify-between"
+  >
+    <div class="w-full lg:w-1/4 text-3xl text-white tracking-[0.3em] font-semibold">
+      <a href="/"><img src={cdemLogo.src} alt="CDEM" class="site-header__logo" /></a>
+    </div>
+    <div class="w-full lg:w-1/4 space-y-1 font-secondary text-base uppercase tracking-[0.25em] text-white">
+      <p class="hover:text-primary transition-colors">Contacto</pc>
+      <p class="hover:text-primary transition-colors">Aviso legal</p>
+      <p class="hover:text-primary transition-colors">Política de cookies</p>
+      <p class="hover:text-primary transition-colors">Política de privacidad</p>
+    </div>
+    <div class="flex w-full items-center justify-center gap-3 lg:w-1/4">
+      <a
+        href="#"
+        aria-label="Instagram"
+        class="inline-flex shrink-0 items-center justify-center hover:animate-heartbeat"
+        ><img class="h-20 w-20 object-contain" src="/rrss-ig.png" /></a
+      >
+      <a
+        href="#"
+        aria-label="LinkedIn"
+        class="inline-flex shrink-0 items-center justify-center hover:animate-heartbeat"
+        ><img class="h-20 w-20 object-contain" src="/rrss-linke.png" /></a
+      >
+      <a
+        href="#"
+        aria-label="Facebook"
+        class="inline-flex shrink-0 items-center justify-center hover:animate-heartbeat"
+        ><img class="h-20 w-20 object-contain" src="/rrss-facebook.png" /></a
+      >
+    </div>
 
-		<div class="space-y-4">
-			<h2 class="text-sm font-semibold tracking-[0.25em] uppercase">
-				Suscrbete a nuestra newsletter
-			</h2>
-			<form class="space-y-3">
-				<div class="space-y-1">
-					<label class="block text-[11px] uppercase tracking-[0.2em] text-white/70">
-						Nombre y apellidos
-					</label>
-					<input
-						type="text"
-						class="w-full bg-transparent border border-white/30 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
-					/>
-				</div>
-				<div class="space-y-1">
-					<label class="block text-[11px] uppercase tracking-[0.2em] text-white/70">
-						Email
-					</label>
-					<input
-						type="email"
-						class="w-full bg-transparent border border-white/30 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
-					/>
-				</div>
-				<div class="space-y-1">
-					<label class="block text-[11px] uppercase tracking-[0.2em] text-white/70">
-						Poltica de privacidad
-					</label>
-					<select
-						class="w-full bg-transparent border border-white/30 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
-					>
-						<option value="" selected disabled class="bg-black">
-							Acepto la poltica de privacidad
-						</option>
-						<option value="yes" class="bg-black">S</option>
-					</select>
-				</div>
-				<button
-					type="submit"
-					class="mt-3 inline-flex items-center justify-center rounded-full bg-cyan-400 text-black px-8 py-2 text-xs font-semibold tracking-[0.25em] uppercase hover:bg-white transition-colors"
-				>
-					Enviar
-				</button>
-			</form>
-		</div>
-	</div>
+    <div class="font-secondary w-full lg:w-1/4 border-2 border-white p-3">
+      <h2
+        class="text-md text-white font-semibold tracking-[0.25em] uppercase mb-1"
+      >
+        Suscríbete a nuestra newsletter
+      </h2>
+      <form class="space-y-2">
+        <div class="flex items-center gap-1">
+          <label
+            class="block whitespace-nowrap text-base uppercase tracking-[0.1em] text-white"
+          >
+            Nombre y apellidos
+          </label>
+          <input
+            type="text"
+            class="w-full bg-white border text-base outline-none focus:border-[var(--color-primary)] transition-colors"
+          />
+        </div>
+        <div class="flex items-center gap-1">
+          <label
+            class="block text-x uppercase tracking-[0.2em] text-white"
+          >
+            Email
+          </label>
+          <input
+            type="email"
+            class="w-full bg-white border text-sm outline-none focus:border-[var(--color-primary)] transition-colors"
+          />
+        </div>
+        <div class="space-y-1">
+          <label class="flex items-center gap-2 text-sm text-white">
+            <input
+              type="checkbox"
+              name="privacy"
+              class="h-4 w-4 bg-primary"
+              required
+            />
+            <label
+              class="block text-sm uppercase tracking-[0.2em] text-white"
+            >
+              Política de privacidad
+            </label>
+          </label>
+        </div>
+        <div class="flex justify-end">
+        <button
+          type="submit"
+          class="mt-3 inline-flex items-center justify-center rounded-full bg-primary text-black px-8 py-2 text-base font-semibold tracking-[0.25em] uppercase hover:bg-white transition-colors"
+        >
+          Enviar
+        </button>
+      </div>
+    </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto mt-8 text-center w-full">
+    <p class="pt-4 text-[10px] text-white/50 uppercase tracking-[0.25em]">
+      Todos los derechos reservados {new Date().getFullYear()} CDEM Creación y Diseño
+      de Eventos Musicales
+    </p>
+  </div>
 </footer>
-
-

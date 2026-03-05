@@ -14,44 +14,42 @@ const normalizePath = (path) => (path.length > 1 ? path.replace(/\/+$/, '') : pa
 const currentPath = normalizePath(Astro.url.pathname);
 ---
 
-<header
-	class="relative z-20 flex items-center justify-between bg-black px-8 lg:px-16 py-6"
->
-	<div class="flex items-center gap-3 w-30">
-		<a href="/"><img src={cdemLogo.src} alt="CDEM" class="h-full w-full" /></a>
+<header class="site-header">
+	<div class="site-header__brand">
+		<a href="/"><img src={cdemLogo.src} alt="CDEM" class="site-header__logo" /></a>
 	</div>
 
-	<nav class="hidden md:flex gap-6 text-sm tracking-[0.25em] uppercase" style={`--underline-url: url('${subrayado.src}')`}>
+	<nav class="site-nav" style={`--underline-url: url('${subrayado.src}')`}>
 		{
 			navItems.map((item) => {
 				const isActive = currentPath === normalizePath(item.href);
 				return (
 					<a
 						href={item.href}
-						class:list={['nav-link transition-colors text-white hover:text-primary', { 'is-active': isActive }]}
+						class:list={['nav-link', { 'is-active': isActive }]}
 					>
-						<span class="text-center">{item.label}</span>
+						<span class="nav-link__label">{item.label}</span>
 					</a>
 				);
 			})
 		}
 	</nav>
 
-	<details class="relative md:hidden">
-		<summary class="list-none flex h-10 w-10 cursor-pointer items-center justify-center rounded border border-white/50 bg-black/30 [&::-webkit-details-marker]:hidden">
+	<details class="mobile-menu">
+		<summary class="mobile-menu__trigger">
 			<span class="sr-only">Abrir menu</span>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="h-5 w-5">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="mobile-menu__icon">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
 			</svg>
 		</summary>
-		<nav class="absolute right-0 mt-3 w-56 rounded border border-white/15 bg-black/95 p-2 text-xs tracking-[0.22em] uppercase shadow-xl backdrop-blur" style={`--underline-url: url('${subrayado.src}')`}>
+		<nav class="mobile-menu__panel" style={`--underline-url: url('${subrayado.src}')`}>
 			{
 				navItems.map((item) => {
 					const isActive = currentPath === normalizePath(item.href);
 					return (
 						<a
 							href={item.href}
-							class:list={['nav-link-mobile block rounded px-3 py-2 transition-colors text-white hover:text-primary', { 'is-active': isActive }]}
+							class:list={['nav-link-mobile', { 'is-active': isActive }]}
 						>
 							<span>{item.label}</span>
 						</a>
