@@ -12,12 +12,11 @@ import keystatic from '@keystatic/astro';
 // https://astro.build/config
 export default defineConfig({
   vite: {
-    plugins: [tailwindcss()]
-  },
-  adapter: cloudflare({
-    platformProxy: {
-      enabled: false
+    plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ['@keystatic/astro']
     }
-  }),
+  },
+  adapter: cloudflare(),
   integrations: [react(), markdoc(), keystatic()]
 });
