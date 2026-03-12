@@ -92,6 +92,12 @@ export const server = {
       mensaje: z.string().min(1, 'El mensaje es obligatorio'),
     }),
     handler: async ({ nombre, email, telefono, mensaje }) => {
+      if (!RESEND_API_KEY || !CONTACT_EMAIL_TO || !FROM_EMAIL) {
+        throw new ActionError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'El formulario de contacto no está configurado. Contacta con el administrador.',
+        });
+      }
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -128,6 +134,12 @@ export const server = {
       privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
     }),
     handler: async ({ nombre, email }) => {
+      if (!RESEND_API_KEY) {
+        throw new ActionError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'La suscripción no está configurada. Contacta con el administrador.',
+        });
+      }
       const res = await fetch('https://api.resend.com/contacts', {
         method: 'POST',
         headers: {
