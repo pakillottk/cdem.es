@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm';
 ---
 <Layout>
 	<div class="min-h-screen bg-black text-white font-sans">
@@ -25,75 +26,8 @@ import Layout from '../layouts/Layout.astro';
 			<div
 				class="max-w-5xl mx-auto grid gap-10 lg:gap-16 md:grid-cols-[minmax(0,1.3fr),minmax(0,1fr)] items-start"
 			>
-				<!-- Formulario -->
-				<div class="border-2 border-white px-6 sm:px-8 py-8 sm:py-10 space-y-6">
-					<div class="space-y-1">
-						<label
-							for="nombre"
-							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
-						>
-							Nombre
-						</label>
-						<input
-							id="nombre"
-							name="nombre"
-							type="text"
-							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
-						/>
-					</div>
-
-					<div class="space-y-1">
-						<label
-							for="email"
-							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
-						>
-							Email
-						</label>
-						<input
-							id="email"
-							name="email"
-							type="email"
-							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
-						/>
-					</div>
-
-					<div class="space-y-1">
-						<label
-							for="telefono"
-							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
-						>
-							Teléfono (opcional)
-						</label>
-						<input
-							id="telefono"
-							name="telefono"
-							type="tel"
-							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors"
-						/>
-					</div>
-
-					<div class="space-y-1">
-						<label
-							for="mensaje"
-							class="block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80"
-						>
-							Mensaje
-						</label>
-						<textarea
-							id="mensaje"
-							name="mensaje"
-							rows="5"
-							class="mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none resize-none focus:border-cyan-400 transition-colors"
-						></textarea>
-					</div>
-
-					<button
-						type="submit"
-						class="inline-flex items-center justify-center rounded-full border border-white/80 bg-white/10 px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
-					>
-						Enviar mensaje
-					</button>
-				</div>
+			<!-- Formulario -->
+			<ContactForm client:load />
 
 				<!-- Datos de contacto -->
 				<div class="space-y-6">

@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
@@ -13,9 +13,19 @@ import keystatic from '@keystatic/astro';
 export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
+    resolve: {
+      dedupe: ['react', 'react-dom', 'react-dom/server'],
+    },
     optimizeDeps: {
       exclude: ['@keystatic/astro']
     }
+  },
+  env: {
+    schema: {
+      RESEND_API_KEY: envField.string({ context: 'server', access: 'secret' }),
+      CONTACT_EMAIL_TO: envField.string({ context: 'server', access: 'secret' }),
+      FROM_EMAIL: envField.string({ context: 'server', access: 'secret' }),
+    },
   },
   adapter: cloudflare(),
   integrations: [react(), markdoc(), keystatic()]
