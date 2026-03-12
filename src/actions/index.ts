@@ -119,4 +119,38 @@ export const server = {
       return { sent: true };
     },
   }),
+
+  newsletter: defineAction({
+    accept: 'form',
+    input: z.object({
+      nombre: z.string().min(1, 'El nombre es obligatorio'),
+      email: z.string().email('Email no válido'),
+      privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
+    }),
+    handler: async ({ nombre, email }) => {
+      const res = await fetch('https://api.resend.com/contacts', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          first_name: nombre,
+          unsubscribed: false,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.text();
+        console.error(`[Resend newsletter] ${res.status} ${res.statusText}:`, body);
+        throw new ActionError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'No se pudo procesar la suscripción. Por favor, inténtalo de nuevo.',
+        });
+      }
+
+      return { subscribed: true };
+    },
+  }),
 };
