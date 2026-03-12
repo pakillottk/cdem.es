@@ -40,25 +40,18 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
-| `npm run deploy`          | Build y despliegue en Cloudflare Pages           |
+| `npm run deploy`          | Build y despliegue en Cloudflare Pages (`wrangler pages deploy`) |
 
 ## Deploy en Cloudflare Pages
 
-Este proyecto usa Astro con el adapter `@astrojs/cloudflare` (SSR). Para evitar una **página en blanco**:
+Configurado según la [doc del adapter Cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/#using-with-cloudflare-pages): `build.client`/`server` y `public/_routes.json`.
 
-1. **Despliegue con Wrangler (recomendado)**  
-   Desde tu máquina (o CI con `CLOUDFLARE_API_TOKEN`):
-   ```bash
-   npm run deploy
-   ```
-   O manualmente: `npm run build && npx wrangler pages deploy ./dist`
+En el dashboard de Pages (Connect to Git):
 
-2. **Si usas "Connect to Git" en el dashboard**  
-   No basta con "Build output directory: dist", porque la raíz de `dist` no tiene `index.html` (está en `dist/client`). Configura:
-   - **Build command:** `npm run build && npx wrangler pages deploy ./dist --project-name=cdem-es`
-   - Añade en Variables de entorno del proyecto: `CLOUDFLARE_API_TOKEN` (y opcionalmente `CLOUDFLARE_ACCOUNT_ID`).
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
 
-Las variables de entorno del formulario de contacto (`RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `FROM_EMAIL`) deben configurarse en el proyecto de Pages (Settings → Environment variables).
+Las variables de entorno del formulario de contacto (`RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `FROM_EMAIL`) se configuran en el proyecto de Pages (Settings → Environment variables).
 
 ## 👀 Want to learn more?
 

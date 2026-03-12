@@ -8,7 +8,7 @@
   ],
 	"assets": {
 		"binding": "ASSETS",
-		"directory": "./dist/client"
+		"directory": "./dist"
 	},
 	"observability": {
     "enabled": true

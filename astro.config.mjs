@@ -27,10 +27,10 @@ export default defineConfig({
       FROM_EMAIL: envField.string({ context: 'server', access: 'secret' }),
     },
   },
-  adapter: cloudflare({
-    platformProxy: {
-      enabled: true,
-    },
-  }),
+  adapter: cloudflare(),
+  build: {
+    client: './',
+    server: './_worker.js',
+  },
   integrations: [react(), markdoc(), keystatic()]
 });
