@@ -1,98 +1,29 @@
 ---
-import cdemLogo from '../assets/cdemLogo.png';
 ---
 
-<footer id="contacto" class="site-footer">
-  <div class="site-footer__inner">
-    <div class="site-footer__brand">
-      <a href="/"><img src={cdemLogo.src} alt="CDEM" class="site-footer__logo" /></a>
-    </div>
+<NewsletterSection />
 
-    <div class="site-footer__links">
-      <p class="site-footer__link">Contacto</p>
-      <p class="site-footer__link">Aviso legal</p>
-      <p class="site-footer__link">Política de cookies</p>
-      <p class="site-footer__link">Política de privacidad</p>
-    </div>
-
-    <div class="site-footer__social">
-      <a
-        href="#"
-        aria-label="Instagram"
-        class="site-footer__social-link"
-        ><img class="site-footer__social-icon" src="/rrss-ig.png" /></a
-      >
-      <a
-        href="#"
-        aria-label="LinkedIn"
-        class="site-footer__social-link"
-        ><img class="site-footer__social-icon" src="/rrss-linke.png" /></a
-      >
-      <a
-        href="#"
-        aria-label="Facebook"
-        class="site-footer__social-link"
-        ><img class="site-footer__social-icon" src="/rrss-facebook.png" /></a
-      >
-    </div>
-
-    <div class="site-footer__newsletter">
-      <h2 class="site-footer__newsletter-title">
-        Suscríbete a nuestra newsletter
-      </h2>
-      <form class="site-footer__form">
-        <div class="site-footer__form-row">
-          <label
-            class="site-footer__label"
-          >
-            Nombre y apellidos
-          </label>
-          <input
-            type="text"
-            class="site-footer__input"
-          />
-        </div>
-        <div class="site-footer__form-row">
-          <label
-            class="site-footer__label"
-          >
-            Email
-          </label>
-          <input
-            type="email"
-            class="site-footer__input--small"
-          />
-        </div>
-        <div class="site-footer__checkbox-row">
-          <label class="site-footer__checkbox-label">
-            <input
-              type="checkbox"
-              name="privacy"
-              class="site-footer__checkbox"
-              required
-            />
-            <span class="site-footer__checkbox-text">
-              Política de privacidad
-            </span>
-          </label>
-        </div>
-        <div class="site-footer__submit">
-        <button
-          type="submit"
-          class="site-footer__button"
-        >
-          Enviar
-        </button>
-      </div>
-    </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="site-footer__bottom">
-    <p class="site-footer__bottom-text">
-      Todos los derechos reservados {new Date().getFullYear()} CDEM Creación y Diseño
-      de Eventos Musicales
-    </p>
-  </div>
+<footer
+	id="contacto"
+	class="bg-black border-t border-white/10 px-6 lg:px-0 py-12"
+>
+	<div class="max-w-5xl mx-auto">
+		<div class="space-y-4 text-sm">
+			<div class="text-3xl tracking-[0.3em] font-semibold">CDEM</div>
+			<div class="space-y-1 text-xs uppercase tracking-[0.25em] text-white/70">
+				<p>Contacto</p>
+				<p>Aviso legal</p>
+				<p>Política de cookies</p>
+				<p>Política de privacidad</p>
+			</div>
+			<div class="flex gap-4 pt-4 text-xl">
+				<a href="#" aria-label="Instagram" class="hover:text-primary transition-colors">?</a>
+				<a href="#" aria-label="LinkedIn" class="hover:text-primary transition-colors">?</a>
+				<a href="#" aria-label="Facebook" class="hover:text-primary transition-colors">?</a>
+			</div>
+			<p class="pt-4 text-[10px] text-white/50 uppercase tracking-[0.25em]">
+				Todos los derechos reservados {new Date().getFullYear()} CDEM Creación de Eventos Musicales
+			</p>
+		</div>
+	</div>
 </footer>

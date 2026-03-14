@@ -40,6 +40,18 @@ All commands are run from the root of the project, from a terminal:
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `npm run astro -- --help` | Get help using the Astro CLI                     |
+| `npm run deploy`          | Build y despliegue en Cloudflare Pages (`wrangler pages deploy`) |
+
+## Deploy en Cloudflare Pages
+
+Configurado según la [doc del adapter Cloudflare](https://docs.astro.build/en/guides/integrations-guide/cloudflare/#using-with-cloudflare-pages): `build.client`/`server` y `public/_routes.json`.
+
+En el dashboard de Pages (Connect to Git):
+
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
+
+Las variables de entorno del formulario de contacto (`RESEND_API_KEY`, `CONTACT_EMAIL_TO`, `FROM_EMAIL`) se configuran en el proyecto de Pages (Settings → Environment variables).
 
 ## 👀 Want to learn more?
 
