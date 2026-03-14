@@ -14,3 +14,24 @@
   background-color: var(--color-primary);
 }
 
+/* Keyframes squeeze (efecto de “apretar” al hacer hover) */
+@keyframes squeeze {
+  to {
+    transform: scale(0.98);
+  }
+}
+
+.animate-squeeze {
+  animation: squeeze 0.2s ease-out forwards;
+}
+
+/* Hover: reducir al pasar el ratón y volver al salir */
+.hover\:animate-squeeze {
+  transition: transform 0.2s ease-out;
+}
+
+.hover\:animate-squeeze:hover {
+  transform: scale(0.98);
+}
+
+

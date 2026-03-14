@@ -3,6 +3,8 @@
 @import "./utilities.css";
 @import "./header.css";
 @import "./home.css";
+@import "./servicio.css";
+@import "./eventos.css";
 @import "./footer.css";
 
 :root {
