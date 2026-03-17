@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ContactoSection from "../components/ContactoSection.astro";
 ---
 
 <Layout>
@@ -71,27 +72,6 @@ import Layout from "../layouts/Layout.astro";
     </section>
 
     <!-- Texto descriptivo + CTA en fila -->
-    <section class="producciones-cta-section">
-      <div class="producciones-cta-section__inner">
-        <div>
-				<p class="producciones-cta-section__text">
-            Desde la idea inicial hasta el último acorde, diseñamos experiencias
-            que conectan con artistas y público, cuidando la identidad visual,
-            el relato y cada detalle técnico y artístico.
-          </p>
-          <p
-            class="producciones-cta-section__headline"
-          >
-            ¿Hablamos de tu próximo proyecto?
-          </p>
-        </div>
-        <a
-          href="/contacto"
-          class="producciones-cta-section__button"
-        >
-          Contactar
-        </a>
-      </div>
-    </section>
+    <ContactoSection />
   </div>
 </Layout>
