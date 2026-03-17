@@ -1,0 +1,80 @@
+.producciones-page {
+  @apply min-h-screen bg-black text-white font-primary;
+}
+
+.producciones-hero {
+  @apply relative flex flex-col justify-end text-center overflow-hidden;
+}
+
+.producciones-hero__banner {
+  @apply relative w-full h-[100px] border-b border-white;
+}
+
+.producciones-hero__overlay {
+  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
+}
+
+.producciones-hero__quote {
+  @apply font-secondary text-white text-xl tracking-[0.35em] uppercase text-primary px-4 sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.producciones-grid {
+  @apply bg-white py-16 px-6 text-black;
+}
+
+.producciones-grid__inner {
+  @apply max-w-6xl mx-auto;
+}
+
+.producciones-grid__list {
+  @apply grid gap-10 md:grid-cols-3;
+}
+
+.producciones-grid__item {
+  @apply bg-white overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-[1.03] hover:shadow-2xl;
+}
+
+.producciones-grid__image {
+  @apply relative flex items-center justify-center;
+}
+
+.producciones-grid__image img {
+  @apply max-w-full max-h-full object-contain;
+}
+
+.producciones-text-intro {
+  @apply bg-white pb-10 px-6 text-black;
+}
+
+.producciones-text-intro__inner {
+  @apply max-w-6xl mx-auto text-center;
+}
+
+.producciones-text-intro__title {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.producciones-text-intro__highlight {
+  @apply mt-1 text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[0.2em] leading-[0.5] text-black;
+}
+
+.producciones-cta-section {
+  @apply bg-black font-secondary tracking-[0.25em] pt-16 pb-16 px-6 mb-16 text-white;
+}
+
+.producciones-cta-section__inner {
+  @apply max-w-6xl mx-auto flex flex-col gap-6 items-center text-center md:flex-row md:items-center md:justify-between md:text-left;
+}
+
+.producciones-cta-section__text {
+  @apply mt-0 sm:text-lg md:text-xl lg:text-2xl max-w-3xl font-normal;
+}
+
+.producciones-cta-section__headline {
+  @apply mt-0 text-primary sm:text-lg md:text-4xl lg:text-5xl font-extrabold max-w-3xl;
+}
+
+.producciones-cta-section__button {
+  @apply inline-flex items-center justify-center rounded-full border-2 border-white px-10 py-3 text-sm tracking-[0.25em] uppercase font-semibold hover:bg-primary hover:text-black transition-colors;
+}
+

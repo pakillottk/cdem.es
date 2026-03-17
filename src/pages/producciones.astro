@@ -1,102 +1,97 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
 ---
+
 <Layout>
-	<div class="min-h-screen bg-black text-white font-sans">
-		<!-- Hero producciones -->
-		<section
-			class="relative min-h-[380px] flex flex-col justify-end text-center overflow-hidden"
-		>
-			<div
-				class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1511379938547-c1f69419868d?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center opacity-55"
-				aria-hidden="true"
-			></div>
-			<div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/50 to-black"></div>
+  <div class="producciones-page">
+    <!-- Hero producciones -->
 
-			<div class="relative z-10 max-w-5xl mx-auto px-6 pb-10 pt-28">
-				<p class="text-sm sm:text-base md:text-lg tracking-[0.35em] uppercase">
-					Cada producción es una experiencia diseñada para vivirse
-				</p>
-			</div>
-		</section>
+    <section class="producciones-hero">
+      <div class="producciones-hero__banner">
+        <div class="producciones-hero__overlay">
+          <p class="producciones-hero__quote">
+            Cada producción es una experiencia diseñada para vivirse.
+          </p>
+        </div>
+      </div>
+    </section>
 
-		<!-- Grid de producciones destacadas -->
-		<section class="bg-white py-12 px-6 lg:px-0 text-black">
-			<div class="max-w-5xl mx-auto">
-				<div class="grid gap-6 md:grid-cols-3">
-					<!-- Vive Linares -->
-					<article class="bg-black text-white overflow-hidden shadow-lg">
-						<div class="relative h-40">
-							<div
-								class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-80"
-							></div>
-							<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-							<div
-								class="relative z-10 h-full flex items-end justify-start px-4 pb-4 text-left leading-tight font-extrabold tracking-[0.25em] uppercase"
-							>
-								<span>Vive<br />Linares<br />Fest</span>
-							</div>
-						</div>
-					</article>
+    <!-- Grid de producciones destacadas -->
+    <section class="producciones-grid">
+      <div class="producciones-grid__inner">
+        <div class="producciones-grid__list">
+          <!-- Vive Linares -->
+          <article class="producciones-grid__item">
+            <div class="producciones-grid__image">
+              <img
+                src="/portada vive Linares2.jpg"
+                alt="Vive Linares Fest"
+                class="max-w-full max-h-full object-contain"
+              />
+            </div>
+          </article>
 
-					<!-- Sarao Late -->
-					<article class="bg-black text-white overflow-hidden shadow-lg">
-						<div class="relative h-40">
-							<div
-								class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518976024611-28bf4b48222e?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-80"
-							></div>
-							<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-							<div
-								class="relative z-10 h-full flex items-end justify-start px-4 pb-4 text-left leading-tight font-extrabold tracking-[0.25em] uppercase"
-							>
-								<span>Sarao<br />Late</span>
-							</div>
-						</div>
-					</article>
+          <!-- Festival de Jazz -->
+          <article class="producciones-grid__item">
+          <div class="producciones-grid__image">
+              <img
+                src="/portada festival jazz.jpg"
+                alt="Festival de Jazz"
+                class="max-w-full max-h-full object-contain"
+              />
+            </div>
+          </article>
 
-					<!-- Ibero Joven -->
-					<article class="bg-black text-white overflow-hidden shadow-lg">
-						<div class="relative h-40">
-							<div
-								class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518895949257-7621c3c786d4?auto=format&fit=crop&w=1000&q=80')] bg-cover bg-center opacity-80"
-							></div>
-							<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-							<div
-								class="relative z-10 h-full flex items-end justify-start px-4 pb-4 text-left leading-tight font-extrabold tracking-[0.25em] uppercase"
-							>
-								<span>Ibero<br />Joven<br />Fest</span>
-							</div>
-						</div>
-					</article>
-				</div>
+          <!-- New Wave -->
+          <article class="producciones-grid__item">
+            <div class="producciones-grid__image">
+              <img
+                src="/portada New Wave2.jpg"
+                alt="New Wave"
+                class="max-w-full max-h-full object-contain"
+              />
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-				<!-- Texto conceptual -->
-				<div class="mt-10 text-center">
-					<p class="text-sm sm:text-base md:text-lg">
-						Cada producción refleja nuestra forma de entender la música en vivo:
-					</p>
-					<p
-						class="mt-2 text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[0.2em] uppercase text-black"
-					>
-						diseño, rigor y emoción.
-					</p>
-					<p class="mt-4 text-xs sm:text-sm max-w-3xl mx-auto">
-						Desde la idea inicial hasta el último acorde, diseñamos experiencias que conectan con artistas y
-						público, cuidando la identidad visual, el relato y cada detalle técnico y artístico.
-					</p>
-				</div>
+    <!-- Texto conceptual a todo lo ancho -->
+    <section class="producciones-text-intro">
+      <div class="producciones-text-intro__inner">
+        <p class="producciones-text-intro__title">
+          Cada producción refleja nuestra forma de entender la música en vivo:
+        </p>
+        <p
+          class="producciones-text-intro__highlight"
+        >
+          diseño, rigor y emoción.
+        </p>
+      </div>
+    </section>
 
-				<!-- CTA contactar -->
-				<div class="mt-10 flex justify-center">
-					<a
-						href="/contacto"
-						class="inline-flex items-center justify-center rounded-full border-2 border-black px-10 py-3 text-sm tracking-[0.25em] uppercase font-semibold hover:bg-black hover:text-white transition-colors"
-					>
-						Contactar
-					</a>
-				</div>
-			</div>
-		</section>
-
-	</div>
+    <!-- Texto descriptivo + CTA en fila -->
+    <section class="producciones-cta-section">
+      <div class="producciones-cta-section__inner">
+        <div>
+				<p class="producciones-cta-section__text">
+            Desde la idea inicial hasta el último acorde, diseñamos experiencias
+            que conectan con artistas y público, cuidando la identidad visual,
+            el relato y cada detalle técnico y artístico.
+          </p>
+          <p
+            class="producciones-cta-section__headline"
+          >
+            ¿Hablamos de tu próximo proyecto?
+          </p>
+        </div>
+        <a
+          href="/contacto"
+          class="producciones-cta-section__button"
+        >
+          Contactar
+        </a>
+      </div>
+    </section>
+  </div>
 </Layout>
