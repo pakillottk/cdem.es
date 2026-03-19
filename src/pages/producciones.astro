@@ -1,6 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ContactoSection from "../components/ContactoSection.astro";
+import GalleryModal from "../components/GalleryModal";
+import { productions } from "../data/galleryData";
 ---
 
 <Layout>
@@ -21,38 +23,16 @@ import ContactoSection from "../components/ContactoSection.astro";
     <section class="producciones-grid">
       <div class="producciones-grid__inner">
         <div class="producciones-grid__list">
-          <!-- Vive Linares -->
-          <article class="producciones-grid__item">
-            <div class="producciones-grid__image">
-              <img
-                src="/portada vive Linares2.jpg"
-                alt="Vive Linares Fest"
-                class="max-w-full max-h-full object-contain"
+          {productions.map((prod) => (
+            <article class="producciones-grid__item">
+              <GalleryModal
+                coverSrc={prod.coverSrc}
+                coverAlt={`${prod.name} – Ver galería`}
+                images={prod.images}
+                client:load
               />
-            </div>
-          </article>
-
-          <!-- Festival de Jazz -->
-          <article class="producciones-grid__item">
-          <div class="producciones-grid__image">
-              <img
-                src="/portada festival jazz.jpg"
-                alt="Festival de Jazz"
-                class="max-w-full max-h-full object-contain"
-              />
-            </div>
-          </article>
-
-          <!-- New Wave -->
-          <article class="producciones-grid__item">
-            <div class="producciones-grid__image">
-              <img
-                src="/portada New Wave2.jpg"
-                alt="New Wave"
-                class="max-w-full max-h-full object-contain"
-              />
-            </div>
-          </article>
+            </article>
+          ))}
         </div>
       </div>
     </section>
