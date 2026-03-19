@@ -14,11 +14,11 @@ const { className = '' } = Astro.props;
         ¿Hablamos de tu próximo proyecto?
       </p>
     </div>
-    <a
-      href="/contacto"
-      class="cta-section__button"
-    >
-      Contactar
+    <a href="/contacto" class="contacto-draw-btn">
+      <span class="contacto-draw-btn__text text-xl sm:text-2xl">Contactar</span>
+      <svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+        <ellipse cx="120" cy="30" rx="115" ry="25" />
+      </svg>
     </a>
   </div>
 </section>

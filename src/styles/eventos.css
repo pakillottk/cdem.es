@@ -19,7 +19,7 @@
 }
 
 .eventos-hero__quote {
-  @apply font-secondary text-white text-xl tracking-[0.35em] uppercase text-primary px-4 sm:text-2xl md:text-3xl lg:text-4xl;
+  @apply font-secondary text-white text-2xl tracking-[0.35em] uppercase text-primary px-4 sm:text-3xl md:text-4xl lg:text-5xl;
 }
 
 /* Sección: categorías de eventos */
@@ -28,7 +28,7 @@
 }
 
 .eventos-categorias__title {
-  @apply text-left text-white pb-10 text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase;
+  @apply text-left text-white pb-10 text-2xl sm:text-3xl md:text-4xl lg:text-5xl uppercase;
 }
 
 .eventos-festivales-list {
@@ -83,5 +83,5 @@
 }
 
 .eventos-festival-card__title {
-  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl font-secondary tracking-[0.25em] uppercase font-semibold;
+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-secondary tracking-[0.25em] uppercase font-semibold;
 }

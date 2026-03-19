@@ -15,11 +15,11 @@
 }
 
 .home-hero__title {
-  @apply text-4xl font-extrabold leading-tight tracking-wide drop-shadow-xl sm:text-5xl lg:text-6xl;
+  @apply text-5xl font-extrabold leading-tight tracking-wide drop-shadow-xl sm:text-6xl lg:text-7xl;
 }
 
 .home-hero__subtitle {
-  @apply font-secondary mt-4 text-lg uppercase tracking-[0.3em] sm:text-xl;
+  @apply font-secondary mt-4 text-xl uppercase tracking-[0.3em] sm:text-2xl;
 }
 
 .home-hero__actions {
@@ -47,7 +47,7 @@
 }
 
 .home-claim__text {
-  @apply timeline-view animate-zoom-in animate-range-cover font-secondary text-2xl font-medium uppercase leading-relaxed sm:text-3xl;
+  @apply timeline-view animate-zoom-in animate-range-cover font-secondary text-3xl font-medium uppercase leading-relaxed sm:text-4xl;
 }
 
 .home-services {

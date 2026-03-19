@@ -3,70 +3,66 @@ import Layout from '../layouts/Layout.astro';
 import ContactForm from '../components/ContactForm';
 ---
 <Layout>
-	<div class="min-h-screen bg-black text-white font-sans">
-		<!-- Franja superior con claim -->
-		<section class="bg-black border-y border-white/5">
-			<div class="max-w-5xl mx-auto">
-				<!-- Banda azul / imagen -->
-				<div class="h-40 sm:h-52 md:h-64 bg-gradient-to-r from-cyan-500 via-cyan-400 to-sky-500"></div>
+	<div class="contacto-page">
+		<section class="contacto-hero">
+			<div class="contacto-hero__banner">
+				<img src="/home foto.png" alt="CDEM Producciones" />
+			</div>
+		</section>
+		<section class="contacto-quote">
+			<div class="contacto-quote__banner">
+			  <div class="contacto-quote__overlay">
+				<p class="contacto-quote__text">
+					Cada proyecto empieza con una conversación.
+				</p>
+			  </div>
+			</div>
+		</section>
 
-				<!-- Claim principal -->
-				<div class="bg-black py-8 sm:py-10 text-center border-t border-white/10">
-					<h1
-						class="text-lg sm:text-2xl md:text-3xl font-extrabold tracking-[0.25em] uppercase leading-snug"
-					>
-						Cada proyecto empieza con una conversación.
-					</h1>
+		<section class="contacto-section">
+			<div class="contacto-triangle contacto-triangle--top-left"></div>
+			<div class="contacto-triangle contacto-triangle--top-right"></div>
+			<div class="contacto-triangle contacto-triangle--bottom-center"></div>
+
+			<div class="contacto-wrapper">
+				<ContactForm client:load />
+
+				<div class="contacto-info">
+					<div class="contacto-details">
+						<p class="contacto-details__name">Creación y Diseño de Eventos Musicales S.L.</p>
+						<p><a href="https://maps.google.com/?q=C/+Fernando+el+Católico+28+Linares+Jaén" target="_blank" rel="noopener noreferrer" class="contacto-details__link">C/ Fernando el Católico, 28 Linares (Jaén)</a></p>
+						<p><a href="tel:+34953666904" class="contacto-details__link">+34 953 66 69 04</a></p>
+						<p><a href="mailto:cdemcontratacion@gmail.com?subject=Contacto%20CDEM" class="contacto-details__link">cdemcontratacion@gmail.com</a></p>
+					</div>
+
+					<div class="contacto-social">
+						<a href="https://www.instagram.com/cdem_agendaespectaculos/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
+							<img src="/rrss/rrss-ig.png" alt="Instagram" class="contacto-social__icon" />
+						</a>
+						<a href="https://www.linkedin.com/company/cdemproducciones/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
+							<img src="/rrss/rrss-linke.png" alt="LinkedIn" class="contacto-social__icon" />
+						</a>
+						<a href="https://www.facebook.com/cdemconciertos" aria-label="Facebook" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
+							<img src="/rrss/rrss-facebook.png" alt="Facebook" class="contacto-social__icon" />
+						</a>
+					</div>
 				</div>
 			</div>
 		</section>
 
-		<!-- Bloque contacto -->
-		<section class="bg-black py-12 sm:py-16 px-6 lg:px-0">
-			<div
-				class="max-w-5xl mx-auto grid gap-10 lg:gap-16 md:grid-cols-[minmax(0,1.3fr),minmax(0,1fr)] items-start"
-			>
-			<!-- Formulario -->
-			<ContactForm client:load />
-
-				<!-- Datos de contacto -->
-				<div class="space-y-6">
-					<div class="space-y-2 text-xs sm:text-sm uppercase tracking-[0.25em]">
-						<p class="font-semibold">Creación y Diseño de Eventos Musicales S.L.</p>
-						<p>C/ Fernando el Católico, 28 Linares (Jaén)</p>
-						<p>+34 953 66 69 04</p>
-						<p>cdemcontratacion@gmail.com</p>
-					</div>
-
-					<div class="flex gap-4 text-xl">
-						<a href="#" aria-label="Instagram" class="hover:text-primary transition-colors">?</a>
-						<a href="#" aria-label="LinkedIn" class="hover:text-primary transition-colors">?</a>
-						<a href="#" aria-label="Facebook" class="hover:text-primary transition-colors">?</a>
-					</div>
-				</div>
-			</div>
-
-			<!-- Triángulo azul con CTAs -->
-			<div class="mt-16 flex flex-col items-center gap-8">
-				<div
-					class="w-48 h-48 sm:w-56 sm:h-56 bg-cyan-400 rotate-45 shadow-[0_0_60px_rgba(34,211,238,0.6)]"
-				></div>
-				<div class="flex flex-col sm:flex-row gap-6 justify-center">
-					<a
-						href="/contacto"
-						class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-8 sm:px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors"
-					>
-						Contrata tu evento
-					</a>
-					<a
-						href="/producciones"
-						class="inline-flex items-center justify-center rounded-full border border-white/60 px-8 sm:px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-colors"
-					>
-						Descubre nuestros proyectos
-					</a>
-				</div>
-			</div>
-		</section>
-
+		<div class="contacto-cta">
+			<a href="/contacto" class="contacto-draw-btn">
+				<span class="contacto-draw-btn__text">Contrata tu evento</span>
+				<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+					<ellipse cx="120" cy="30" rx="115" ry="25" />
+				</svg>
+			</a>
+			<a href="/producciones" class="contacto-draw-btn">
+				<span class="contacto-draw-btn__text">Descubre nuestros proyectos</span>
+				<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+					<ellipse cx="120" cy="30" rx="115" ry="25" />
+				</svg>
+			</a>
+		</div>
 	</div>
 </Layout>

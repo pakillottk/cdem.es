@@ -1,17 +1,17 @@
 /**
- * Aparición de las tarjetas de festivales al hacer scroll (Intersection Observer).
- * Cuando el listado entra en vista, se añade la clase is-visible a todas las tarjetas;
+ * Aparición de las tarjetas de festivales/conciertos al hacer scroll (Intersection Observer).
+ * Cuando cada listado entra en vista, se añade la clase is-visible a sus tarjetas;
  * el retardo escalonado se define en eventos.css.
  */
 function initEventosScroll() {
-	const list = document.getElementById('eventos-festivales-list');
-	if (!list) return;
+	const lists = document.querySelectorAll('.eventos-festivales-list');
+	if (!lists.length) return;
 
 	const observer = new IntersectionObserver(
 		(entries) => {
 			entries.forEach((entry) => {
 				if (entry.isIntersecting) {
-					list.querySelectorAll('.eventos-festival-card').forEach((el) => {
+					entry.target.querySelectorAll('.eventos-festival-card').forEach((el) => {
 						el.classList.add('is-visible');
 					});
 				}
@@ -19,7 +19,8 @@ function initEventosScroll() {
 		},
 		{ rootMargin: '0px 0px -40px 0px', threshold: 0.1 }
 	);
-	observer.observe(list);
+
+	lists.forEach((list) => observer.observe(list));
 }
 
 if (document.readyState === 'loading') {
