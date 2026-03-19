@@ -1,176 +1,194 @@
 ---
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import ContactoSection from "../components/ContactoSection.astro";
 ---
+
 <Layout>
-	<div class="min-h-screen bg-black text-white font-sans">
-		<!-- Hero / Claim principal -->
-		<section
-			class="bg-black py-12 px-6 lg:px-0 border-y border-white/5 flex items-center justify-center"
-		>
-			<div class="max-w-5xl w-full space-y-8">
-				<h1
-					class="text-2xl sm:text-3xl md:text-4xl tracking-[0.35em] uppercase font-semibold text-center"
+  <div class="min-h-screen bg-black text-white font-sans">
+    <!-- Hero / Claim principal -->
+	<section class="nosotros-hero">
+		<div class="nosotros-hero__banner">
+		  <div class="nosotros-hero__overlay">
+			<p class="nosotros-hero__quote">
+			  Creemos en la música.
+			</p>
+		  </div>
+		</div>
+	  </section>
+
+    <section class="nosotros-intro">
+      <div class="nosotros-intro__inner">
+
+        <div class="nosotros-intro__box">
+          <p
+            class="nosotros-intro__text"
+          >
+            CDEM Producciones es una productora especializada en la creación,
+            diseño y gestión de eventos musicales y experiencias en vivo.
+            Nuestra visión integral combina creatividad, planificación y
+            producción, cuidando cada detalle para que la música se escuche, se
+            vea y se viva como merece.
+          </p>
+          <p
+            class="nosotros-intro__text nosotros-intro__text--spaced"
+          >
+            Apostamos por el talento nacional e internacional, ofreciendo
+            producciones con identidad propia y una mirada contemporánea del
+            directo. Profesionalidad, pasión y creatividad se unen para poner la
+            música en el centro de cada experiencia.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lo que nos define -->
+    <section class="nosotros-definition">
+      <div class="nosotros-definition__inner">
+        <h2 class="nosotros-definition__title">
+          Lo que nos define
+        </h2>
+
+        <div class="nosotros-definition__list">
+          <p class="mb-0">
+            <span class="text-primary text-2xl sm:text-4xl md:text5xl lg:text-7xl">Creatividad</span> con criterio
+          </p>
+		  <hr class="nosotros-definition__divider">
+          <p class="mb-0">
+            Rigor en la <span class="text-primary text-2xl sm:text-4xl md:text5xl lg:text-7xl">producción</span>
+          </p>
+		  <hr class="nosotros-definition__divider">
+          <p class="mb-0">
+            Respeto por la <span class="text-primary text-2xl sm:text-4xl md:text5xl lg:text-7xl">música</span>
+          </p>
+		  <hr class="nosotros-definition__divider">
+          <p class="nosotros-definition__note">
+            Experiencias pensadas para el público
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Equipo -->
+    <section class="nosotros-team">
+      <div class="nosotros-team__inner">
+        <div class="nosotros-team__header">
+          <h2 class="nosotros-team__title">
+            Equipo
+          </h2>
+          <p
+            class="nosotros-team__desc"
+          >
+            Detrás de CDEM hay un equipo multidisciplinar con experiencia en
+            producción, dirección técnica y gestión cultural, unido por una
+            misma forma de entender la música en directo.
+          </p>
+        </div>
+
+        <div class="nosotros-member-wrap--paco">
+		  <div class="nosotros-member">
+            <div
+              class="nosotros-member__avatar"
+            >
+            </div>
+            <div class="nosotros-member__body">
+              <p class="nosotros-member__name">
+                Francisco Gázquez
+              </p>
+              <p class="nosotros-member__role">
+                Dirección / Administración
+              </p>
+				<a
+					href="mailto:cdemlinares@gmail.com?subject=Contacto%20CDEM&body="
+					class="inline-block transition-colors"
 				>
-					Creemos en la música.
-				</h1>
-
-				<div class="border-y border-white/10 py-6 sm:py-8">
-					<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium text-center">
-						CDEM Producciones es una productora especializada en la creación, diseño y gestión de eventos
-						musicales y experiencias en vivo. Nuestra visión integral combina creatividad, planificación y
-						producción, cuidando cada detalle para que la música se escuche, se vea y se viva como merece.
-					</p>
-					<p class="mt-4 text-sm sm:text-base md:text-lg leading-relaxed font-medium text-center">
-						Apostamos por el talento nacional e internacional, ofreciendo producciones con identidad propia
-						y una mirada contemporánea del directo. Profesionalidad, pasión y creatividad se unen para
-						poner la música en el centro de cada experiencia.
-					</p>
-				</div>
-			</div>
-		</section>
-
-		<!-- Lo que nos define -->
-		<section class="bg-black py-12 px-6 lg:px-0 flex items-center justify-center">
-			<div class="max-w-5xl w-full space-y-8 text-center">
-				<h2 class="text-sm sm:text-base tracking-[0.35em] uppercase font-semibold">
-					Lo que nos define
-				</h2>
-
-				<div class="space-y-4 text-sm sm:text-base md:text-lg font-semibold leading-relaxed">
-					<p>
-						<span class="text-primary">Creatividad</span> con criterio
-					</p>
-					<p>
-						Rigor en la <span class="text-primary">producción</span>
-					</p>
-					<p>
-						Respeto por la <span class="text-primary">música</span>
-					</p>
-					<p class="uppercase tracking-[0.20em] text-xs sm:text-sm md:text-base font-medium">
-						Experiencias pensadas para el público
-					</p>
-				</div>
-			</div>
-		</section>
-
-		<!-- Equipo -->
-		<section class="bg-black py-12 px-6 lg:px-0 border-y border-white/5 flex justify-center">
-			<div class="max-w-5xl w-full space-y-10">
-				<div class="text-center space-y-3">
-					<h2 class="text-sm sm:text-base tracking-[0.35em] uppercase font-semibold">
-						Equipo
-					</h2>
-					<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium">
-						Detrás de CDEM hay un equipo multidisciplinar con experiencia en producción, dirección técnica
-						y gestión cultural, unido por una misma forma de entender la música en directo.
-					</p>
-				</div>
-
-				<div class="grid gap-8 md:grid-cols-2">
-					<!-- Miembro -->
-					<div class="flex gap-4 items-start">
-						<div
-							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
-						></div>
-						<div class="space-y-1 text-sm">
-							<p class="font-semibold uppercase tracking-[0.18em]">Francisco Gzuaz</p>
-							<p class="text-xs sm:text-sm text-white/80">
-								Dirección / Administración
-							</p>
-							<p class="text-xs text-primary">cdemfinanzas@gmail.com</p>
-						</div>
-					</div>
-
-					<div class="flex gap-4 items-start">
-						<div
-							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
-						></div>
-						<div class="space-y-1 text-sm">
-							<p class="font-semibold uppercase tracking-[0.18em]">Juan Martínez</p>
-							<p class="text-xs sm:text-sm text-white/80">
-								Production Manager / Riesgos laborales
-							</p>
-							<p class="text-xs text-primary">cdemproduccion@gmail.com</p>
-						</div>
-					</div>
-
-					<div class="flex gap-4 items-start">
-						<div
-							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
-						></div>
-						<div class="space-y-1 text-sm">
-							<p class="font-semibold uppercase tracking-[0.18em]">Rocío García Pérez</p>
-							<p class="text-xs sm:text-sm text-white/80">
-								Comunicación y diseño
-							</p>
-							<p class="text-xs text-primary">cdemdesigncreativo@gmail.com</p>
-						</div>
-					</div>
-
-					<div class="flex gap-4 items-start">
-						<div
-							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
-						></div>
-						<div class="space-y-1 text-sm">
-							<p class="font-semibold uppercase tracking-[0.18em]">Juan Carlos Mendieta</p>
-							<p class="text-xs sm:text-sm text-white/80">
-								RRPP / Gestión de taquillas
-							</p>
-							<p class="text-xs text-primary">cdemscenografia@gmail.com</p>
-						</div>
-					</div>
-
-					<div class="flex gap-4 items-start">
-						<div
-							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
-						></div>
-						<div class="space-y-1 text-sm">
-							<p class="font-semibold uppercase tracking-[0.18em]">Raquel Urrutia</p>
-							<p class="text-xs sm:text-sm text-white/80">
-								Administración / Contratación
-							</p>
-							<p class="text-xs text-primary">cdemcontratacion@gmail.com</p>
-						</div>
-					</div>
-
-					<div class="flex gap-4 items-start">
-						<div
-							class="w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0"
-						></div>
-						<div class="space-y-1 text-sm">
-							<p class="font-semibold uppercase tracking-[0.18em]">Antonio Gzuaz</p>
-							<p class="text-xs sm:text-sm text-white/80">
-								Production Assistant
-							</p>
-							<p class="text-xs text-primary">cdemtecnico@gmail.com</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- CTA final -->
-		<section class="bg-black py-12 px-6 lg:px-0 flex items-center justify-center">
-			<div class="max-w-5xl w-full text-center space-y-6">
-				<p class="text-sm sm:text-base md:text-lg leading-relaxed font-medium">
-					Entendemos cada proyecto como un proceso creativo, desde la idea inicial hasta el último acorde.
-					Diseñamos experiencias que conectan con artistas y público.
-				</p>
-				<p
-					class="text-xs sm:text-sm md:text-base uppercase tracking-[0.25em] text-primary font-semibold"
-				>
-					¿Hablamos de tu próximo proyecto?
-				</p>
-				<div class="mt-4">
-					<a
-						href="/contacto"
-						class="inline-flex items-center justify-center rounded-full border border-cyan-400 bg-cyan-500/90 px-10 py-3 text-sm tracking-[0.25em] uppercase text-black hover:bg-white hover:border-white transition-colors"
+					<span
+						class="text-base sm:text-lg md:text-xl lg:text-2xl text-primary hover:text-black/80 transition-colors"
 					>
-						Contactar
-					</a>
-				</div>
-			</div>
-		</section>
+						cdemlinares@gmail.com
+					</span>
+				</a>
+            </div>
+          </div>
+        </div>
 
-	</div>
+        <div class="nosotros-members-grid">
+		  <div class="nosotros-member">
+            <div
+              class="nosotros-member__avatar"
+            >
+            </div>
+            <div class="nosotros-member__body">
+              <p class="nosotros-member__name">
+               Raquel Urrutia
+              </p>
+              <p class="nosotros-member__role">
+                Administración / Contratación
+              </p>
+				<a
+					href="mailto:cdemcontratacion@gmail.com?subject=Contacto%20CDEM&body="
+					class="inline-block transition-colors"
+				>
+					<span
+						class="text-base sm:text-lg md:text-xl lg:text-2xl text-primary hover:text-black/80 transition-colors"
+					>
+						cdemcontratacion@gmail.com
+					</span>
+				</a>
+            </div>
+          </div>
+		  <div class="nosotros-member">
+            <div
+              class="nosotros-member__avatar"
+            >
+            </div>
+            <div class="nosotros-member__body">
+              <p class="nosotros-member__name">
+                Rocio Garcia Pérez
+              </p>
+              <p class="nosotros-member__role">
+                Comunicacion y Diseño
+              </p>
+				<a
+					href="mailto:cdemdesigncreativo@gmail.com?subject=Contacto%20CDEM&body="
+					class="inline-block transition-colors"
+				>
+					<span
+						class="text-base sm:text-lg md:text-xl lg:text-2xl text-primary hover:text-black/80 transition-colors"
+					>
+						cdemdesigncreativo@gmail.com
+					</span>
+				</a>
+            </div>
+          </div>
+		  <div class="nosotros-member">
+            <div
+              class="nosotros-member__avatar"
+            >
+            </div>
+            <div class="nosotros-member__body">
+              <p class="nosotros-member__name">
+                Juan Martínez
+              </p>
+              <p class="nosotros-member__role">
+                Production Manager / Riesgos Laborales
+              </p>
+				<a
+					href="mailto:cdemproduccion@gmail.com?subject=Contacto%20CDEM&body="
+					class="inline-block transition-colors"
+				>
+					<span
+						class="text-base sm:text-lg md:text-xl lg:text-2xl text-primary hover:text-black/80 transition-colors"
+					>
+						cdemproduccion@gmail.com
+					</span>
+				</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Texto descriptivo + CTA en fila -->
+    <ContactoSection />
+  </div>
 </Layout>

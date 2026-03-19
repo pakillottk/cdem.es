@@ -1,5 +1,5 @@
 .cta-section {
-  @apply bg-black font-secondary tracking-[0.25em] pt-16 pb-16 px-6 mb-16 text-white;
+  @apply bg-black font-secondary tracking-[0.25em] pt-16 pb-16 px-6 mb-8 text-white;
 }
 
 .cta-section__inner {

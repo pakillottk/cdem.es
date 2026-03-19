@@ -6,8 +6,10 @@
 @import "./servicio.css";
 @import "./eventos.css";
 @import "./producciones.css";
+@import "./nosotros.css";
 @import "./ContactoSection.css";
 @import "./footer.css";
+
 
 :root {
   --font-primary: "ITC Eras", sans-serif;

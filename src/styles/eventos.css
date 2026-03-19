@@ -14,7 +14,8 @@
 }
 
 .eventos-hero__overlay {
-  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
+  @apply absolute inset-0 flex items-center justify-center z-10;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .eventos-hero__quote {

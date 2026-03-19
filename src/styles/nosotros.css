@@ -1,0 +1,111 @@
+.nosotros-hero {
+  @apply relative flex flex-col justify-end text-center overflow-hidden;
+}
+
+.nosotros-hero__banner {
+  @apply relative w-full h-[100px] border-b border-[#fff];
+}
+
+.nosotros-hero__overlay {
+  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
+}
+
+.nosotros-hero__quote {
+  @apply font-secondary text-white text-xl tracking-[0.35em] uppercase text-primary px-4 sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+/* Intro (CDEM Producciones) */
+.nosotros-intro {
+  @apply font-primary bg-white text-black py-12 px-6 border-y border-white/5 flex items-center justify-center;
+}
+
+.nosotros-intro__inner {
+  @apply max-w-5xl w-full space-y-8;
+}
+
+.nosotros-intro__box {
+  @apply border-y border-white/10 py-6 sm:py-8;
+}
+
+.nosotros-intro__text {
+  @apply text-sm sm:text-base md:text-lg leading-relaxed font-medium text-center;
+}
+
+.nosotros-intro__text--spaced {
+  @apply mt-4;
+}
+
+/* Lo que nos define */
+.nosotros-definition {
+  @apply bg-black py-12 px-6 flex items-center justify-center;
+}
+
+.nosotros-definition__inner {
+  @apply max-w-5xl w-[90%] space-y-8 text-center uppercase text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.nosotros-definition__title {
+  @apply text-left font-semibold;
+}
+
+.nosotros-definition__list {
+  @apply space-y-4 font-semibold leading-relaxed;
+}
+
+.nosotros-definition__divider {
+  @apply border-[var(--color-primary)] border-2 w-1/4 mx-auto;
+}
+
+.nosotros-definition__note {
+  @apply uppercase italic font-normal;
+}
+
+/* Equipo */
+.nosotros-team {
+  @apply font-secondary bg-white text-black py-12 px-6 border-y border-white/5 flex justify-center;
+}
+
+.nosotros-team__inner {
+  @apply max-w-5xl w-full space-y-10;
+}
+
+.nosotros-team__header {
+  @apply text-center space-y-3;
+}
+
+.nosotros-team__title {
+  @apply font-secondary tracking-[0.1em] text-xl sm:text-2xl md:text-3xl lg:text-4xl uppercase font-semibold;
+}
+
+.nosotros-team__desc {
+  @apply font-primary text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.nosotros-member-wrap--paco {
+  @apply flex justify-start md:justify-center;
+}
+
+.nosotros-members-grid {
+  @apply grid gap-8 md:grid-cols-2;
+}
+
+.nosotros-member {
+  @apply flex gap-4 items-start;
+}
+
+.nosotros-member__avatar {
+  @apply w-24 h-24 rounded-full border-2 border-cyan-400 bg-gradient-to-b from-cyan-500/20 to-transparent flex-shrink-0;
+}
+
+.nosotros-member__body {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.nosotros-member__name {
+  @apply uppercase;
+}
+
+.nosotros-member__role {
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+}
+
