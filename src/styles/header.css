@@ -1,5 +1,5 @@
 .site-header {
-  @apply relative z-20 flex items-center justify-between bg-black px-8 py-6 lg:px-16;
+  @apply relative z-20 flex items-center justify-between border-b-2 border-white bg-black px-8 py-6 lg:px-16;
 }
 
 .site-header__brand {
@@ -78,6 +78,7 @@
 .mobile-menu[open] .nav-link-mobile:nth-child(4) { transition-delay: 0.2s; }
 .mobile-menu[open] .nav-link-mobile:nth-child(5) { transition-delay: 0.25s; }
 .mobile-menu[open] .nav-link-mobile:nth-child(6) { transition-delay: 0.3s; }
+.mobile-menu[open] .nav-link-mobile:nth-child(7) { transition-delay: 0.35s; }
 
 .nav-link.is-active::after,
 .nav-link-mobile.is-active::after {

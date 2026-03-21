@@ -1,61 +1,78 @@
 ---
-import subrayado from '../assets/subrayado.png';
-import cdemLogo from '../assets/cdemLogo.png';
+import subrayado from "../assets/subrayado.png";
+import cdemLogo from "../assets/cdemLogo.png";
 
 const navItems = [
-  { href: '/servicio', label: 'Servicio' },
-  { href: '/eventos', label: 'Eventos' },
-  { href: '/producciones', label: 'Producciones' },
-  { href: '/nosotros', label: 'Nosotros' },
-  { href: '/contacto', label: 'Contacto' }
+  { href: "/booking", label: "Booking" },
+  { href: "/servicio", label: "Servicio" },
+  { href: "/eventos", label: "Eventos" },
+  { href: "/producciones", label: "Producciones" },
+  { href: "/nosotros", label: "Nosotros" },
+  { href: "/contacto", label: "Contacto" },
 ];
 
-const normalizePath = (path) => (path.length > 1 ? path.replace(/\/+$/, '') : path);
+const normalizePath = (path) =>
+  path.length > 1 ? path.replace(/\/+$/, "") : path;
 const currentPath = normalizePath(Astro.url.pathname);
 ---
 
 <header class="site-header">
-	<div class="site-header__brand">
-		<a href="/"><img src={cdemLogo.src} alt="CDEM" class="site-header__logo" /></a>
-	</div>
+  <div class="site-header__brand">
+    <a href="/"
+      ><img src={cdemLogo.src} alt="CDEM" class="site-header__logo" /></a
+    >
+  </div>
 
-	<nav class="site-nav" style={`--underline-url: url('${subrayado.src}')`}>
-		{
-			navItems.map((item) => {
-				const isActive = currentPath === normalizePath(item.href);
-				return (
-					<a
-						href={item.href}
-						class:list={['nav-link', { 'is-active': isActive }]}
-					>
-						<span class="nav-link__label">{item.label}</span>
-					</a>
-				);
-			})
-		}
-	</nav>
+  <nav class="site-nav" style={`--underline-url: url('${subrayado.src}')`}>
+    {
+      navItems.map((item) => {
+        const isActive = currentPath === normalizePath(item.href);
+        return (
+          <a
+            href={item.href}
+            class:list={["nav-link", { "is-active": isActive }]}
+          >
+            <span class="nav-link__label">{item.label}</span>
+          </a>
+        );
+      })
+    }
+  </nav>
 
-	<details class="mobile-menu">
-		<summary class="mobile-menu__trigger">
-			<span class="sr-only">Abrir menu</span>
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="mobile-menu__icon">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-			</svg>
-		</summary>
-		<nav class="mobile-menu__panel" style={`--underline-url: url('${subrayado.src}')`}>
-			{
-				navItems.map((item) => {
-					const isActive = currentPath === normalizePath(item.href);
-					return (
-						<a
-							href={item.href}
-							class:list={['nav-link-mobile', { 'is-active': isActive }]}
-						>
-							<span>{item.label}</span>
-						</a>
-					);
-				})
-			}
-		</nav>
-	</details>
+  <details class="mobile-menu">
+    <summary class="mobile-menu__trigger">
+      <span class="sr-only">Abrir menu</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        stroke-width="2"
+        class="mobile-menu__icon"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </summary>
+    <nav
+      class="mobile-menu__panel"
+      style={`--underline-url: url('${subrayado.src}')`}
+    >
+      {
+        navItems.map((item) => {
+          const isActive = currentPath === normalizePath(item.href);
+          return (
+            <a
+              href={item.href}
+              class:list={["nav-link-mobile", { "is-active": isActive }]}
+            >
+              <span>{item.label}</span>
+            </a>
+          );
+        })
+      }
+    </nav>
+  </details>
 </header>
