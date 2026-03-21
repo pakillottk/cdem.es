@@ -23,16 +23,22 @@ import Layout from '../layouts/Layout.astro';
 
 				<div class="home-hero__actions">
 					<a
-						href="#contacto"
-						class="home-hero__cta home-hero__cta--primary"
+						href="/contacto"
+						class="contacto-draw-btn home-hero__cta home-hero__cta--primary"
 					>
-						Contrata tu evento
+						<span class="contacto-draw-btn__text text-sm sm:text-base">Contrata tu evento</span>
+						<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+							<ellipse cx="120" cy="30" rx="115" ry="25" />
+						</svg>
 					</a>
 					<a
-						href="#producciones"
-						class="home-hero__cta home-hero__cta--secondary"
+						href="/producciones"
+						class="contacto-draw-btn home-hero__cta home-hero__cta--secondary"
 					>
-						Descubre nuestros proyectos
+						<span class="contacto-draw-btn__text text-sm sm:text-base">Descubre nuestros proyectos</span>
+						<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+							<ellipse cx="120" cy="30" rx="115" ry="25" />
+						</svg>
 					</a>
 				</div>
 			</div>

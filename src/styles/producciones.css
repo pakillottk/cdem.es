@@ -31,11 +31,20 @@
 }
 
 .producciones-grid__item {
-  @apply bg-white overflow-hidden shadow-lg hover:scale-[1.03] hover:shadow-2xl;
+  @apply bg-white overflow-hidden shadow-md;
   opacity: 0;
   transform: translateX(-100%) rotate(-8deg);
   animation: dealCard 0.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.producciones-grid__item:hover {
+  transform: translateX(0) rotate(0) scale(1.012);
+  box-shadow:
+    0 8px 22px -6px rgba(0, 0, 0, 0.1),
+    0 2px 8px -2px rgba(0, 0, 0, 0.06);
 }
 
 .producciones-grid__item:nth-child(1) { animation-delay: 0s; }
