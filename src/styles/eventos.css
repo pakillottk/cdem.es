@@ -14,12 +14,25 @@
 }
 
 .eventos-hero__overlay {
-  @apply absolute inset-0 flex items-center justify-center z-10;
-  background-color: rgba(0, 0, 0, 0.4);
+  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
 }
 
 .eventos-hero__quote {
-  @apply font-secondary text-white text-2xl tracking-[0.35em] uppercase text-primary px-4 sm:text-3xl md:text-4xl lg:text-5xl;
+  @apply font-secondary text-white text-lg tracking-[0.2em] leading-tight uppercase text-primary px-4 sm:text-2xl sm:tracking-[0.35em] md:text-3xl lg:text-4xl;
+}
+
+/* Evita recortes del texto en 320px aprox */
+@media (max-width: 360px) {
+  .eventos-hero__banner {
+    height: 120px;
+  }
+
+  .eventos-hero__quote {
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    padding-inline: 0.5rem;
+  }
 }
 
 /* Sección: categorías de eventos */

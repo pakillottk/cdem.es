@@ -6,34 +6,29 @@
   @apply relative flex flex-col justify-end text-center overflow-hidden;
 }
 
-/* Gradiente fijo: animar background-position fuerza repintados constantes y puede ir a tirones */
 .booking-hero__banner {
-  @apply relative w-full h-[100px] border-b border-white/80;
-  background: linear-gradient(
-    105deg,
-    #0a0a0a 0%,
-    #152028 42%,
-    #1c2834 50%,
-    #152028 58%,
-    #0a0a0a 100%
-  );
+  @apply relative w-full h-[100px] border-b border-white;
 }
 
 .booking-hero__overlay {
-  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/35;
+  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
 }
 
 .booking-hero__quote {
-  @apply font-secondary text-white text-xl tracking-[0.35em] uppercase text-primary px-4 sm:text-2xl md:text-3xl lg:text-4xl;
-  opacity: 0;
-  transform: translate3d(0, 10px, 0);
-  animation: bookingQuoteReveal 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.12s forwards;
+  @apply font-secondary text-white text-lg tracking-[0.2em] leading-tight uppercase text-primary px-4 sm:text-2xl sm:tracking-[0.35em] md:text-3xl lg:text-4xl;
 }
 
-@keyframes bookingQuoteReveal {
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
+/* Evita recortes del texto en 320px aprox */
+@media (max-width: 360px) {
+  .booking-hero__banner {
+    height: 120px;
+  }
+
+  .booking-hero__quote {
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    padding-inline: 0.5rem;
   }
 }
 

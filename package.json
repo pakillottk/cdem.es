@@ -3,6 +3,9 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "gallery:manifest": "node scripts/build-gallery-manifest.mjs",
+    "predev": "npm run gallery:manifest",
+    "prebuild": "npm run gallery:manifest",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",

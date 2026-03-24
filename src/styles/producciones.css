@@ -15,7 +15,21 @@
 }
 
 .producciones-hero__quote {
-  @apply font-secondary text-white text-xl tracking-[0.35em] uppercase text-primary px-4 sm:text-2xl md:text-3xl lg:text-4xl;
+  @apply font-secondary text-white text-lg tracking-[0.2em] leading-tight uppercase text-primary px-4 sm:text-2xl sm:tracking-[0.35em] md:text-3xl lg:text-4xl;
+}
+
+/* Evita recortes del texto en 320px aprox */
+@media (max-width: 360px) {
+  .producciones-hero__banner {
+    height: 120px;
+  }
+
+  .producciones-hero__quote {
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    padding-inline: 0.5rem;
+  }
 }
 
 .producciones-grid {
@@ -93,7 +107,7 @@
 }
 
 .producciones-text-intro__highlight {
-  @apply mt-1 text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[0.2em] leading-[0.5] text-black;
+  @apply mt-1 text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[0.2em] text-black;
 }
 
 /* Gallery modal */

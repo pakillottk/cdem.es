@@ -1,3 +1,5 @@
+import manifest from "./galleryManifest.generated";
+
 export interface GalleryImage {
   original: string;
   thumbnail: string;
@@ -10,29 +12,66 @@ export interface Production {
   images: GalleryImage[];
 }
 
-function buildImages(folder: string, count: number, alt: string): GalleryImage[] {
-  return Array.from({ length: count }, (_, i) => ({
-    original: `/producciones/${folder}/${i + 1}.jpg`,
-    thumbnail: `/producciones/${folder}/${i + 1}.jpg`,
-    originalAlt: alt,
-  }));
+function buildImagesFromManifest(
+  folder: string,
+  alt: string,
+): GalleryImage[] {
+  const files = manifest[folder] ?? [];
+  return files.map((file) => {
+    const src = encodeURI(`/producciones/${folder}/${file}`);
+    return {
+      original: src,
+      thumbnail: src,
+      originalAlt: alt,
+    };
+  });
 }
 
 const productions: Production[] = [
   {
     name: "Vive Linares",
     coverSrc: "/producciones/portada vive Linares2.jpg",
-    images: buildImages("ViveLinares", 29, "Vive Linares"),
+    images: buildImagesFromManifest("ViveLinares", "Vive Linares"),
   },
   {
     name: "Festival de Jazz",
     coverSrc: "/producciones/portada festival jazz.jpg",
-    images: buildImages("FestivalJazz", 8, "Festival de Jazz"),
+    images: buildImagesFromManifest("FestivalJazz", "Festival de Jazz"),
   },
   {
     name: "New Wave",
     coverSrc: "/producciones/portada New Wave2.jpg",
-    images: buildImages("NewWave", 21, "New Wave"),
+    images: buildImagesFromManifest("NewWave", "New Wave"),
+  },
+  {
+    name: "Ibero Joven",
+    coverSrc: "/producciones/portada ibero joven.jpg",
+    images: buildImagesFromManifest("IberoJoven", "Ibero Joven"),
+  },
+  {
+    name: "JC Reyes",
+    coverSrc: "/producciones/PORTADA jc reyes.jpg",
+    images: buildImagesFromManifest("JCReyes", "JC Reyes"),
+  },
+  {
+    name: "Joaquín Sabina",
+    coverSrc: "/producciones/PORTADA Joaquín Sabina.jpg",
+    images: buildImagesFromManifest("JoaquinSabina", "Joaquín Sabina"),
+  },
+  {
+    name: "Panorama",
+    coverSrc: "/producciones/PORTADA Panorama.jpg",
+    images: buildImagesFromManifest("Panorama", "Panorama"),
+  },
+  {
+    name: "Quevedo",
+    coverSrc: "/producciones/PORTADA quevedo.jpg",
+    images: buildImagesFromManifest("Quevedo", "Quevedo"),
+  },
+  {
+    name: "Raphael",
+    coverSrc: "/producciones/PORTADA Raphael.jpg",
+    images: buildImagesFromManifest("Raphael", "Raphael"),
   },
 ];
 

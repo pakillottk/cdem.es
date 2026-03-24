@@ -6,32 +6,25 @@ import ContactoSection from "../components/ContactoSection.astro";
 <Layout>
   <div class="min-h-screen bg-black text-white font-primary">
     <!-- Hero / Claim principal -->
-	<section class="nosotros-hero">
-		<div class="nosotros-hero__banner">
-		  <div class="nosotros-hero__overlay">
-			<p class="nosotros-hero__quote">
-			  Creemos en la música.
-			</p>
-		  </div>
-		</div>
-	  </section>
+    <section class="nosotros-hero">
+      <div class="nosotros-hero__banner">
+        <div class="nosotros-hero__overlay">
+          <p class="nosotros-hero__quote">Creemos en la música.</p>
+        </div>
+      </div>
+    </section>
 
     <section class="nosotros-intro">
       <div class="nosotros-intro__inner">
-
         <div class="nosotros-intro__box">
-          <p
-            class="nosotros-intro__text"
-          >
+          <p class="nosotros-intro__text">
             CDEM Producciones es una productora especializada en la creación,
             diseño y gestión de eventos musicales y experiencias en vivo.
             Nuestra visión integral combina creatividad, planificación y
             producción, cuidando cada detalle para que la música se escuche, se
             vea y se viva como merece.
           </p>
-          <p
-            class="nosotros-intro__text nosotros-intro__text--spaced"
-          >
+          <p class="nosotros-intro__text nosotros-intro__text--spaced">
             Apostamos por el talento nacional e internacional, ofreciendo
             producciones con identidad propia y una mirada contemporánea del
             directo. Profesionalidad, pasión y creatividad se unen para poner la
@@ -44,23 +37,30 @@ import ContactoSection from "../components/ContactoSection.astro";
     <!-- Lo que nos define -->
     <section class="nosotros-definition">
       <div class="nosotros-definition__inner">
-        <h2 class="nosotros-definition__title">
-          Lo que nos define
-        </h2>
+        <h2 class="nosotros-definition__title">Lo que nos define</h2>
 
         <div class="nosotros-definition__list">
           <p class="mb-0">
-            <span class="text-primary text-3xl sm:text-5xl md:text-6xl lg:text-7xl">Creatividad</span> con criterio
+            <span
+              class="text-primary text-3xl sm:text-5xl md:text-6xl lg:text-7xl"
+              >Creatividad</span
+            > con criterio
           </p>
-		  <hr class="nosotros-definition__divider">
+          <hr class="nosotros-definition__divider" />
           <p class="mb-0">
-            Rigor en la <span class="text-primary text-3xl sm:text-5xl md:text-6xl lg:text-7xl">producción</span>
+            Rigor en la <span
+              class="text-primary text-3xl sm:text-5xl md:text-6xl lg:text-7xl"
+              >producción</span
+            >
           </p>
-		  <hr class="nosotros-definition__divider">
+          <hr class="nosotros-definition__divider" />
           <p class="mb-0">
-            Respeto por la <span class="text-primary text-3xl sm:text-5xl md:text-6xl lg:text-7xl">música</span>
+            Respeto por la <span
+              class="text-primary text-3xl sm:text-5xl md:text-6xl lg:text-7xl"
+              >música</span
+            >
           </p>
-		  <hr class="nosotros-definition__divider">
+          <hr class="nosotros-definition__divider" />
           <p class="nosotros-definition__note">
             Experiencias pensadas para el público
           </p>
@@ -72,123 +72,110 @@ import ContactoSection from "../components/ContactoSection.astro";
     <section class="nosotros-team">
       <div class="nosotros-team__inner">
         <div class="nosotros-team__header">
-          <h2 class="nosotros-team__title">
-            Equipo
-          </h2>
-          <p
-            class="nosotros-team__desc"
-          >
+          <h2 class="nosotros-team__title">Equipo</h2>
+          <p class="nosotros-team__desc">
             Detrás de CDEM hay un equipo multidisciplinar con experiencia en
             producción, dirección técnica y gestión cultural, unido por una
             misma forma de entender la música en directo.
           </p>
         </div>
 
-        <div class="nosotros-member-wrap--paco">
-		  <div class="nosotros-member">
-            <div
-              class="nosotros-member__avatar"
-            >
-            </div>
-            <div class="nosotros-member__body">
-              <p class="nosotros-member__name">
-                Francisco Gázquez
-              </p>
-              <p class="nosotros-member__role">
-                Dirección / Administración
-              </p>
-				<a
-					href="mailto:cdemlinares@gmail.com?subject=Contacto%20CDEM&body="
-					class="inline-block transition-colors"
-				>
-					<span
-						class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
-					>
-						cdemlinares@gmail.com
-					</span>
-				</a>
-            </div>
-          </div>
-        </div>
-
         <div class="nosotros-members-grid">
-		  <div class="nosotros-member">
-            <div
+          <div class="nosotros-member">
+            <img
+              src="/nosotros/Paco.png"
+              alt="Francisco Gázquez"
               class="nosotros-member__avatar"
-            >
-            </div>
+            />
             <div class="nosotros-member__body">
-              <p class="nosotros-member__name">
-               Raquel Urrutia
-              </p>
-              <p class="nosotros-member__role">
-                Administración / Contratación
-              </p>
-				<a
-					href="mailto:cdemcontratacion@gmail.com?subject=Contacto%20CDEM&body="
-					class="inline-block transition-colors"
-				>
-					<span
-						class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
-					>
-						cdemcontratacion@gmail.com
-					</span>
-				</a>
+              <p class="nosotros-member__name">Francisco Gázquez</p>
+              <p class="nosotros-member__role">Administración</p>
+              <a
+                href="mailto:cdemlinares@gmail.com?subject=Contacto%20CDEM&body="
+                class="inline-block transition-colors"
+              >
+                <span
+                  class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
+                >
+                  cdemlinares@gmail.com
+                </span>
+              </a>
             </div>
           </div>
-		  <div class="nosotros-member">
-            <div
+
+          <div class="nosotros-member">
+            <img
+              src="/nosotros/raquel.png"
+              alt="Raquel Urrutia"
               class="nosotros-member__avatar"
-            >
-            </div>
+            />
             <div class="nosotros-member__body">
-              <p class="nosotros-member__name">
-                Rocio Garcia Pérez
-              </p>
-              <p class="nosotros-member__role">
-                Comunicacion y Diseño
-              </p>
-				<a
-					href="mailto:cdemdesigncreativo@gmail.com?subject=Contacto%20CDEM&body="
-					class="inline-block transition-colors"
-				>
-					<span
-						class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
-					>
-						cdemdesigncreativo@gmail.com
-					</span>
-				</a>
+              <p class="nosotros-member__name">Raquel Urrutia</p>
+              <p class="nosotros-member__role">Gerente</p>
+              <p class="nosotros-member__role">Administración / Contratación</p>
+              <a
+                href="mailto:cdemcontratacion@gmail.com?subject=Contacto%20CDEM&body="
+                class="inline-block transition-colors"
+              >
+                <span
+                  class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
+                >
+                  cdemcontratacion@gmail.com
+                </span>
+              </a>
             </div>
           </div>
-		  <div class="nosotros-member">
-            <div
+
+          <div class="nosotros-member">
+            <img
+              src="/nosotros/juan.png"
+              alt="Juan Martínez"
               class="nosotros-member__avatar"
-            >
-            </div>
+            />
             <div class="nosotros-member__body">
-              <p class="nosotros-member__name">
-                Juan Martínez
-              </p>
+              <p class="nosotros-member__name">Juan Martínez</p>
               <p class="nosotros-member__role">
                 Production Manager / Riesgos Laborales
               </p>
-				<a
-					href="mailto:cdemproduccion@gmail.com?subject=Contacto%20CDEM&body="
-					class="inline-block transition-colors"
-				>
-					<span
-						class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
-					>
-						cdemproduccion@gmail.com
-					</span>
-				</a>
+              <a
+                href="mailto:cdemproduccion@gmail.com?subject=Contacto%20CDEM&body="
+                class="inline-block transition-colors"
+              >
+                <span
+                  class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
+                >
+                  cdemproduccion@gmail.com
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="nosotros-member">
+            <img
+              src="/nosotros/rocio.png"
+              alt="Rocio Garcia Pérez"
+              class="nosotros-member__avatar"
+            />
+            <div class="nosotros-member__body">
+              <p class="nosotros-member__name">Rocio Garcia Pérez</p>
+              <p class="nosotros-member__role">Comunicacion y Diseño</p>
+              <a
+                href="mailto:cdemdesigncreativo@gmail.com?subject=Contacto%20CDEM&body="
+                class="inline-block transition-colors"
+              >
+                <span
+                  class="text-lg sm:text-xl md:text-2xl lg:text-3xl text-primary hover:text-black/80 transition-colors"
+                >
+                  cdemdesigncreativo@gmail.com
+                </span>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </section>
-
-    <!-- Texto descriptivo + CTA en fila -->
-    <ContactoSection />
   </div>
+
+  <!-- Texto descriptivo + CTA en fila -->
+  <ContactoSection />
 </Layout>
