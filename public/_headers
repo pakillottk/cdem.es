@@ -1,0 +1,44 @@
+# Cloudflare Pages / Workers cache headers
+# Recursos inmutables (hash en nombre): caché máxima
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fuentes: inmutables, nunca cambian sin cambiar la URL
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Imágenes WebP optimizadas
+/home-foto.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/iconos/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/rrss/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/nosotros/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/eventos/*/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/booking/img/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/producciones/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/producciones/*/*.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+# Favicon optimizado
+/favicon-cdem-opt.png
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML: sin caché para recibir siempre la versión más reciente
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin

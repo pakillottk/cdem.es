@@ -3,9 +3,14 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "gallery:manifest": "node scripts/build-gallery-manifest.mjs",
+    "images:optimize": "node scripts/optimize-images.mjs",
+    "predev": "npm run gallery:manifest",
+    "prebuild": "npm run gallery:manifest",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "npm run build && npx wrangler pages deploy ./dist",
     "astro": "astro"
   },
   "dependencies": {
@@ -20,6 +25,9 @@
     "astro": "^6.0.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
+    "react-image-gallery": "^2.1.2",
+    "swiper": "^12.1.2",
+    "tailwind-animations": "^1.0.1",
     "tailwindcss": "^4.1.17"
   }
 }

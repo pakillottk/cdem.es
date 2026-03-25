@@ -1,0 +1,27 @@
+/* Servicios - aparecer/desaparecer con scroll (Intersection Observer) */
+.services-zipper {
+  @apply max-w-5xl mx-auto;
+}
+
+.services-zipper__row {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 min-h-[200px] md:min-h-[200px];
+}
+
+.services-flow-card {
+  @apply flex flex-wrap p-6 sm:p-7 md:p-8 shadow-lg rounded-md;
+  opacity: 0;
+  transform: translate(-70px, -50px) scale(0.96);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.services-flow-card--slant-right {
+  transform: translate(70px, -50px) scale(0.96);
+}
+
+/* Visible (dentro del viewport): aparecen */
+.services-flow-card.is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}

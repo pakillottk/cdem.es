@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm';
+---
+<Layout
+  title="Contacto - CDEM"
+  description="Contacta con CDEM para organizar tu evento musical. Presupuestos personalizados para festivales, conciertos y experiencias en vivo."
+>
+	<div class="contacto-page">
+		<section class="contacto-hero">
+			<div class="contacto-hero__banner">
+				<img src="/home foto.png" alt="CDEM Producciones" />
+			</div>
+		</section>
+		<section class="contacto-quote">
+			<div class="contacto-quote__banner">
+			  <div class="contacto-quote__overlay">
+				<p class="contacto-quote__text">
+					Cada proyecto empieza con una conversación.
+				</p>
+			  </div>
+			</div>
+		</section>
+
+		<section class="contacto-section">
+			<div class="contacto-triangle contacto-triangle--top-left"></div>
+			<div class="contacto-triangle contacto-triangle--top-right"></div>
+			<div class="contacto-triangle contacto-triangle--bottom-center"></div>
+
+			<div class="contacto-wrapper">
+				<ContactForm client:visible />
+
+				<div class="contacto-info">
+					<div class="contacto-details">
+						<p class="contacto-details__name">Creación y Diseño de Eventos Musicales S.L.</p>
+						<p><a href="https://maps.google.com/?q=C/+Fernando+el+Católico+28+Linares+Jaén" target="_blank" rel="noopener noreferrer" class="contacto-details__link">C/ Fernando el Católico, 28 Linares (Jaén)</a></p>
+						<p><a href="tel:+34953666904" class="contacto-details__link">+34 953 66 69 04</a></p>
+						<p><a href="mailto:cdemcontratacion@gmail.com?subject=Contacto%20CDEM" class="contacto-details__link">cdemcontratacion@gmail.com</a></p>
+					</div>
+
+					<div class="contacto-social">
+						<a href="https://www.instagram.com/cdem_agendaespectaculos/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
+							<img src="/rrss/rrss-ig.png" alt="Instagram" class="contacto-social__icon" />
+						</a>
+						<a href="https://www.linkedin.com/company/cdemproducciones/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
+							<img src="/rrss/rrss-linke.png" alt="LinkedIn" class="contacto-social__icon" />
+						</a>
+						<a href="https://www.facebook.com/cdemconciertos" aria-label="Facebook" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
+							<img src="/rrss/rrss-facebook.png" alt="Facebook" class="contacto-social__icon" />
+						</a>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<div class="contacto-cta">
+			<a href="/contacto" class="contacto-draw-btn">
+				<span class="contacto-draw-btn__text">Contrata tu evento</span>
+				<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+					<ellipse cx="120" cy="30" rx="112" ry="29" />
+				</svg>
+			</a>
+			<a href="/producciones" class="contacto-draw-btn">
+				<span class="contacto-draw-btn__text">Descubre nuestros proyectos</span>
+				<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+					<ellipse cx="120" cy="30" rx="112" ry="29" />
+				</svg>
+			</a>
+		</div>
+	</div>
+</Layout>

@@ -1,0 +1,194 @@
+/* ─── Página: contenedor general ─── */
+.contacto-page {
+  @apply min-h-screen bg-black text-white;
+}
+
+/* ─── Hero: banner superior ─── */
+.contacto-hero {
+  @apply relative flex flex-col justify-end text-center overflow-hidden;
+}
+
+.contacto-hero__banner {
+  @apply relative w-full h-[100px] border-b border-white;
+}
+
+.contacto-hero__banner img {
+  @apply absolute inset-0 w-full h-full object-cover object-center;
+}
+
+/* ─── Hero: cita con overlay ─── */
+.contacto-quote {
+  @apply relative flex flex-col justify-end text-center overflow-hidden;
+}
+
+.contacto-quote__banner {
+  @apply relative w-full h-[100px] border-b border-white;
+}
+
+.contacto-quote__overlay {
+  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
+}
+
+.contacto-quote__text {
+  @apply font-secondary text-2xl tracking-[0.35em] uppercase text-white px-4 sm:text-3xl md:text-3xl lg:text-4xl;
+}
+
+/* ─── Sección principal de contacto ─── */
+.contacto-section {
+  @apply relative bg-white text-black py-12 sm:py-16 px-6 overflow-hidden;
+}
+
+.contacto-wrapper {
+  @apply relative z-10 py-[100px] max-w-[90%] mx-auto
+         flex flex-col items-center text-center justify-center
+         gap-10 lg:gap-16
+         md:flex-row md:items-center md:text-left md:justify-between;
+}
+
+/* ─── Bloque de datos de contacto ─── */
+.contacto-info {
+  @apply space-y-6 font-secondary flex flex-col items-center md:items-start;
+}
+
+.contacto-details {
+  @apply space-y-2 text-base sm:text-lg uppercase tracking-[0.25em];
+}
+
+.contacto-details__name {
+  @apply font-semibold;
+}
+
+.contacto-details__link {
+  @apply hover:text-primary transition-colors;
+}
+
+/* ─── Iconos de redes sociales ─── */
+.contacto-social {
+  @apply flex gap-4 justify-center md:justify-start;
+}
+
+.contacto-social__link {
+  @apply inline-flex shrink-0 items-center justify-center hover:animate-heartbeat;
+}
+
+.contacto-social__icon {
+  @apply w-16 h-16 object-contain invert;
+}
+
+/* ─── Botones CTA ─── */
+.contacto-cta {
+  @apply py-16 flex flex-col md:flex-row items-center justify-center gap-10 px-6 text-center md:text-center;
+}
+
+/* ─── Triángulos decorativos ─── */
+.contacto-triangle {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.contacto-triangle--top-left {
+  top: 0;
+  left: 0;
+  border-left: 120px solid var(--color-primary);
+  border-bottom: 120px solid transparent;
+}
+
+.contacto-triangle--top-right {
+  top: 0;
+  right: 0;
+  border-right: 120px solid var(--color-primary);
+  border-bottom: 120px solid transparent;
+}
+
+.contacto-triangle--bottom-center {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 100px solid transparent;
+  border-right: 100px solid transparent;
+  border-bottom: 120px solid var(--color-primary);
+}
+
+@media (min-width: 768px) {
+  .contacto-triangle--top-left {
+    border-left-width: 180px;
+    border-bottom-width: 180px;
+  }
+
+  .contacto-triangle--top-right {
+    border-right-width: 180px;
+    border-bottom-width: 180px;
+  }
+
+  .contacto-triangle--bottom-center {
+    border-left-width: 150px;
+    border-right-width: 150px;
+    border-bottom-width: 180px;
+  }
+}
+
+/* ─── Botones con efecto "dibujar" elipse ─── */
+.contacto-draw-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 2rem;
+  min-width: 280px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.contacto-draw-btn__text {
+  position: relative;
+  z-index: 1;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  transition: color 0.4s ease;
+}
+
+.contacto-draw-btn__svg {
+  position: absolute;
+  inset: -8px -16px;
+  width: calc(100% + 32px);
+  height: calc(100% + 16px);
+  pointer-events: none;
+}
+
+.contacto-draw-btn__svg ellipse {
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: 0.4;
+  stroke-width: 1.5;
+  stroke-dasharray: 500;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.65, 0, 0.35, 1),
+              stroke 0.3s ease,
+              stroke-opacity 0.3s ease,
+              stroke-width 0.3s ease;
+}
+
+.contacto-draw-btn:hover .contacto-draw-btn__svg ellipse {
+  stroke: var(--color-primary);
+  stroke-opacity: 1;
+  stroke-width: 2.5;
+  stroke-dashoffset: 500;
+  animation: drawEllipse 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+@keyframes drawEllipse {
+  0% {
+    stroke-dashoffset: 500;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.contacto-draw-btn:hover .contacto-draw-btn__text {
+  color: var(--color-primary);
+}

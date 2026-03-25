@@ -1,0 +1,60 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ContactoSection from "../components/ContactoSection.astro";
+import GalleryModal from "../components/GalleryModal";
+import { productions } from "../data/galleryData";
+---
+
+<Layout
+  title="Producciones - CDEM"
+  description="Portfolio de producciones musicales: Vive Linares, Festival de Jazz, New Wave, Joaquín Sabina y más eventos producidos por CDEM."
+>
+  <div class="producciones-page">
+    <!-- Hero producciones -->
+
+    <section class="producciones-hero">
+      <div class="producciones-hero__banner">
+        <div class="producciones-hero__overlay">
+          <p class="producciones-hero__quote">
+            Cada producción es una experiencia diseñada para vivirse.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid de producciones destacadas -->
+    <section class="producciones-grid">
+      <div class="producciones-grid__inner">
+        <div class="producciones-grid__list">
+          {productions.map((prod) => (
+            <article class="producciones-grid__item">
+              <GalleryModal
+                coverSrc={prod.coverSrc}
+                coverAlt={`${prod.name} – Ver galería`}
+                images={prod.images}
+                client:visible
+              />
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Texto conceptual a todo lo ancho -->
+    <section class="producciones-text-intro">
+      <div class="producciones-text-intro__inner">
+        <p class="producciones-text-intro__title">
+          Cada producción refleja nuestra forma de entender la música en vivo:
+        </p>
+        <p
+          class="producciones-text-intro__highlight"
+        >
+          diseño, rigor y emoción.
+        </p>
+      </div>
+    </section>
+
+    <!-- Texto descriptivo + CTA en fila -->
+    <ContactoSection />
+  </div>
+</Layout>

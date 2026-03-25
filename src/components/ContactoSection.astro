@@ -1,0 +1,25 @@
+---
+const { className = '' } = Astro.props;
+---
+
+<section class={`cta-section ${className}`}>
+  <div class="cta-section__inner">
+    <div>
+      <p class="cta-section__text">
+        Desde la idea inicial hasta el último acorde, diseñamos experiencias
+        que conectan con artistas y público, cuidando la identidad visual,
+        el relato y cada detalle técnico y artístico.
+      </p>
+      <p class="cta-section__headline">
+        ¿Hablamos de tu próximo proyecto?
+      </p>
+    </div>
+    <a href="/contacto" class="contacto-draw-btn">
+      <span class="contacto-draw-btn__text text-xl sm:text-2xl">Contactar</span>
+      <svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+        <ellipse cx="120" cy="30" rx="112" ry="29" />
+      </svg>
+    </a>
+  </div>
+</section>
+

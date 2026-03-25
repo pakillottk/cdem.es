@@ -1,11 +1,112 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
+<Layout
+  title="CDEM - Creación y Diseño de Eventos Musicales"
+  description="Producción integral de festivales y conciertos. Gestión artística y coordinación técnica para eventos musicales únicos."
+  isHome={true}
+>
+	<div class="home-page">
+		<!-- Hero -->
+		<section class="home-hero">
+			<img
+				src="/home-foto.webp"
+				srcset="/home-foto.webp 1920w"
+				sizes="100vw"
+				alt=""
+				class="home-hero__bg"
+				fetchpriority="high"
+				decoding="sync"
+				aria-hidden="true"
+			/>
+			<!-- <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div> -->
 
-<Layout>	
-	<Welcome />
+			<div class="home-hero__content">
+				<h1 class="home-hero__title">
+					CREACIÓN Y DISEÑO<br />
+					DE EVENTOS MUSICALES
+				</h1>
+				<p class="home-hero__subtitle">
+					La creatividad que mueve la música
+				</p>
+
+				<div class="home-hero__actions">
+					<a
+						href="/contacto"
+						class="contacto-draw-btn home-hero__cta home-hero__cta--primary"
+					>
+						<span class="contacto-draw-btn__text text-sm sm:text-base">Contrata tu evento</span>
+						<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+							<ellipse cx="120" cy="30" rx="112" ry="29" />
+						</svg>
+					</a>
+					<a
+						href="/producciones"
+						class="contacto-draw-btn home-hero__cta home-hero__cta--secondary"
+					>
+						<span class="contacto-draw-btn__text text-sm sm:text-base">Descubre nuestros proyectos</span>
+						<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+							<ellipse cx="120" cy="30" rx="112" ry="29" />
+						</svg>
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Claim -->
+		<section
+			id="servicio"
+			class="home-claim"
+		>
+			<div class="home-claim__inner">
+				<p class="home-claim__text">
+					"Creación, diseño y producción de experiencias musicales. Trabajamos con artistas, instituciones y
+					festivales para llevar la música en vivo a otro nivel."
+				</p>
+			</div>
+		</section>
+
+		<!-- Servicios -->
+		<section
+			id="eventos"
+			class="home-services"
+		>
+			<h2 class="sr-only">Nuestros Servicios</h2>
+			<div class="home-services__grid">
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/organizacion-integral.webp" alt="Icono organización integral" loading="lazy" decoding="async" /></span>
+					</div>
+					<h3 class="home-service-card__title">
+						Organización integral de<br />festivales, conciertos y ciclos musicales
+					</h3>
+				</div>
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/gestion-artistas.webp" alt="Icono gestión de artistas" loading="lazy" decoding="async" /></span>
+					</div>
+					<h3 class="home-service-card__title">
+						Gestión directa con artistas<br />y oficinas de booking
+					</h3>
+				</div>
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/coordinacion-tecnica.webp" alt="Icono coordinación técnica" loading="lazy" decoding="async" /></span>
+					</div>
+					<h3 class="home-service-card__title">
+						Coordinación técnica,<br />logística y producción escénica
+					</h3>
+				</div>
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/curaduria-y-asesoramiento.webp" alt="Icono curaduría artística" loading="lazy" decoding="async" /></span>
+					</div>
+					<h3 class="home-service-card__title">
+						Curaduría y asesoramiento<br />artístico
+					</h3>
+				</div>
+			</div>
+		</section>
+
+	</div>
 </Layout>
