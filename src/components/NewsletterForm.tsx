@@ -142,6 +142,7 @@ export default function NewsletterForm() {
             onExpire={() => setTurnstileToken('')}
             onError={() => setTurnstileToken('')}
             theme="dark"
+            size="compact"
           />
         </div>
       )}

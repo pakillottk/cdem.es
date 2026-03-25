@@ -25,9 +25,10 @@ interface TurnstileProps {
   onExpire?: () => void;
   onError?: () => void;
   theme?: 'light' | 'dark' | 'auto';
+  size?: 'normal' | 'compact';
 }
 
-export default function Turnstile({ siteKey, onVerify, onExpire, onError, theme = 'light' }: TurnstileProps) {
+export default function Turnstile({ siteKey, onVerify, onExpire, onError, theme = 'light', size = 'normal' }: TurnstileProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
 
@@ -45,6 +46,7 @@ export default function Turnstile({ siteKey, onVerify, onExpire, onError, theme 
         'expired-callback': onExpire,
         'error-callback': onError,
         theme,
+        size,
       });
     };
 
@@ -66,7 +68,7 @@ export default function Turnstile({ siteKey, onVerify, onExpire, onError, theme 
         widgetIdRef.current = null;
       }
     };
-  }, [siteKey, theme]);
+  }, [siteKey, theme, size]);
 
   return <div ref={containerRef} />;
 }
