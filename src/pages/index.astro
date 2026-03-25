@@ -1,15 +1,24 @@
 ---
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout>
+<Layout
+  title="CDEM - Creación y Diseño de Eventos Musicales"
+  description="Producción integral de festivales y conciertos. Gestión artística y coordinación técnica para eventos musicales únicos."
+  isHome={true}
+>
 	<div class="home-page">
 		<!-- Hero -->
 		<section class="home-hero">
-			<div
+			<img
+				src="/home-foto.webp"
+				srcset="/home-foto.webp 1920w"
+				sizes="100vw"
+				alt=""
 				class="home-hero__bg"
-				style="background-image: url('/home foto.png');"
+				fetchpriority="high"
+				decoding="sync"
 				aria-hidden="true"
-			></div>
+			/>
 			<!-- <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div> -->
 
 			<div class="home-hero__content">
@@ -62,10 +71,11 @@ import Layout from '../layouts/Layout.astro';
 			id="eventos"
 			class="home-services"
 		>
+			<h2 class="sr-only">Nuestros Servicios</h2>
 			<div class="home-services__grid">
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/organizacion-integral.png"></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/organizacion-integral.webp" alt="Icono organización integral" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Organización integral de<br />festivales, conciertos y ciclos musicales
@@ -73,7 +83,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/gestion-artistas.png"></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/gestion-artistas.webp" alt="Icono gestión de artistas" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Gestión directa con artistas<br />y oficinas de booking
@@ -81,7 +91,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/coordinacion-tecnica.png"></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/coordinacion-tecnica.webp" alt="Icono coordinación técnica" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Coordinación técnica,<br />logística y producción escénica
@@ -89,13 +99,12 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/curaduria-y-asesoramiento.png"></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/curaduria-y-asesoramiento.webp" alt="Icono curaduría artística" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Curaduría y asesoramiento<br />artístico
 					</h3>
 				</div>
-				
 			</div>
 		</section>
 

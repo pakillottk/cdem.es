@@ -2,21 +2,69 @@
 import CdemHeader from '../components/CdemHeader.astro';
 import CdemFooter from '../components/CdemFooter.astro';
 import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  isHome?: boolean;
+}
+
+const {
+  title = "CDEM - Creación y Diseño de Eventos Musicales",
+  description = "Creación, diseño y producción de experiencias musicales. Trabajamos con artistas, instituciones y festivales para llevar la música en vivo a otro nivel.",
+  ogImage = "/home-foto.webp",
+  isHome = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
 ---
 
 <!doctype html>
 <html lang="es">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon-cdem.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
-		<title>CDEM - Creación y Diseño de Eventos Musicales</title>
-		<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" href="/favicon-cdem-opt.png" />
+
+		<!-- Preload fuentes críticas ANTES del CSS para romper cadena de dependencias -->
+		<link rel="preload" href="/fonts/itc-eras-ultra/ITC Eras Book Regular.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href="/fonts/itc-eras-ultra/ITC Eras Ultra Regular.woff2" as="font" type="font/woff2" crossorigin />
+		<link rel="preload" href="/fonts/Bebas Neue/BebasNeue-Regular.woff2" as="font" type="font/woff2" crossorigin />
+
+		<!-- Preload imagen hero solo en homepage -->
+		{isHome && (
+			<link rel="preload" as="image" href="/home-foto.webp" fetchpriority="high" />
+		)}
+
+		<!-- SEO -->
+		<title>{title}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={canonicalURL} />
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:locale" content="es_ES" />
+		<meta property="og:site_name" content="CDEM" />
+
+		<!-- Twitter / X -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
 	</head>
 	<body>
 		<CdemHeader />
-		<slot />
+		<main>
+			<slot />
+		</main>
 		<CdemFooter />
 	</body>
 </html>
