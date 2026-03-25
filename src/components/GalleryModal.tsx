@@ -1,7 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, lazy, Suspense } from "react";
 import { createPortal } from "react-dom";
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/image-gallery.css";
+
+const ImageGallery = lazy(() =>
+  import("react-image-gallery").then((mod) => {
+    // Importar el CSS solo cuando se necesita
+    import("react-image-gallery/styles/image-gallery.css");
+    return { default: mod.default };
+  })
+);
 
 interface GalleryImage {
   original: string;
@@ -46,7 +52,7 @@ export default function GalleryModal({
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
       >
-        <img src={coverSrc} alt={coverAlt} />
+        <img src={coverSrc} alt={coverAlt} loading="lazy" decoding="async" />
       </div>
 
       {open &&
@@ -63,14 +69,16 @@ export default function GalleryModal({
               >
                 ✕
               </button>
-              <ImageGallery
-                items={images}
-                showPlayButton={false}
-                showFullscreenButton={true}
-                showThumbnails={true}
-                lazyLoad={true}
-                slideDuration={300}
-              />
+              <Suspense fallback={<div className="gallery-loading">Cargando...</div>}>
+                <ImageGallery
+                  items={images}
+                  showPlayButton={false}
+                  showFullscreenButton={true}
+                  showThumbnails={true}
+                  lazyLoad={true}
+                  slideDuration={300}
+                />
+              </Suspense>
             </div>
           </div>,
           document.body

@@ -2,7 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import ContactForm from '../components/ContactForm';
 ---
-<Layout>
+<Layout
+  title="Contacto - CDEM"
+  description="Contacta con CDEM para organizar tu evento musical. Presupuestos personalizados para festivales, conciertos y experiencias en vivo."
+>
 	<div class="contacto-page">
 		<section class="contacto-hero">
 			<div class="contacto-hero__banner">
@@ -25,7 +28,7 @@ import ContactForm from '../components/ContactForm';
 			<div class="contacto-triangle contacto-triangle--bottom-center"></div>
 
 			<div class="contacto-wrapper">
-				<ContactForm client:load />
+				<ContactForm client:visible />
 
 				<div class="contacto-info">
 					<div class="contacto-details">

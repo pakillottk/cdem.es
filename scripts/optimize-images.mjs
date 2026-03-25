@@ -1,0 +1,265 @@
+/**
+ * Optimiza todas las imágenes de public/ según su uso real en la UI.
+ * - Convierte a WebP
+ * - Reduce resolución al máximo necesario (con margen 2x para retina)
+ * - Genera versiones thumb + full para galerías con modal
+ *
+ * Uso: node scripts/optimize-images.mjs
+ * Prerrequisito: sharp disponible en node_modules
+ */
+
+import sharp from "sharp";
+import {
+  readdirSync,
+  statSync,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+} from "node:fs";
+import { join, basename, extname, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PUBLIC = join(__dirname, "..", "public");
+
+const SUPPORTED = /\.(jpe?g|png|webp)$/i;
+
+// ── Configuración por tipo de uso ──────────────────────────────────────────
+// thumbnail: versión para grids/listas
+// full:      versión para modal/vista completa
+// single:    una sola versión (sin modal)
+
+const TASKS = {
+  // Portadas de producciones (raíz de /producciones, grid 3 cols max-w-6xl → ~384px real, 2x = 768, usamos 800)
+  producciones_portadas: {
+    srcDir: join(PUBLIC, "producciones"),
+    recursive: false,
+    single: { width: 800, quality: 82 },
+  },
+  // Galerías de producciones (en subcarpetas; se usan como thumb en react-image-gallery + full en modal 1100px, 2x = 2200)
+  producciones_gallery: {
+    srcDir: join(PUBLIC, "producciones"),
+    recursive: true,
+    thumb: { width: 800, quality: 80 },
+    full: { width: 2200, quality: 85 },
+  },
+  // Booking (grid 3 cols, sin modal → 800px)
+  booking: {
+    srcDir: join(PUBLIC, "booking", "img"),
+    recursive: false,
+    single: { width: 800, quality: 82 },
+  },
+  // Eventos (grids de presentación → 800px)
+  eventos: {
+    srcDir: join(PUBLIC, "eventos"),
+    recursive: true,
+    single: { width: 800, quality: 82 },
+  },
+  // Iconos del home (grid 4 cols max-w-5xl → ~256px real, 2x = 512, usamos 400 por ser iconos)
+  iconos: {
+    srcDir: join(PUBLIC, "iconos"),
+    recursive: false,
+    single: { width: 400, quality: 80 },
+  },
+  // Equipo nosotros (similar a grid de 3 cols → 1200px)
+  nosotros: {
+    srcDir: join(PUBLIC, "nosotros"),
+    recursive: false,
+    single: { width: 1200, quality: 85 },
+  },
+  // RRSS (iconos pequeños en footer ~32px, 2x = 64px, usamos 128 como máximo)
+  rrss: {
+    srcDir: join(PUBLIC, "rrss"),
+    recursive: false,
+    single: { width: 128, quality: 85 },
+  },
+  // Hero home (background-cover fullscreen → 1920px)
+  hero: {
+    srcDir: PUBLIC,
+    recursive: false,
+    filter: (name) => name === "home foto.png",
+    outputName: () => "home-foto.webp",
+    single: { width: 1920, quality: 85 },
+  },
+  // Favicon (se usa a 32px aprox, optimizar PNG → se maneja separado)
+  favicon: {
+    srcDir: PUBLIC,
+    recursive: false,
+    filter: (name) => name === "favicon-cdem.png",
+    outputName: () => "favicon-cdem-opt.png",
+    single: { width: 180, quality: 90, format: "png" },
+  },
+};
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+let totalSaved = 0;
+let totalOriginal = 0;
+let filesProcessed = 0;
+
+function sizeMB(bytes) {
+  return (bytes / 1024 / 1024).toFixed(2) + " MB";
+}
+
+function sizeKB(bytes) {
+  return (bytes / 1024).toFixed(1) + " KB";
+}
+
+function getFilesInDir(dir, recursive = false) {
+  if (!existsSync(dir)) return [];
+  const entries = readdirSync(dir, { withFileTypes: true });
+  const files = [];
+  for (const e of entries) {
+    const fullPath = join(dir, e.name);
+    if (e.isDirectory() && recursive) {
+      files.push(...getFilesInDir(fullPath, true));
+    } else if (e.isFile() && SUPPORTED.test(e.name)) {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+function getFilesInDirNonRecursive(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir, { withFileTypes: true })
+    .filter((e) => e.isFile() && SUPPORTED.test(e.name))
+    .map((e) => join(dir, e.name));
+}
+
+async function processFile(srcPath, destPath, { width, quality, format = "webp" }) {
+  const originalSize = statSync(srcPath).size;
+
+  let pipeline = sharp(srcPath).resize({
+    width,
+    withoutEnlargement: true, // No agrandar si ya es más pequeña
+    fit: "inside",
+  });
+
+  if (format === "webp") {
+    pipeline = pipeline.webp({ quality });
+  } else if (format === "png") {
+    pipeline = pipeline.png({ quality, compressionLevel: 9 });
+  }
+
+  mkdirSync(dirname(destPath), { recursive: true });
+  await pipeline.toFile(destPath);
+
+  const newSize = statSync(destPath).size;
+  const saved = originalSize - newSize;
+  totalSaved += saved;
+  totalOriginal += originalSize;
+  filesProcessed++;
+
+  const pct = ((saved / originalSize) * 100).toFixed(0);
+  console.log(
+    `  ✓ ${basename(srcPath)} → ${basename(destPath)}\n` +
+      `    ${sizeKB(originalSize)} → ${sizeKB(newSize)} (${pct}% reducción)`
+  );
+
+  return destPath;
+}
+
+function toWebpPath(srcPath, suffix = "") {
+  const base = basename(srcPath, extname(srcPath));
+  const dir = dirname(srcPath);
+  return join(dir, base + suffix + ".webp");
+}
+
+// ── Procesado por tarea ────────────────────────────────────────────────────
+
+async function runTask(name, task) {
+  console.log(`\n── ${name} ──`);
+
+  if (name === "producciones_gallery") {
+    // Solo archivos en subdirectorios (carpetas de galerías)
+    const subDirs = readdirSync(task.srcDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory())
+      .map((e) => join(task.srcDir, e.name));
+
+    for (const subDir of subDirs) {
+      const files = getFilesInDirNonRecursive(subDir);
+      for (const srcPath of files) {
+        // Omitir si ya son archivos webp generados
+        if (srcPath.endsWith(".webp")) continue;
+
+        const thumbPath = toWebpPath(srcPath, "-thumb");
+        const fullPath = toWebpPath(srcPath, "-full");
+
+        if (!existsSync(thumbPath)) {
+          await processFile(srcPath, thumbPath, task.thumb);
+        }
+        if (!existsSync(fullPath)) {
+          await processFile(srcPath, fullPath, task.full);
+        }
+      }
+    }
+    return;
+  }
+
+  if (name === "producciones_portadas") {
+    // Solo archivos en la raíz de producciones (las portadas)
+    const files = getFilesInDirNonRecursive(task.srcDir).filter(
+      (f) => !f.endsWith(".webp")
+    );
+    for (const srcPath of files) {
+      const destPath = toWebpPath(srcPath);
+      if (!existsSync(destPath)) {
+        await processFile(srcPath, destPath, task.single);
+      }
+    }
+    return;
+  }
+
+  // Tareas con filter personalizado (hero, favicon)
+  if (task.filter) {
+    const files = getFilesInDirNonRecursive(task.srcDir).filter((f) =>
+      task.filter(basename(f))
+    );
+    for (const srcPath of files) {
+      const destPath = join(dirname(srcPath), task.outputName(basename(srcPath)));
+      if (!existsSync(destPath)) {
+        await processFile(srcPath, destPath, task.single);
+      }
+    }
+    return;
+  }
+
+  // Tarea estándar (single)
+  const files = task.recursive
+    ? getFilesInDir(task.srcDir, true)
+    : getFilesInDirNonRecursive(task.srcDir);
+
+  for (const srcPath of files) {
+    if (srcPath.endsWith(".webp")) continue;
+    const destPath = toWebpPath(srcPath);
+    if (!existsSync(destPath)) {
+      await processFile(srcPath, destPath, task.single);
+    }
+  }
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────
+
+async function main() {
+  console.log("=== Optimización de imágenes ===\n");
+  const start = Date.now();
+
+  for (const [name, task] of Object.entries(TASKS)) {
+    await runTask(name, task);
+  }
+
+  const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+  console.log(
+    `\n═══════════════════════════════════════════\n` +
+      `Archivos procesados: ${filesProcessed}\n` +
+      `Tamaño original:     ${sizeMB(totalOriginal)}\n` +
+      `Ahorro total:        ${sizeMB(totalSaved)} (${((totalSaved / totalOriginal) * 100).toFixed(0)}%)\n` +
+      `Tiempo:              ${elapsed}s\n`
+  );
+}
+
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

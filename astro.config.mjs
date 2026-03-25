@@ -11,6 +11,7 @@ import keystatic from '@keystatic/astro';
 
 // https://astro.build/config
 export default defineConfig({
+  compressHTML: true,
   vite: {
     plugins: [tailwindcss()],
     resolve: {
@@ -18,19 +19,25 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ['@keystatic/astro']
-    }
+    },
+    ssr: {
+      noExternal: ['swiper'],
+    },
   },
   env: {
     schema: {
       RESEND_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
       CONTACT_EMAIL_TO: envField.string({ context: 'server', access: 'secret', optional: true }),
       FROM_EMAIL: envField.string({ context: 'server', access: 'secret', optional: true }),
+      TURNSTILE_SITE_KEY: envField.string({ context: 'client', access: 'public', optional: true }),
+      TURNSTILE_SECRET_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
   adapter: cloudflare(),
   build: {
     client: './',
     server: './_worker.js',
+    inlineStylesheets: 'auto',
   },
   integrations: [react(), markdoc(), keystatic()]
 });

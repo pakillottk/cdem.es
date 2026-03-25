@@ -21,7 +21,8 @@
 
 @font-face {
   font-family: "Bebas Neue";
-  src: url("/fonts/Bebas Neue/BebasNeue-Regular.ttf") format("truetype");
+  src: url("/fonts/Bebas Neue/BebasNeue-Regular.woff2") format("woff2"),
+       url("/fonts/Bebas Neue/BebasNeue-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -29,7 +30,8 @@
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Light Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Light Regular.woff2") format("woff2"),
+       url("/fonts/itc-eras-ultra/ITC Eras Light Regular.otf") format("opentype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -37,7 +39,8 @@
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Book Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Book Regular.woff2") format("woff2"),
+       url("/fonts/itc-eras-ultra/ITC Eras Book Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -45,7 +48,8 @@
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Medium.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Medium.woff2") format("woff2"),
+       url("/fonts/itc-eras-ultra/ITC Eras Medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -53,7 +57,8 @@
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.woff2") format("woff2"),
+       url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.otf") format("opentype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -61,7 +66,8 @@
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Bold.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Bold.woff2") format("woff2"),
+       url("/fonts/itc-eras-ultra/ITC Eras Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -69,7 +75,8 @@
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.woff2") format("woff2"),
+       url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.otf") format("opentype");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
