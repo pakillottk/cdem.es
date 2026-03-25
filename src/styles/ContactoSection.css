@@ -1,0 +1,20 @@
+.cta-section {
+  @apply bg-black font-secondary tracking-[0.25em] pt-16 pb-16 px-6 mb-8 text-white;
+}
+
+.cta-section__inner {
+  @apply max-w-6xl mx-auto flex flex-col gap-6 items-center text-center md:flex-row md:items-center md:justify-between md:text-left;
+}
+
+.cta-section__text {
+  @apply mt-0 sm:text-lg md:text-xl lg:text-2xl max-w-3xl font-normal;
+}
+
+.cta-section__headline {
+  @apply mt-0 text-primary sm:text-lg md:text-4xl lg:text-5xl font-extrabold max-w-3xl;
+}
+
+.cta-section__button {
+  @apply inline-flex items-center justify-center rounded-full border-2 border-white px-10 py-3 text-sm tracking-[0.25em] uppercase font-semibold hover:bg-primary hover:text-black transition-colors;
+}
+

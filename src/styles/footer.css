@@ -1,0 +1,97 @@
+.site-footer {
+  @apply bg-black border-t border-white/10 px-6 py-12 lg:px-0;
+}
+
+.site-footer__inner {
+  @apply mx-auto flex max-w-5xl flex-col items-center justify-between lg:flex-row;
+}
+
+.site-footer__brand {
+  @apply w-full text-3xl font-semibold tracking-[0.3em] text-white text-center lg:text-left lg:w-1/4;
+}
+
+.site-footer__logo {
+  @apply h-auto w-48 mx-auto lg:mx-0 lg:w-full;
+}
+
+.site-footer__links {
+  @apply w-full font-secondary text-base uppercase tracking-[0.25em] text-white lg:w-1/4;
+  @apply flex flex-row flex-wrap justify-center gap-x-4 gap-y-1 sm:gap-x-6 lg:flex-col lg:justify-start lg:gap-x-0;
+}
+
+.site-footer__link {
+  @apply cursor-pointer transition-colors hover:text-primary;
+}
+
+.site-footer__social {
+  @apply flex w-full items-center justify-center lg:w-1/4;
+}
+
+.site-footer__social-link {
+  @apply inline-flex shrink-0 items-center justify-center hover:animate-heartbeat;
+}
+
+.site-footer__social-icon {
+  @apply h-20 w-20 object-contain;
+}
+
+.site-footer__newsletter {
+  @apply w-full border-2 border-white p-3 font-secondary lg:w-1/4;
+}
+
+.site-footer__newsletter-title {
+  @apply mb-1 text-sm font-semibold uppercase tracking-[0.25em] text-white;
+}
+
+.site-footer__form {
+  @apply space-y-2;
+}
+
+.site-footer__form-row {
+  @apply flex items-center gap-1;
+}
+
+.site-footer__label {
+  @apply block whitespace-nowrap text-base uppercase tracking-[0.1em] text-white;
+}
+
+
+.site-footer__input {
+  @apply w-full border bg-white text-base outline-none transition-colors focus:border-[var(--color-primary)];
+}
+
+.site-footer__input--small {
+  @apply w-full border bg-white text-sm outline-none transition-colors focus:border-[var(--color-primary)];
+}
+
+.site-footer__checkbox-row {
+  @apply space-y-1;
+}
+
+.site-footer__checkbox-label {
+  @apply flex items-center gap-2 text-sm text-white;
+}
+
+.site-footer__checkbox {
+  @apply h-4 w-4 bg-primary;
+}
+
+.site-footer__checkbox-text {
+  @apply text-sm uppercase tracking-[0.2em] text-white;
+}
+
+.site-footer__submit {
+  @apply flex justify-end;
+}
+
+.site-footer__button {
+  @apply mt-3 inline-flex items-center justify-center rounded-full bg-primary px-8 py-2 text-base font-semibold uppercase tracking-[0.25em] text-black transition-colors hover:bg-white;
+}
+
+.site-footer__bottom {
+  @apply mx-auto mt-8 w-full max-w-5xl text-center;
+}
+
+.site-footer__bottom-text {
+  @apply pt-4 text-[10px] uppercase tracking-[0.25em] text-white/50;
+}

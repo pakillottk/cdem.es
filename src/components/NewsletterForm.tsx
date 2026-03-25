@@ -3,11 +3,9 @@ import { useState } from 'react';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
-const inputClass =
-  'mt-1 w-full bg-transparent border border-white/30 px-3 py-2 text-sm text-white outline-none focus:border-cyan-400 transition-colors';
-
-const labelClass =
-  'block text-[11px] uppercase tracking-[0.2em] text-white/70';
+const inputClass = 'site-footer__input';
+const smallInputClass = 'site-footer__input--small';
+const labelClass = 'site-footer__label';
 
 export default function NewsletterForm() {
   const [state, setState] = useState<FormState>('idle');
@@ -46,33 +44,25 @@ export default function NewsletterForm() {
 
   if (state === 'success') {
     return (
-      <div className="flex flex-col gap-3 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-cyan-400 flex items-center justify-center shrink-0">
-            <svg className="w-4 h-4 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <p className="text-sm font-semibold tracking-[0.2em] uppercase text-white">
-            ¡Suscripción confirmada!
-          </p>
-        </div>
-        <p className="text-xs text-white/60 leading-relaxed">
-          Ya formas parte de nuestra newsletter. Te mantendremos informado de nuestros próximos eventos y producciones.
+      <div className="site-footer__form">
+        <p className="site-footer__label">¡Suscripción confirmada!</p>
+        <p className="site-footer__bottom-text">
+          Ya formas parte de nuestra newsletter. Te mantendremos informado de nuestros próximos eventos y
+          producciones.
         </p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+    <form onSubmit={handleSubmit} noValidate>
       {state === 'error' && (
-        <div className="border border-red-500/60 bg-red-500/10 px-3 py-2 text-xs text-red-400 tracking-wide">
+        <div className="site-footer__bottom-text" style={{ color: '#fca5a5' }}>
           {errorMessage}
         </div>
       )}
 
-      <div className="space-y-1">
+      <div className="site-footer__form-row">
         <label htmlFor="nl-nombre" className={labelClass}>
           Nombre y apellidos
         </label>
@@ -83,12 +73,15 @@ export default function NewsletterForm() {
           required
           className={`${inputClass} ${fieldErrors.nombre ? 'border-red-500' : ''}`}
         />
-        {fieldErrors.nombre && (
-          <p className="text-[10px] text-red-400 tracking-wide mt-1">{fieldErrors.nombre}</p>
-        )}
       </div>
 
-      <div className="space-y-1">
+      {fieldErrors.nombre && (
+        <p className="site-footer__bottom-text" style={{ color: '#fca5a5' }}>
+          {fieldErrors.nombre}
+        </p>
+      )}
+
+      <div className="site-footer__form-row">
         <label htmlFor="nl-email" className={labelClass}>
           Email
         </label>
@@ -97,50 +90,48 @@ export default function NewsletterForm() {
           name="email"
           type="email"
           required
-          className={`${inputClass} ${fieldErrors.email ? 'border-red-500' : ''}`}
+          className={`${smallInputClass} ${fieldErrors.email ? 'border-red-500' : ''}`}
         />
-        {fieldErrors.email && (
-          <p className="text-[10px] text-red-400 tracking-wide mt-1">{fieldErrors.email}</p>
-        )}
       </div>
 
-      <div className="space-y-1">
-        <label className="flex items-start gap-2.5 cursor-pointer group">
+      {fieldErrors.email && (
+        <p className="site-footer__bottom-text" style={{ color: '#fca5a5' }}>
+          {fieldErrors.email}
+        </p>
+      )}
+
+      <div className="site-footer__checkbox-row">
+        <label className="site-footer__checkbox-label">
           <input
             name="privacidad"
             type="checkbox"
             required
-            className="mt-0.5 shrink-0 w-4 h-4 accent-cyan-400 cursor-pointer"
+            className="site-footer__checkbox"
           />
-          <span className="text-[10px] uppercase tracking-[0.15em] text-white/60 leading-relaxed group-hover:text-white/80 transition-colors">
+          <span className="site-footer__checkbox-text">
             Acepto la{' '}
-            <a href="/politica-de-privacidad" className="underline hover:text-cyan-400 transition-colors">
+            <a href="/politica-de-privacidad">
               política de privacidad
             </a>
           </span>
         </label>
-        {fieldErrors.privacidad && (
-          <p className="text-[10px] text-red-400 tracking-wide mt-1">{fieldErrors.privacidad}</p>
-        )}
       </div>
 
-      <button
-        type="submit"
-        disabled={state === 'submitting'}
-        className="mt-3 inline-flex items-center justify-center rounded-full bg-cyan-400 text-black px-8 py-2 text-xs font-semibold tracking-[0.25em] uppercase hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {state === 'submitting' ? (
-          <span className="flex items-center gap-2">
-            <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-            </svg>
-            Enviando…
-          </span>
-        ) : (
-          'Suscribirse'
-        )}
-      </button>
+      {fieldErrors.privacidad && (
+        <p className="site-footer__bottom-text" style={{ color: '#fca5a5' }}>
+          {fieldErrors.privacidad}
+        </p>
+      )}
+
+      <div className="site-footer__submit">
+        <button
+          type="submit"
+          disabled={state === 'submitting'}
+          className="site-footer__button"
+        >
+          {state === 'submitting' ? 'Enviando…' : 'Suscribirse'}
+        </button>
+      </div>
     </form>
   );
 }

@@ -2,40 +2,43 @@
 import Layout from '../layouts/Layout.astro';
 ---
 <Layout>
-	<div class="min-h-screen bg-black text-white font-sans">
+	<div class="home-page">
 		<!-- Hero -->
-		<section
-			class="relative h-[90vh] min-h-[640px] flex items-center justify-center text-center overflow-hidden"
-		>
+		<section class="home-hero">
 			<div
-				class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1600&q=80')] bg-cover bg-center opacity-40"
+				class="home-hero__bg"
+				style="background-image: url('/home foto.png');"
 				aria-hidden="true"
 			></div>
-			<div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div>
+			<!-- <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div> -->
 
-			<div class="relative z-10 px-6 lg:px-0 max-w-5xl mx-auto">
-				<h1
-					class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-wide drop-shadow-xl"
-				>
+			<div class="home-hero__content">
+				<h1 class="home-hero__title">
 					CREACIÓN Y DISEÑO<br />
 					DE EVENTOS MUSICALES
 				</h1>
-				<p class="mt-4 text-lg sm:text-xl tracking-[0.3em] uppercase text-primary">
+				<p class="home-hero__subtitle">
 					La creatividad que mueve la música
 				</p>
 
-				<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-6">
+				<div class="home-hero__actions">
 					<a
-						href="#contacto"
-						class="inline-flex items-center justify-center rounded-full border border-white/70 bg-white/10 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-primary hover:text-black hover:border-cyan-400 transition-colors"
+						href="/contacto"
+						class="contacto-draw-btn home-hero__cta home-hero__cta--primary"
 					>
-						Contrata tu evento
+						<span class="contacto-draw-btn__text text-sm sm:text-base">Contrata tu evento</span>
+						<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+							<ellipse cx="120" cy="30" rx="112" ry="29" />
+						</svg>
 					</a>
 					<a
-						href="#producciones"
-						class="inline-flex items-center justify-center rounded-full border border-white/60 px-10 py-3 text-sm tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-colors"
+						href="/producciones"
+						class="contacto-draw-btn home-hero__cta home-hero__cta--secondary"
 					>
-						Descubre nuestros proyectos
+						<span class="contacto-draw-btn__text text-sm sm:text-base">Descubre nuestros proyectos</span>
+						<svg class="contacto-draw-btn__svg" viewBox="0 0 240 60" preserveAspectRatio="none">
+							<ellipse cx="120" cy="30" rx="112" ry="29" />
+						</svg>
 					</a>
 				</div>
 			</div>
@@ -44,10 +47,10 @@ import Layout from '../layouts/Layout.astro';
 		<!-- Claim -->
 		<section
 			id="servicio"
-			class="bg-black py-16 px-6 lg:px-0 border-y border-white/5 flex items-center justify-center"
+			class="home-claim"
 		>
-			<div class="max-w-4xl text-center">
-				<p class="text-lg sm:text-2xl leading-relaxed font-medium">
+			<div class="home-claim__inner">
+				<p class="home-claim__text">
 					"Creación, diseño y producción de experiencias musicales. Trabajamos con artistas, instituciones y
 					festivales para llevar la música en vivo a otro nivel."
 				</p>
@@ -57,41 +60,42 @@ import Layout from '../layouts/Layout.astro';
 		<!-- Servicios -->
 		<section
 			id="eventos"
-			class="bg-[#050811] py-16 px-6 lg:px-0 flex items-center justify-center"
+			class="home-services"
 		>
-			<div class="max-w-5xl grid gap-10 md:grid-cols-4 text-center">
-				<div class="flex flex-col items-center gap-4">
-					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
-						<span class="text-3xl">⚙️</span>
+			<div class="home-services__grid">
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/organizacion-integral.png"></span>
 					</div>
-					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+					<h3 class="home-service-card__title">
 						Organización integral de<br />festivales, conciertos y ciclos musicales
 					</h3>
 				</div>
-				<div class="flex flex-col items-center gap-4">
-					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
-						<span class="text-3xl">🎵</span>
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/gestion-artistas.png"></span>
 					</div>
-					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+					<h3 class="home-service-card__title">
 						Gestión directa con artistas<br />y oficinas de booking
 					</h3>
 				</div>
-				<div class="flex flex-col items-center gap-4">
-					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
-						<span class="text-3xl">🎛️</span>
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/coordinacion-tecnica.png"></span>
 					</div>
-					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+					<h3 class="home-service-card__title">
 						Coordinación técnica,<br />logística y producción escénica
 					</h3>
 				</div>
-				<div class="flex flex-col items-center gap-4">
-					<div class="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center">
-						<span class="text-3xl">📝</span>
+				<div class="home-service-card">
+					<div class="home-service-card__icon-wrap">
+						<span class="home-service-card__icon-anim"><img src="/iconos/curaduria-y-asesoramiento.png"></span>
 					</div>
-					<h3 class="text-sm font-semibold tracking-[0.2em] uppercase">
+					<h3 class="home-service-card__title">
 						Curaduría y asesoramiento<br />artístico
 					</h3>
 				</div>
+				
 			</div>
 		</section>
 

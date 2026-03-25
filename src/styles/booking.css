@@ -1,0 +1,222 @@
+.booking-page {
+  @apply min-h-screen bg-black text-white font-primary;
+}
+
+.booking-hero {
+  @apply relative flex flex-col justify-end text-center overflow-hidden;
+}
+
+.booking-hero__banner {
+  @apply relative w-full h-[100px] border-b border-white;
+}
+
+.booking-hero__overlay {
+  @apply absolute inset-0 flex items-center justify-center z-10 bg-black/40;
+}
+
+.booking-hero__quote {
+  @apply font-secondary text-white text-lg tracking-[0.2em] leading-tight uppercase text-primary px-4 sm:text-2xl sm:tracking-[0.35em] md:text-3xl lg:text-4xl;
+}
+
+/* Evita recortes del texto en 320px aprox */
+@media (max-width: 360px) {
+  .booking-hero__banner {
+    height: 120px;
+  }
+
+  .booking-hero__quote {
+    font-size: 0.9rem;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+    padding-inline: 0.5rem;
+  }
+}
+
+.booking-grid {
+  @apply bg-white py-16 px-6 text-black;
+}
+
+.booking-grid__inner {
+  @apply max-w-6xl mx-auto;
+}
+
+/* Grid solo en lg+; por debajo usa Swiper en BookingGridSwiper */
+.booking-grid__list {
+  @apply hidden gap-10 lg:grid lg:grid-cols-3;
+}
+
+.booking-grid__swiper-wrap {
+  @apply w-full lg:hidden;
+}
+
+.booking-swiper-shell {
+  @apply flex w-full flex-col gap-3;
+}
+
+/* Contenedor solo slides + flechas: altura = imagen → top 50% centra en la foto */
+.booking-swiper {
+  --swiper-pagination-color: #59a1dc;
+  --swiper-pagination-bullet-inactive-color: rgba(0, 0, 0, 0.35);
+  --swiper-pagination-bullet-inactive-opacity: 1;
+  --swiper-navigation-color: #ffffff;
+  --swiper-navigation-size: 1.25rem;
+  position: relative;
+  width: 100%;
+  padding-bottom: 0;
+}
+
+.booking-swiper .swiper-slide {
+  height: auto;
+}
+
+/* Swiper sigue insertando un .swiper-pagination interno; usamos el de fuera (#booking-swiper-pagination) */
+.booking-swiper > .swiper-pagination {
+  display: none !important;
+}
+
+.booking-swiper .swiper-button-prev,
+.booking-swiper .swiper-button-next {
+  position: absolute !important;
+  top: 50% !important;
+  z-index: 5;
+  margin: 0 !important;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);
+  transform: translateY(-50%) !important;
+}
+
+.booking-swiper .swiper-button-prev {
+  left: 0.5rem !important;
+  right: auto !important;
+}
+
+.booking-swiper .swiper-button-next {
+  right: 0.5rem !important;
+  left: auto !important;
+}
+
+.booking-swiper .swiper-button-prev::after,
+.booking-swiper .swiper-button-next::after {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* Paginación renderizada fuera del Swiper (ver BookingGridSwiper.tsx) */
+.booking-swiper-pagination-below {
+  position: static !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100% !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+.booking-swiper-pagination-below .swiper-pagination-bullet {
+  margin: 0 4px !important;
+}
+
+/* Entrada solo con opacity + transform (compositor); sin blur: mucho más fluido */
+.booking-grid__item {
+  @apply bg-white overflow-hidden rounded-sm border border-black/5;
+  opacity: 0;
+  transform: translate3d(0, 18px, 0) scale(0.985);
+  animation: bookingCardRise 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease;
+  backface-visibility: hidden;
+}
+
+.booking-grid__item:nth-child(1) {
+  animation-delay: 0.06s;
+}
+.booking-grid__item:nth-child(2) {
+  animation-delay: 0.16s;
+}
+.booking-grid__item:nth-child(3) {
+  animation-delay: 0.26s;
+}
+.booking-grid__item:nth-child(4) {
+  animation-delay: 0.36s;
+}
+.booking-grid__item:nth-child(5) {
+  animation-delay: 0.46s;
+}
+.booking-grid__item:nth-child(6) {
+  animation-delay: 0.56s;
+}
+
+@keyframes bookingCardRise {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.booking-grid__item:hover {
+  transform: translate3d(0, -8px, 0) scale(1);
+  box-shadow:
+    0 18px 32px -14px rgba(0, 0, 0, 0.28),
+    0 0 0 1px rgba(89, 161, 220, 0.4),
+    0 0 20px -8px rgba(89, 161, 220, 0.28);
+}
+
+.booking-grid__item img {
+  @apply w-full h-auto block;
+  transform: translateZ(0);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.booking-grid__item:hover img {
+  transform: translateZ(0) scale3d(1.06, 1.06, 1);
+}
+
+.booking-grid__item a {
+  @apply block overflow-hidden;
+}
+
+.booking-text-intro {
+  @apply bg-white pb-10 px-6 text-black;
+}
+
+.booking-text-intro__inner {
+  @apply max-w-6xl mx-auto text-center;
+}
+
+.booking-text-intro__title {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+.booking-text-intro__highlight {
+  @apply mt-1 text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[0.2em] leading-[0.5] text-black;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-hero__quote,
+  .booking-grid__item {
+    animation: none !important;
+    animation-delay: 0s !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .booking-grid__item,
+  .booking-grid__item img {
+    transition: none !important;
+  }
+
+  .booking-grid__item:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  .booking-grid__item:hover img {
+    transform: none !important;
+  }
+}

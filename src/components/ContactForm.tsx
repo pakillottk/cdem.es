@@ -4,10 +4,10 @@ import { useState } from 'react';
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
 const inputClass =
-  'mt-1 w-full bg-transparent border border-white/40 px-3 py-2 text-sm outline-none focus:border-cyan-400 transition-colors';
+  'mt-1 w-full bg-transparent border border-black px-3 py-2 text-sm text-black outline-none focus:border-[var(--color-primary)] transition-colors';
 
 const labelClass =
-  'block text-xs sm:text-[11px] uppercase tracking-[0.25em] text-white/80';
+  'block text-sm sm:text-xs uppercase tracking-[0.25em] text-black/70';
 
 export default function ContactForm() {
   const [state, setState] = useState<FormState>('idle');
@@ -46,21 +46,21 @@ export default function ContactForm() {
 
   if (state === 'success') {
     return (
-      <div className="border-2 border-cyan-400 px-6 sm:px-8 py-10 sm:py-12 flex flex-col items-center justify-center gap-4 text-center min-h-[360px]">
-        <div className="w-12 h-12 rounded-full bg-cyan-400 flex items-center justify-center">
+      <div className="border-2 border-[var(--color-primary)] px-6 sm:px-8 py-10 sm:py-12 flex flex-col items-center justify-center gap-4 text-center min-h-[360px]">
+        <div className="w-12 h-12 rounded-full bg-[var(--color-primary)] flex items-center justify-center">
           <svg className="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-base sm:text-lg font-extrabold tracking-[0.2em] uppercase text-white">
+        <h2 className="text-lg sm:text-xl font-extrabold tracking-[0.2em] uppercase text-black">
           Mensaje enviado
         </h2>
-        <p className="text-sm text-white/70 max-w-xs">
+        <p className="text-sm text-black/60 max-w-xs">
           Hemos recibido tu solicitud. Nos pondremos en contacto contigo lo antes posible.
         </p>
         <button
           onClick={() => setState('idle')}
-          className="mt-2 inline-flex items-center justify-center rounded-full border border-white/40 px-8 py-2.5 text-xs tracking-[0.25em] uppercase hover:border-cyan-400 hover:text-cyan-400 transition-colors"
+          className="mt-2 inline-flex items-center justify-center rounded-full border border-black px-8 py-2.5 text-xs tracking-[0.25em] uppercase text-black hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-colors"
         >
           Enviar otro mensaje
         </button>
@@ -72,7 +72,7 @@ export default function ContactForm() {
     <form
       onSubmit={handleSubmit}
       noValidate
-      className="border-2 border-white px-6 sm:px-8 py-8 sm:py-10 space-y-6"
+      className="border-2 border-black px-6 sm:px-8 py-8 sm:py-10 space-y-6 font-secondary"
     >
       {state === 'error' && (
         <div className="border border-red-500/60 bg-red-500/10 px-4 py-3 text-xs text-red-400 tracking-wide">
@@ -143,7 +143,7 @@ export default function ContactForm() {
       <button
         type="submit"
         disabled={state === 'submitting'}
-        className="inline-flex items-center justify-center rounded-full border border-white/80 bg-white/10 px-10 py-2.5 text-xs sm:text-sm tracking-[0.25em] uppercase hover:bg-cyan-400 hover:text-black hover:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center justify-center rounded-full border border-black px-10 py-2.5 text-sm sm:text-base tracking-[0.25em] uppercase text-black hover:bg-[var(--color-primary)] hover:text-black hover:border-[var(--color-primary)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {state === 'submitting' ? (
           <span className="flex items-center gap-2">
