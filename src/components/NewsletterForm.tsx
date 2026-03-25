@@ -1,5 +1,7 @@
 import { actions, isInputError } from 'astro:actions';
+import { TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { useState } from 'react';
+import Turnstile from './Turnstile';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -11,14 +13,23 @@ export default function NewsletterForm() {
   const [state, setState] = useState<FormState>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [turnstileToken, setTurnstileToken] = useState<string>('');;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      setErrorMessage('Por favor, completa la verificación de seguridad.');
+      setState('error');
+      return;
+    }
+
     setState('submitting');
     setFieldErrors({});
     setErrorMessage('');
 
     const formData = new FormData(e.currentTarget);
+    formData.set('turnstileToken', turnstileToken);
 
     const { data, error } = await actions.newsletter(formData);
 
@@ -121,6 +132,18 @@ export default function NewsletterForm() {
         <p className="site-footer__bottom-text" style={{ color: '#fca5a5' }}>
           {fieldErrors.privacidad}
         </p>
+      )}
+
+      {TURNSTILE_SITE_KEY && (
+        <div className="site-footer__turnstile">
+          <Turnstile
+            siteKey={TURNSTILE_SITE_KEY}
+            onVerify={setTurnstileToken}
+            onExpire={() => setTurnstileToken('')}
+            onError={() => setTurnstileToken('')}
+            theme="dark"
+          />
+        </div>
       )}
 
       <div className="site-footer__submit">

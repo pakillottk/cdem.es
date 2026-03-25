@@ -1,6 +1,17 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL } from 'astro:env/server';
+import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY } from 'astro:env/server';
+
+async function verifyTurnstile(token: string): Promise<boolean> {
+  if (!TURNSTILE_SECRET_KEY) return true;
+  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ secret: TURNSTILE_SECRET_KEY, response: token }),
+  });
+  const data = await res.json() as { success: boolean };
+  return data.success === true;
+}
 
 function buildEmailHtml(nombre: string, email: string, telefono: string | undefined, mensaje: string): string {
   return `
@@ -90,8 +101,17 @@ export const server = {
       email: z.string().email('Email no válido'),
       telefono: z.string().optional(),
       mensaje: z.string().min(1, 'El mensaje es obligatorio'),
+      turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ nombre, email, telefono, mensaje }) => {
+    handler: async ({ nombre, email, telefono, mensaje, turnstileToken }) => {
+      const isHuman = await verifyTurnstile(turnstileToken);
+      if (!isHuman) {
+        throw new ActionError({
+          code: 'FORBIDDEN',
+          message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
+        });
+      }
+
       if (!RESEND_API_KEY || !CONTACT_EMAIL_TO || !FROM_EMAIL) {
         throw new ActionError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -132,8 +152,17 @@ export const server = {
       nombre: z.string().min(1, 'El nombre es obligatorio'),
       email: z.string().email('Email no válido'),
       privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
+      turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ nombre, email }) => {
+    handler: async ({ nombre, email, turnstileToken }) => {
+      const isHuman = await verifyTurnstile(turnstileToken);
+      if (!isHuman) {
+        throw new ActionError({
+          code: 'FORBIDDEN',
+          message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
+        });
+      }
+
       if (!RESEND_API_KEY) {
         throw new ActionError({
           code: 'INTERNAL_SERVER_ERROR',
