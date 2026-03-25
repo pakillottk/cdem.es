@@ -25,7 +25,10 @@ const bookingSlides: BookingSlide[] = [
 ];
 ---
 
-<Layout>
+<Layout
+  title="Booking - CDEM"
+  description="Artistas y bandas disponibles para contratación. Gestión directa con oficinas de booking nacionales e internacionales."
+>
   <div class="booking-page">
     <!-- Hero booking -->
 
@@ -42,7 +45,7 @@ const bookingSlides: BookingSlide[] = [
     <!-- Grid / Swiper según viewport -->
     <section class="booking-grid">
       <div class="booking-grid__inner">
-        <BookingGridSwiper slides={bookingSlides} client:load />
+        <BookingGridSwiper slides={bookingSlides} client:only="react" />
       </div>
     </section>
 

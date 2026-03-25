@@ -5,7 +5,10 @@ import GalleryModal from "../components/GalleryModal";
 import { productions } from "../data/galleryData";
 ---
 
-<Layout>
+<Layout
+  title="Producciones - CDEM"
+  description="Portfolio de producciones musicales: Vive Linares, Festival de Jazz, New Wave, Joaquín Sabina y más eventos producidos por CDEM."
+>
   <div class="producciones-page">
     <!-- Hero producciones -->
 
@@ -29,7 +32,7 @@ import { productions } from "../data/galleryData";
                 coverSrc={prod.coverSrc}
                 coverAlt={`${prod.name} – Ver galería`}
                 images={prod.images}
-                client:load
+                client:visible
               />
             </article>
           ))}

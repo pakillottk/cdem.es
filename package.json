@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "gallery:manifest": "node scripts/build-gallery-manifest.mjs",
+    "images:optimize": "node scripts/optimize-images.mjs",
     "predev": "npm run gallery:manifest",
     "prebuild": "npm run gallery:manifest",
     "dev": "astro dev",

@@ -11,6 +11,7 @@ import keystatic from '@keystatic/astro';
 
 // https://astro.build/config
 export default defineConfig({
+  compressHTML: true,
   vite: {
     plugins: [tailwindcss()],
     resolve: {
@@ -18,7 +19,10 @@ export default defineConfig({
     },
     optimizeDeps: {
       exclude: ['@keystatic/astro']
-    }
+    },
+    ssr: {
+      noExternal: ['swiper'],
+    },
   },
   env: {
     schema: {
@@ -31,6 +35,7 @@ export default defineConfig({
   build: {
     client: './',
     server: './_worker.js',
+    inlineStylesheets: 'auto',
   },
   integrations: [react(), markdoc(), keystatic()]
 });
