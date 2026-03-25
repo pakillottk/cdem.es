@@ -11,14 +11,18 @@ export default {
     "7.jpg",
     "8.jpg"
   ],
-  "IberoJoven": [],
-  "JCReyes": [],
-  "JoaquinSabina": [],
+  "IberoJoven": [
+    "PHOTO-2026-02-25-18-20-52.jpg"
+  ],
+  "JCReyes": [
+    "PHOTO-2026-02-25-18-20-54 (1).jpg",
+    "PHOTO-2026-02-25-18-20-54.jpg"
+  ],
+  "JoaquinSabina": [
+    "PHOTO-2026-02-25-18-24-13.jpg"
+  ],
   "NewWave": [
-    "1.jpg",
-    "2.jpg",
     "3.jpg",
-    "4.jpg",
     "5.jpg",
     "6.jpg",
     "7.jpg",
@@ -27,28 +31,28 @@ export default {
     "10.jpg",
     "11.jpg",
     "12.jpg",
-    "13.jpg",
     "14.jpg",
     "15.jpg",
-    "16.jpg",
     "17.jpg",
     "18.jpg",
     "19.jpg",
-    "20.jpg",
     "21.jpg"
   ],
-  "Panorama": [],
-  "Quevedo": [],
-  "Raphael": [],
+  "Panorama": [
+    "PHOTO-2026-02-25-18-20-53.jpg"
+  ],
+  "Quevedo": [
+    "PHOTO-2026-02-25-18-20-52 (31f7cdb1-8923-4519-b130-3a36abf86c49).jpg"
+  ],
+  "Raphael": [
+    "PHOTO-2026-02-25-18-22-21.jpg"
+  ],
   "ViveLinares": [
     "1.jpg",
     "2.jpg",
-    "3.jpg",
     "4.jpg",
-    "5.jpg",
     "6.jpg",
     "7.jpg",
-    "8.jpg",
     "9.jpg",
     "10.jpg",
     "11.jpg",
