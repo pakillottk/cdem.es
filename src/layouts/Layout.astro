@@ -59,6 +59,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content={ogImage} />
+
+		<!-- Cloudflare Turnstile widget API -->
+		<script
+			src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+			async
+			defer
+		></script>
 	</head>
 	<body>
 		<CdemHeader />
