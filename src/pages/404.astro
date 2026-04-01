@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Página no encontrada - CDEM"
+  description="La página que buscas no existe o ha sido movida. Vuelve al inicio de CDEM Producciones."
+>
+  <div
+    class="min-h-[65vh] bg-black text-white font-primary px-6 py-16 sm:py-24 flex flex-col items-center justify-center text-center"
+  >
+    <p
+      class="font-secondary text-6xl sm:text-8xl md:text-9xl tracking-[0.08em] text-primary leading-none select-none"
+      aria-hidden="true"
+    >
+      404
+    </p>
+    <h1
+      class="mt-6 text-2xl sm:text-3xl font-secondary uppercase tracking-[0.25em] text-white"
+    >
+      Página no encontrada
+    </h1>
+    <p class="mt-6 max-w-lg text-base sm:text-lg leading-relaxed text-white/85">
+      La página que buscas no existe o el enlace ya no está disponible. Puedes
+      volver al inicio y seguir navegando por CDEM.
+    </p>
+    <div class="mt-12">
+      <a href="/" class="contacto-draw-btn text-white">
+        <span class="contacto-draw-btn__text text-xl sm:text-2xl"
+          >Volver al inicio</span
+        >
+        <svg
+          class="contacto-draw-btn__svg"
+          viewBox="0 0 240 60"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <ellipse cx="120" cy="30" rx="112" ry="29"></ellipse>
+        </svg>
+      </a>
+    </div>
+  </div>
+</Layout>
