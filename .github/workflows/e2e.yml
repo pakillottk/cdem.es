@@ -1,3 +1,6 @@
+# Automático: solo push a develop.
+# Manual: workflow_dispatch desde Actions; en ramas que no sean develop, deja base_url vacío
+# para build+preview en el runner, o indica la URL del despliegue a probar.
 name: E2E Tests
 
 on:
@@ -7,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       base_url:
-        description: 'URL base para los tests (vacío = según rama / local)'
+        description: 'URL a probar (vacío en develop = secret E2E_DEV_URL; vacío en otras ramas = preview en CI)'
         required: false
         type: string
 
