@@ -1,0 +1,47 @@
+# Automático: solo push a develop.
+# Manual: workflow_dispatch desde Actions; en ramas que no sean develop, deja base_url vacío
+# para build+preview en el runner, o indica la URL del despliegue a probar.
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'URL a probar (vacío en develop = secret E2E_DEV_URL; vacío en otras ramas = preview en CI)'
+        required: false
+        type: string
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npx playwright install --with-deps
+
+      - name: Run Playwright
+        run: npm run test:e2e
+        env:
+          E2E_BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || github.ref == 'refs/heads/develop' && secrets.E2E_DEV_URL || '' }}
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
