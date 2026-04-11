@@ -101,12 +101,12 @@ const TASKS = {
     quality: 64,
     webpEffort: 6,
     breakpoints: [
-      { file: "home-foto-640.webp", width: 640, quality: 42 },
+      { file: "home-foto-640.webp", width: 640, quality: 36 },
       // ~360 CSS px ×2 ≈ 720 físicos: evita bajar al 800w si no hace falta.
-      { file: "home-foto-720.webp", width: 720, quality: 30 },
-      // Entre 720 y 960: móviles ~390–430 ×2 suelen caer en 800w.
-      { file: "home-foto-800.webp", width: 800, quality: 28 },
-      { file: "home-foto-960.webp", width: 960, quality: 34 },
+      { file: "home-foto-720.webp", width: 720, quality: 24 },
+      // Lighthouse suele fijarse en 800w (LCP típico ~390×2); q22 es el último peldaño antes de notarse mucho.
+      { file: "home-foto-800.webp", width: 800, quality: 22 },
+      { file: "home-foto-960.webp", width: 960, quality: 28 },
       { file: "home-foto-1280.webp", width: 1280, quality: 52 },
       { file: "home-foto-1920.webp", width: 1920, quality: 58 },
     ],
