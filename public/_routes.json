@@ -1,5 +1,32 @@
 {
   "version": 1,
   "include": ["/*"],
-  "exclude": ["/_astro/*", "/fonts/*", "/admin/*"]
+  "exclude": [
+    "/_astro/*",
+    "/fonts/*",
+    "/admin/*",
+    "/",
+    "/index.html",
+    "/404.html",
+    "/aviso-legal",
+    "/aviso-legal/*",
+    "/booking",
+    "/booking/*",
+    "/contacto",
+    "/contacto/*",
+    "/eventos",
+    "/eventos/*",
+    "/nosotros",
+    "/nosotros/*",
+    "/politica-de-cookies",
+    "/politica-de-cookies/*",
+    "/politica-de-privacidad",
+    "/politica-de-privacidad/*",
+    "/posts",
+    "/posts/*",
+    "/producciones",
+    "/producciones/*",
+    "/servicio",
+    "/servicio/*"
+  ]
 }
