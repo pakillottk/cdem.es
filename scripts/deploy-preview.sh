@@ -34,4 +34,4 @@ npx wrangler versions upload \
   --message "preview: ${BRANCH}"
 
 echo "✓ Preview desplegado."
-echo "  Alias: https://${BRANCH}.cdem-es.workers.dev"
+echo "  Alias: https://${BRANCH}-cdem-es.cdemtic.workers.dev"
