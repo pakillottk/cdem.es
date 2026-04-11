@@ -1,111 +1,68 @@
 #!/usr/bin/env bash
-# Espera a que Cloudflare Pages tenga un despliegue exitoso para el commit dado.
-# Requiere: CF_API_TOKEN, CF_ACCOUNT_ID, CF_PROJECT, COMMIT_SHA
+# Espera a que el Worker de Cloudflare haya sido desplegado tras el inicio del workflow.
+# Requiere: CF_API_TOKEN, CF_ACCOUNT_ID, CF_WORKER, WORKFLOW_STARTED_AT (epoch UTC)
 set -euo pipefail
 
 : "${CF_API_TOKEN:?}"
 : "${CF_ACCOUNT_ID:?}"
-: "${CF_PROJECT:?}"
-: "${COMMIT_SHA:?}"
+: "${CF_WORKER:?}"
+: "${WORKFLOW_STARTED_AT:?}"
 
-# GitHub Secrets a veces guardan un salto de línea al final al pegar; la API entonces busca «cdem-es⏎» y devuelve 8000007.
 cf_trim() {
   printf '%s' "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -d '\r\n'
 }
 
 CF_ACCOUNT_ID=$(cf_trim "$CF_ACCOUNT_ID")
-CF_PROJECT=$(cf_trim "$CF_PROJECT")
-COMMIT_SHA=$(cf_trim "$COMMIT_SHA")
+CF_WORKER=$(cf_trim "$CF_WORKER")
 
-if [ -z "$CF_PROJECT" ]; then
-  echo "::error::CLOUDFLARE_PAGES_PROJECT quedó vacío tras quitar espacios/saltos de línea. Vuelve a guardar el secret sin espacio extra al final."
-  exit 1
-fi
-
-API="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PROJECT}/deployments"
 MAX_ATTEMPTS="${WAIT_MAX_ATTEMPTS:-40}"
 INTERVAL_SEC="${WAIT_INTERVAL_SEC:-30}"
 
-commit_lc=$(echo "$COMMIT_SHA" | tr '[:upper:]' '[:lower:]')
+SCRIPTS_API="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/workers/scripts"
 
-echo "Esperando despliegue en Cloudflare Pages — proyecto «${CF_PROJECT}», commit ${commit_lc:0:7}"
+echo "Esperando despliegue del Worker «${CF_WORKER}» (posterior a epoch ${WORKFLOW_STARTED_AT})"
 
 for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-  row=""
-  page=1
-  while true; do
-    # No se pasa per_page: la API de Pages rechaza valores concretos (8000024).
-    # Se pagina solo si result_info indica más páginas.
-    if [ "$page" -eq 1 ]; then
-      json=$(curl -sS "${API}" \
-        -H "Authorization: Bearer ${CF_API_TOKEN}")
-    else
-      json=$(curl -sS "${API}?page=${page}" \
-        -H "Authorization: Bearer ${CF_API_TOKEN}")
-    fi
+  json=$(curl -sS "${SCRIPTS_API}" \
+    -H "Authorization: Bearer ${CF_API_TOKEN}")
 
-    if ! echo "$json" | jq -e '.success == true' >/dev/null 2>&1; then
-      err_code=$(echo "$json" | jq -r '.errors[0].code // empty')
-      err_msg=$(echo "$json" | jq -r '.errors[0].message // empty')
-      echo "::error::API Cloudflare: ${err_msg}"
-      echo "$json" | jq .
-      if [ "$err_code" = "8000007" ]; then
-        echo "::error::Proyecto Pages no encontrado para esta cuenta (API 8000007)."
-        list_json=$(curl -sS "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects" \
-          -H "Authorization: Bearer ${CF_API_TOKEN}")
-        if echo "$list_json" | jq -e '.success == true' >/dev/null 2>&1; then
-          names=$(echo "$list_json" | jq -r '(.result // []) | map(.name) | join(", ")')
-          echo "::notice::Proyectos Pages visibles para este token en esta cuenta: ${names:-ninguno}"
-        else
-          echo "::notice::No se pudo listar proyectos Pages: $(echo "$list_json" | jq -r '.errors[0].message // empty')"
-        fi
-      fi
-      exit 1
-    fi
-
-    row=$(echo "$json" | jq -c --arg sha "$commit_lc" '
-      (.result // [])
-      | map(select(
-          (.deployment_trigger.metadata.commit_hash // "" | ascii_downcase) == $sha
-          and (.is_skipped != true)
-        ))
-      | .[0] // empty
-    ')
-
-    [[ -n "$row" && "$row" != "null" ]] && break
-
-    total_pages=$(echo "$json" | jq -r '.result_info.total_pages // 1')
-    if ! [[ "$total_pages" =~ ^[0-9]+$ ]] || [ "$page" -ge "$total_pages" ]; then
-      break
-    fi
-    page=$((page + 1))
-  done
-
-  if [[ -z "$row" || "$row" == "null" ]]; then
-    echo "Intento ${attempt}/${MAX_ATTEMPTS}: aún no hay despliegue para el commit ${commit_lc:0:7}… (esperando ${INTERVAL_SEC}s)"
-    sleep "$INTERVAL_SEC"
-    continue
+  if ! echo "$json" | jq -e '.success == true' >/dev/null 2>&1; then
+    err_msg=$(echo "$json" | jq -r '.errors[0].message // empty')
+    echo "::error::API Cloudflare Workers: ${err_msg}"
+    echo "$json" | jq .
+    exit 1
   fi
 
-  status=$(echo "$row" | jq -r '.latest_stage.status // empty')
-  stage=$(echo "$row" | jq -r '.latest_stage.name // empty')
-  url=$(echo "$row" | jq -r '.url // empty')
-  echo "Intento ${attempt}/${MAX_ATTEMPTS}: commit encontrado — stage=${stage} status=${status} url=${url}"
+  # Buscar el script por nombre y obtener su modified_on
+  modified_on=$(echo "$json" | jq -r --arg name "$CF_WORKER" '
+    (.result // [])
+    | map(select(.id == $name))
+    | .[0].modified_on // empty
+  ')
 
-  case "$status" in
-    success)
-      echo "Despliegue Cloudflare Pages listo."
-      exit 0
-      ;;
-    failure|canceled)
-      echo "::error::El despliegue terminó en estado: ${status}"
-      exit 1
-      ;;
-    *)
-      sleep "$INTERVAL_SEC"
-      ;;
-  esac
+  if [ -z "$modified_on" ]; then
+    # Listar los scripts disponibles para ayudar al diagnóstico
+    names=$(echo "$json" | jq -r '[(.result // [])[] | .id] | join(", ")')
+    echo "::error::Worker «${CF_WORKER}» no encontrado en esta cuenta."
+    echo "::notice::Workers disponibles: ${names:-ninguno}"
+    exit 1
+  fi
+
+  # Convertir modified_on a epoch (compatible con GNU date y macOS date)
+  modified_ts=$(date -d "$modified_on" +%s 2>/dev/null \
+    || date -j -f "%Y-%m-%dT%H:%M:%S" "${modified_on%%.*}" +%s 2>/dev/null \
+    || echo "0")
+
+  echo "Intento ${attempt}/${MAX_ATTEMPTS}: Worker modificado en ${modified_on} (epoch ${modified_ts}), workflow iniciado en epoch ${WORKFLOW_STARTED_AT}"
+
+  if [ "$modified_ts" -gt "$WORKFLOW_STARTED_AT" ]; then
+    echo "Worker «${CF_WORKER}» desplegado correctamente tras el inicio del workflow."
+    exit 0
+  fi
+
+  echo "Aún no hay despliegue nuevo… (esperando ${INTERVAL_SEC}s)"
+  sleep "$INTERVAL_SEC"
 done
 
-echo "::error::Tiempo de espera agotado esperando el despliegue de Cloudflare Pages."
+echo "::error::Tiempo de espera agotado esperando el despliegue del Worker «${CF_WORKER}»."
 exit 1
