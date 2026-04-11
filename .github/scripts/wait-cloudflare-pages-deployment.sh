@@ -31,14 +31,18 @@ commit_lc=$(echo "$COMMIT_SHA" | tr '[:upper:]' '[:lower:]')
 echo "Esperando despliegue en Cloudflare Pages — proyecto «${CF_PROJECT}», commit ${commit_lc:0:7}"
 
 for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-  # La API rechaza per_page alto (p. ej. 50); el máximo habitual es 20.
   row=""
   page=1
   while true; do
-    json=$(curl -sS -G "${API}" \
-      -H "Authorization: Bearer ${CF_API_TOKEN}" \
-      --data-urlencode "page=${page}" \
-      --data-urlencode "per_page=20")
+    # No se pasa per_page: la API de Pages rechaza valores concretos (8000024).
+    # Se pagina solo si result_info indica más páginas.
+    if [ "$page" -eq 1 ]; then
+      json=$(curl -sS "${API}" \
+        -H "Authorization: Bearer ${CF_API_TOKEN}")
+    else
+      json=$(curl -sS "${API}?page=${page}" \
+        -H "Authorization: Bearer ${CF_API_TOKEN}")
+    fi
 
     if ! echo "$json" | jq -e '.success == true' >/dev/null 2>&1; then
       err_code=$(echo "$json" | jq -r '.errors[0].code // empty')
@@ -47,15 +51,13 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
       echo "$json" | jq .
       if [ "$err_code" = "8000007" ]; then
         echo "::error::Proyecto Pages no encontrado para esta cuenta (API 8000007)."
-        echo "::error::Comprueba: (1) CLOUDFLARE_ACCOUNT_ID = Account ID del panel (Overview → copiar Account ID), no el Zone ID del dominio. (2) El token con permiso «Account → Cloudflare Pages → Read». (3) CLOUDFLARE_PAGES_PROJECT = nombre del proyecto (p. ej. cdem-es), sin espacios extra."
-        list_json=$(curl -sS -G "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects" \
-          -H "Authorization: Bearer ${CF_API_TOKEN}" \
-          --data-urlencode "per_page=20")
+        list_json=$(curl -sS "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects" \
+          -H "Authorization: Bearer ${CF_API_TOKEN}")
         if echo "$list_json" | jq -e '.success == true' >/dev/null 2>&1; then
           names=$(echo "$list_json" | jq -r '(.result // []) | map(.name) | join(", ")')
           echo "::notice::Proyectos Pages visibles para este token en esta cuenta: ${names:-ninguno}"
         else
-          echo "::notice::No se pudo listar proyectos Pages; revisa token o CLOUDFLARE_ACCOUNT_ID."
+          echo "::notice::No se pudo listar proyectos Pages: $(echo "$list_json" | jq -r '.errors[0].message // empty')"
         fi
       fi
       exit 1

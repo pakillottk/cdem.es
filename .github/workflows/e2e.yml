@@ -62,7 +62,7 @@ jobs:
             | jq '{success: .success, accounts: [(.result // [])[] | {id: .id, name: .name}], errors: .errors}'
 
           echo "=== Proyectos Pages en la cuenta del secret CLOUDFLARE_ACCOUNT_ID ==="
-          curl -sS -X GET "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects?per_page=20" \
+          curl -sS "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects" \
             -H "Authorization: Bearer ${CF_API_TOKEN}" \
             | jq '{success: .success, projects: [(.result // [])[] | {name: .name}], errors: .errors}'
 
