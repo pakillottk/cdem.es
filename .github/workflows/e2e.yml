@@ -4,8 +4,8 @@
 #
 # En push a develop, si existen CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID y E2E_DEV_URL,
 # se espera a que Cloudflare Pages termine el despliegue de este commit antes de los e2e.
-# Variable del repositorio CLOUDFLARE_PAGES_PROJECT = nombre exacto del proyecto
-# en Cloudflare (Workers & Pages → proyecto); debe coincidir con el deploy de wrangler.
+# Secret CLOUDFLARE_PAGES_PROJECT = nombre exacto del proyecto en Cloudflare
+# (Workers & Pages → proyecto); debe coincidir con el deploy de wrangler.
 name: E2E Tests
 
 on:
@@ -51,7 +51,7 @@ jobs:
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CF_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          CF_PROJECT: ${{ secrets.CLOUDFLARE_PAGES_PROJECT }}
           COMMIT_SHA: ${{ github.sha }}
           E2E_DEV_URL: ${{ secrets.E2E_DEV_URL }}
         run: |
@@ -60,7 +60,7 @@ jobs:
             exit 0
           fi
           if [ -z "${CF_PROJECT:-}" ]; then
-            echo "::warning::Define la variable del repositorio CLOUDFLARE_PAGES_PROJECT con el nombre exacto del proyecto en Cloudflare Pages (Workers & Pages → tu proyecto)."
+            echo "::warning::Define el secret CLOUDFLARE_PAGES_PROJECT con el nombre exacto del proyecto en Cloudflare Pages (Workers & Pages → tu proyecto)."
             exit 0
           fi
           bash .github/scripts/wait-cloudflare-pages-deployment.sh

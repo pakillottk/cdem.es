@@ -32,7 +32,7 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
       echo "::error::API Cloudflare: ${err_msg}"
       echo "$json" | jq .
       if [ "$err_code" = "8000007" ]; then
-        echo "::error::El nombre de proyecto «${CF_PROJECT}» no existe en esta cuenta. En Cloudflare: Workers & Pages → copia el nombre del proyecto (slug). En GitHub: Settings → Secrets and variables → Actions → Variables → CLOUDFLARE_PAGES_PROJECT."
+        echo "::error::El nombre de proyecto «${CF_PROJECT}» no existe en esta cuenta. En Cloudflare: Workers & Pages → copia el slug del proyecto. En GitHub: Actions → Secrets → CLOUDFLARE_PAGES_PROJECT."
       fi
       exit 1
     fi
