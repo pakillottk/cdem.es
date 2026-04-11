@@ -2,14 +2,17 @@ import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
 import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TURNSTILE_TEST_MODE } from 'astro:env/server';
 
+// Clave secreta de test de Cloudflare: acepta cualquier token y siempre devuelve success.
+// Documentada públicamente en https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
+
 async function verifyTurnstile(token: string): Promise<boolean> {
-  // En modo test (previews, e2e) se salta la verificación real con la API de Cloudflare.
-  if (TURNSTILE_TEST_MODE) return true;
-  if (!TURNSTILE_SECRET_KEY) return true;
+  const secret = TURNSTILE_TEST_MODE ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
+  if (!secret) return true;
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ secret: TURNSTILE_SECRET_KEY, response: token }),
+    body: JSON.stringify({ secret, response: token }),
   });
   const data = await res.json() as { success: boolean };
   return data.success === true;
