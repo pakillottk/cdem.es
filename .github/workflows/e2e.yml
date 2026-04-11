@@ -70,9 +70,28 @@ jobs:
           bash .github/scripts/wait-cloudflare-pages-deployment.sh
 
       - name: Run Playwright
+        id: playwright
         run: npm run test:e2e
         env:
           E2E_BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || github.ref == 'refs/heads/develop' && secrets.E2E_DEV_URL || '' }}
+
+      - name: Resumen de fallos en Job Summary
+        if: failure() && steps.playwright.outcome == 'failure'
+        run: |
+          echo "## ❌ E2E Tests — fallos detectados" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f playwright-report/index.html ]; then
+            echo "El informe completo está disponible en el artefacto **playwright-report**." >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -d test-results ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Tests fallidos" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            find test-results -name 'test-failed-*.txt' -exec cat {} \; 2>/dev/null \
+              || find test-results -name '*.txt' -exec cat {} \; 2>/dev/null \
+              || echo "(sin detalle de texto disponible)"
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
 
       - uses: actions/upload-artifact@v7
         if: failure()

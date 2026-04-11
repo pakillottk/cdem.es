@@ -10,10 +10,17 @@ export default defineConfig({
   retries: isRemote ? 2 : 0,
   // En CI remoto: 1 worker por navegador (3 en paralelo); en CI local: 1 para no saturar el servidor de preview.
   workers: process.env.CI ? (isRemote ? 3 : 1) : undefined,
-  reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
-  ],
+  reporter: process.env.CI
+    ? [
+        // Anotaciones inline en el commit/PR de GitHub (errores visibles sin descargar nada).
+        ['github'],
+        // Resumen con tabla de resultados en la pestaña Summary del workflow.
+        ['html', { open: 'never', outputFolder: 'playwright-report' }],
+      ]
+    : [
+        ['list'],
+        ['html', { open: 'never', outputFolder: 'playwright-report' }],
+      ],
   use: {
     baseURL,
     trace: 'on-first-retry',
