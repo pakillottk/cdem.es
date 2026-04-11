@@ -7,13 +7,19 @@
 #       BRANCH=mi-alias npm run deploy:preview   (alias personalizado)
 set -euo pipefail
 
+# ── DEBUG: dump de variables de entorno para detectar cuál tiene la rama ──────
+echo "=== DEBUG ENV (branch detection) ==="
+echo "GITHUB_REF_NAME   = ${GITHUB_REF_NAME:-<unset>}"
+echo "GITHUB_REF        = ${GITHUB_REF:-<unset>}"
+echo "CF_PAGES_BRANCH   = ${CF_PAGES_BRANCH:-<unset>}"
+echo "git abbrev-ref    = $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '<error>')"
+echo "git log --decorate= $(git log -1 --pretty=format:'%D' 2>/dev/null || echo '<error>')"
+echo "--- todas las vars que contengan BRANCH, REF o COMMIT ---"
+env | grep -iE 'branch|ref|commit|sha|head|cf_' | sort || true
+echo "==================================="
+
 # ── Alias: rama actual (o override via env) ────────────────────────────────────
 if [ -z "${BRANCH:-}" ]; then
-  # Orden de precedencia para obtener el nombre de la rama:
-  # 1. GITHUB_REF_NAME  → GitHub Actions
-  # 2. CF_PAGES_BRANCH  → Cloudflare Pages build CI
-  # 3. git log %D       → refs del commit actual; funciona en detached HEAD (Cloudflare Workers CI)
-  # 4. git abbrev-ref   → ejecución local normal
   RAW_BRANCH="${GITHUB_REF_NAME:-${CF_PAGES_BRANCH:-}}"
   if [ -z "$RAW_BRANCH" ]; then
     RAW_BRANCH=$(git log -1 --pretty=format:'%D' \
