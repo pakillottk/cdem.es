@@ -15,23 +15,38 @@ INTERVAL_SEC="${WAIT_INTERVAL_SEC:-30}"
 commit_lc=$(echo "$COMMIT_SHA" | tr '[:upper:]' '[:lower:]')
 
 for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-  json=$(curl -sS -H "Authorization: Bearer ${CF_API_TOKEN}" \
-    "${API}?per_page=50&page=1")
+  # La API rechaza per_page alto (p. ej. 50); el máximo habitual es 20.
+  row=""
+  page=1
+  while true; do
+    json=$(curl -sS -G "${API}" \
+      -H "Authorization: Bearer ${CF_API_TOKEN}" \
+      --data-urlencode "page=${page}" \
+      --data-urlencode "per_page=20")
 
-  if ! echo "$json" | jq -e '.success == true' >/dev/null 2>&1; then
-    echo "::error::Respuesta inválida de la API de Cloudflare"
-    echo "$json" | jq .
-    exit 1
-  fi
+    if ! echo "$json" | jq -e '.success == true' >/dev/null 2>&1; then
+      echo "::error::Respuesta inválida de la API de Cloudflare"
+      echo "$json" | jq .
+      exit 1
+    fi
 
-  row=$(echo "$json" | jq -c --arg sha "$commit_lc" '
-    (.result // [])
-    | map(select(
-        (.deployment_trigger.metadata.commit_hash // "" | ascii_downcase) == $sha
-        and (.is_skipped != true)
-      ))
-    | .[0] // empty
-  ')
+    row=$(echo "$json" | jq -c --arg sha "$commit_lc" '
+      (.result // [])
+      | map(select(
+          (.deployment_trigger.metadata.commit_hash // "" | ascii_downcase) == $sha
+          and (.is_skipped != true)
+        ))
+      | .[0] // empty
+    ')
+
+    [[ -n "$row" && "$row" != "null" ]] && break
+
+    total_pages=$(echo "$json" | jq -r '.result_info.total_pages // 1')
+    if ! [[ "$total_pages" =~ ^[0-9]+$ ]] || [ "$page" -ge "$total_pages" ]; then
+      break
+    fi
+    page=$((page + 1))
+  done
 
   if [[ -z "$row" || "$row" == "null" ]]; then
     echo "Intento ${attempt}/${MAX_ATTEMPTS}: aún no hay despliegue para el commit ${commit_lc:0:7}… (esperando ${INTERVAL_SEC}s)"
