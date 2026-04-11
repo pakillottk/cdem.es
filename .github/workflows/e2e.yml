@@ -1,6 +1,10 @@
 # Automático: solo push a develop.
 # Manual: workflow_dispatch desde Actions; en ramas que no sean develop, deja base_url vacío
 # para build+preview en el runner, o indica la URL del despliegue a probar.
+#
+# En push a develop, si existen CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID y E2E_DEV_URL,
+# se espera a que Cloudflare Pages termine el despliegue de este commit antes de los e2e.
+# Opcional: variable CLOUDFLARE_PAGES_PROJECT (por defecto cdem-es).
 name: E2E Tests
 
 on:
@@ -18,9 +22,9 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -29,18 +33,41 @@ jobs:
 
       - run: npx playwright install --with-deps
 
+      - name: Aviso si no se puede esperar a Cloudflare
+        if: >-
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/develop' &&
+          secrets.E2E_DEV_URL != '' &&
+          (secrets.CLOUDFLARE_API_TOKEN == '' || secrets.CLOUDFLARE_ACCOUNT_ID == '')
+        run: |
+          echo "::warning::Configura los secrets CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID para esperar al despliegue de Pages antes de los e2e contra E2E_DEV_URL."
+
+      - name: Esperar despliegue Cloudflare Pages (mismo commit)
+        if: >-
+          github.event_name == 'push' &&
+          github.ref == 'refs/heads/develop' &&
+          secrets.CLOUDFLARE_API_TOKEN != '' &&
+          secrets.CLOUDFLARE_ACCOUNT_ID != '' &&
+          secrets.E2E_DEV_URL != ''
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT != '' && vars.CLOUDFLARE_PAGES_PROJECT || 'cdem-es' }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: bash .github/scripts/wait-cloudflare-pages-deployment.sh
+
       - name: Run Playwright
         run: npm run test:e2e
         env:
           E2E_BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || github.ref == 'refs/heads/develop' && secrets.E2E_DEV_URL || '' }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
           path: playwright-report/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-results
