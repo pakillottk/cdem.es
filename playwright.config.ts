@@ -8,7 +8,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: isRemote ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // En CI remoto: 1 worker por navegador (3 en paralelo); en CI local: 1 para no saturar el servidor de preview.
+  workers: process.env.CI ? (isRemote ? 3 : 1) : undefined,
   reporter: [
     ['list'],
     ['html', { open: 'never', outputFolder: 'playwright-report' }],
