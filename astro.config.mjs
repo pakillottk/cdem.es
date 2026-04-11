@@ -51,8 +51,13 @@ export default defineConfig({
         try {
           pathname = new URL(page).pathname;
         } catch {}
-        const privatePrefixes = ['/keystatic', '/api/keystatic', '/admin'];
-        return !privatePrefixes.some(
+        const excludeFromSitemap = [
+          '/keystatic',
+          '/api/keystatic',
+          '/admin',
+          '/posts', // índice vacío hasta tener contenido
+        ];
+        return !excludeFromSitemap.some(
           (p) => pathname === p || pathname.startsWith(`${p}/`)
         );
       },
