@@ -11,9 +11,22 @@ set -euo pipefail
 if [ -z "${BRANCH:-}" ]; then
   # Orden de precedencia para obtener el nombre de la rama:
   # 1. GITHUB_REF_NAME  → GitHub Actions
-  # 2. CF_PAGES_BRANCH  → Cloudflare Workers/Pages build CI
-  # 3. git              → ejecución local (puede devolver HEAD en detached)
-  RAW_BRANCH="${GITHUB_REF_NAME:-${CF_PAGES_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "preview")}}"
+  # 2. CF_PAGES_BRANCH  → Cloudflare Pages build CI
+  # 3. git log %D       → refs del commit actual; funciona en detached HEAD (Cloudflare Workers CI)
+  # 4. git abbrev-ref   → ejecución local normal
+  RAW_BRANCH="${GITHUB_REF_NAME:-${CF_PAGES_BRANCH:-}}"
+  if [ -z "$RAW_BRANCH" ]; then
+    RAW_BRANCH=$(git log -1 --pretty=format:'%D' \
+      | tr ',' '\n' \
+      | grep -E '^\s*origin/' \
+      | head -1 \
+      | sed 's|.*origin/||' \
+      | tr -d ' \t' \
+      || true)
+  fi
+  if [ -z "$RAW_BRANCH" ]; then
+    RAW_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "preview")
+  fi
   # Solo caracteres permitidos por Cloudflare para aliases: [a-z0-9-]
   BRANCH=$(echo "$RAW_BRANCH" \
     | tr '[:upper:]' '[:lower:]' \
