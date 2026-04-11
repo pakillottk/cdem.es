@@ -13,7 +13,7 @@ export default function NewsletterForm() {
   const [state, setState] = useState<FormState>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [turnstileToken, setTurnstileToken] = useState<string>('');;
+  const [turnstileToken, setTurnstileToken] = useState<string>('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -121,7 +121,7 @@ export default function NewsletterForm() {
           />
           <span className="site-footer__checkbox-text">
             Acepto la{' '}
-            <a href="/politica-de-privacidad">
+            <a href="/politica-de-privacidad" className="site-footer__privacy-link">
               política de privacidad
             </a>
           </span>

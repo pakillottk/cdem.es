@@ -19,8 +19,8 @@
   @apply flex flex-row flex-wrap justify-center gap-x-4 gap-y-1 sm:gap-x-6 lg:flex-col lg:justify-start lg:gap-x-0;
 }
 
-.site-footer__link {
-  @apply cursor-pointer transition-colors hover:text-primary;
+.site-footer__link {  
+  @apply inline-flex min-h-[48px] cursor-pointer items-center px-1 transition-colors hover:text-primary;
 }
 
 .site-footer__social {
@@ -57,11 +57,11 @@
 
 
 .site-footer__input {
-  @apply w-full border bg-white text-base outline-none transition-colors focus:border-[var(--color-primary)];
+  @apply min-h-[48px] w-full border bg-white px-3 text-base outline-none transition-colors focus:border-[var(--color-primary)];
 }
 
 .site-footer__input--small {
-  @apply w-full border bg-white text-sm outline-none transition-colors focus:border-[var(--color-primary)];
+  @apply min-h-[48px] w-full border bg-white px-3 text-sm outline-none transition-colors focus:border-[var(--color-primary)];
 }
 
 .site-footer__checkbox-row {
@@ -78,6 +78,10 @@
 
 .site-footer__checkbox-text {
   @apply text-sm uppercase tracking-[0.2em] text-white;
+}
+
+.site-footer__privacy-link {
+  @apply inline-flex min-h-[48px] items-center underline;
 }
 
 .site-footer__submit {

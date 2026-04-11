@@ -15,7 +15,14 @@ type Props = {
 
 function SlideCard({ slide }: { slide: BookingSlide }) {
   const img = (
-    <img src={slide.src} alt={slide.alt} loading="lazy" decoding="async" />
+    <img
+      src={slide.src}
+      alt={slide.alt}
+      width={314}
+      height={779}
+      loading="lazy"
+      decoding="async"
+    />
   );
 
   if (slide.kind === "pdf") {

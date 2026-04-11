@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
 ---
 <Layout
   title="CDEM - Creación y Diseño de Eventos Musicales"
@@ -10,13 +11,15 @@ import Layout from '../layouts/Layout.astro';
 		<!-- Hero -->
 		<section class="home-hero">
 			<img
-				src="/home-foto.webp"
-				srcset="/home-foto.webp 1920w"
-				sizes="100vw"
+				src={HERO_IMG_SRC}
+				srcset={HERO_IMG_SRCSET}
+				sizes={HERO_IMG_SIZES}
 				alt=""
 				class="home-hero__bg"
+				width="1920"
+				height="1080"
 				fetchpriority="high"
-				decoding="sync"
+				decoding="async"
 				aria-hidden="true"
 			/>
 			<!-- <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black"></div> -->
@@ -75,7 +78,7 @@ import Layout from '../layouts/Layout.astro';
 			<div class="home-services__grid">
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/organizacion-integral.webp" alt="Icono organización integral" loading="lazy" decoding="async" /></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/organizacion-integral.webp" alt="Icono organización integral" width="284" height="284" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Organización integral de<br />festivales, conciertos y ciclos musicales
@@ -83,7 +86,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/gestion-artistas.webp" alt="Icono gestión de artistas" loading="lazy" decoding="async" /></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/gestion-artistas.webp" alt="Icono gestión de artistas" width="284" height="284" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Gestión directa con artistas<br />y oficinas de booking
@@ -91,7 +94,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/coordinacion-tecnica.webp" alt="Icono coordinación técnica" loading="lazy" decoding="async" /></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/coordinacion-tecnica.webp" alt="Icono coordinación técnica" width="284" height="284" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Coordinación técnica,<br />logística y producción escénica
@@ -99,7 +102,7 @@ import Layout from '../layouts/Layout.astro';
 				</div>
 				<div class="home-service-card">
 					<div class="home-service-card__icon-wrap">
-						<span class="home-service-card__icon-anim"><img src="/iconos/curaduria-y-asesoramiento.webp" alt="Icono curaduría artística" loading="lazy" decoding="async" /></span>
+						<span class="home-service-card__icon-anim"><img src="/iconos/curaduria-y-asesoramiento.webp" alt="Icono curaduría artística" width="284" height="284" loading="lazy" decoding="async" /></span>
 					</div>
 					<h3 class="home-service-card__title">
 						Curaduría y asesoramiento<br />artístico

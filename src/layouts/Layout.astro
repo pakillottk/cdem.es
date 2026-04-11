@@ -2,6 +2,7 @@
 import CdemHeader from '../components/CdemHeader.astro';
 import CdemFooter from '../components/CdemFooter.astro';
 import '../styles/global.css';
+import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
 
 interface Props {
   title?: string;
@@ -18,6 +19,8 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const siteBase = Astro.site ?? Astro.url.origin;
+const ogImageAbsolute = new URL(ogImage, siteBase).href;
 ---
 
 <!doctype html>
@@ -32,12 +35,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
 
 		<!-- Preload fuentes críticas ANTES del CSS para romper cadena de dependencias -->
 		<link rel="preload" href="/fonts/itc-eras-ultra/ITC Eras Book Regular.woff2" as="font" type="font/woff2" crossorigin />
-		<link rel="preload" href="/fonts/itc-eras-ultra/ITC Eras Ultra Regular.woff2" as="font" type="font/woff2" crossorigin />
 		<link rel="preload" href="/fonts/Bebas Neue/BebasNeue-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
 		<!-- Preload imagen hero solo en homepage -->
 		{isHome && (
-			<link rel="preload" as="image" href="/home-foto.webp" fetchpriority="high" />
+			<link
+				rel="preload"
+				as="image"
+				href={HERO_IMG_SRC}
+				imagesrcset={HERO_IMG_SRCSET}
+				imagesizes={HERO_IMG_SIZES}
+				fetchpriority="high"
+			/>
 		)}
 
 		<!-- SEO -->
@@ -50,7 +59,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
 		<meta property="og:url" content={canonicalURL} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
-		<meta property="og:image" content={ogImage} />
+		<meta property="og:image" content={ogImageAbsolute} />
 		<meta property="og:locale" content="es_ES" />
 		<meta property="og:site_name" content="CDEM" />
 
@@ -58,7 +67,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image" content={ogImageAbsolute} />
 
 		<!-- Cloudflare Turnstile widget API -->
 		<script

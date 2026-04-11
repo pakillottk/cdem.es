@@ -52,7 +52,14 @@ export default function GalleryModal({
         tabIndex={0}
         onKeyDown={(e) => e.key === "Enter" && setOpen(true)}
       >
-        <img src={coverSrc} alt={coverAlt} loading="lazy" decoding="async" />
+        <img
+          src={coverSrc}
+          alt={coverAlt}
+          width={800}
+          height={700}
+          loading="lazy"
+          decoding="async"
+        />
       </div>
 
       {open &&

@@ -55,11 +55,11 @@ const TASKS = {
     recursive: true,
     single: { width: 800, quality: 82 },
   },
-  // Iconos del home (grid 4 cols max-w-5xl → ~256px real, 2x = 512, usamos 400 por ser iconos)
+  // Iconos del home (mostrados ~284px; 300px cubre retina suave)
   iconos: {
     srcDir: join(PUBLIC, "iconos"),
     recursive: false,
-    single: { width: 400, quality: 80 },
+    single: { width: 300, quality: 80 },
   },
   // Equipo nosotros (similar a grid de 3 cols → 1200px)
   nosotros: {
@@ -73,13 +73,19 @@ const TASKS = {
     recursive: false,
     single: { width: 128, quality: 85 },
   },
-  // Hero home (background-cover fullscreen → 1920px)
+  // Hero home: variantes responsive + home-foto.webp (1920, OG/legacy)
   hero: {
     srcDir: PUBLIC,
     recursive: false,
     filter: (name) => name === "home foto.png",
-    outputName: () => "home-foto.webp",
-    single: { width: 1920, quality: 85 },
+    quality: 75,
+    breakpoints: [
+      { file: "home-foto-640.webp", width: 640 },
+      { file: "home-foto-960.webp", width: 960 },
+      { file: "home-foto-1280.webp", width: 1280 },
+      { file: "home-foto-1920.webp", width: 1920 },
+    ],
+    legacyFile: "home-foto.webp",
   },
   // Favicon (se usa a 32px aprox, optimizar PNG → se maneja separado)
   favicon: {
@@ -197,6 +203,28 @@ async function runTask(name, task) {
     return;
   }
 
+  if (name === "hero") {
+    const files = getFilesInDirNonRecursive(task.srcDir).filter((f) =>
+      task.filter(basename(f))
+    );
+    if (files.length === 0) {
+      console.log("  (omitido: falta fuente home foto.png en public/)");
+      return;
+    }
+    const srcPath = files[0];
+    const dir = dirname(srcPath);
+    const q = task.quality;
+    for (const bp of task.breakpoints) {
+      const destPath = join(dir, bp.file);
+      await processFile(srcPath, destPath, { width: bp.width, quality: q });
+    }
+    await processFile(srcPath, join(dir, task.legacyFile), {
+      width: 1920,
+      quality: q,
+    });
+    return;
+  }
+
   if (name === "producciones_portadas") {
     // Solo archivos en la raíz de producciones (las portadas)
     const files = getFilesInDirNonRecursive(task.srcDir).filter(
@@ -211,7 +239,7 @@ async function runTask(name, task) {
     return;
   }
 
-  // Tareas con filter personalizado (hero, favicon)
+  // Tareas con filter personalizado (favicon)
   if (task.filter) {
     const files = getFilesInDirNonRecursive(task.srcDir).filter((f) =>
       task.filter(basename(f))

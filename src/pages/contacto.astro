@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ContactForm from '../components/ContactForm';
+import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
 ---
 <Layout
   title="Contacto - CDEM"
@@ -9,7 +10,16 @@ import ContactForm from '../components/ContactForm';
 	<div class="contacto-page">
 		<section class="contacto-hero">
 			<div class="contacto-hero__banner">
-				<img src="/home foto.png" alt="CDEM Producciones" />
+				<img
+					src={HERO_IMG_SRC}
+					srcset={HERO_IMG_SRCSET}
+					sizes={HERO_IMG_SIZES}
+					alt="CDEM Producciones"
+					width="1920"
+					height="1080"
+					fetchpriority="high"
+					decoding="async"
+				/>
 			</div>
 		</section>
 		<section class="contacto-quote">
@@ -40,13 +50,13 @@ import ContactForm from '../components/ContactForm';
 
 					<div class="contacto-social">
 						<a href="https://www.instagram.com/cdem_agendaespectaculos/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
-							<img src="/rrss/rrss-ig.png" alt="Instagram" class="contacto-social__icon" />
+							<img src="/rrss/rrss-ig.webp" alt="Instagram" class="contacto-social__icon" width="64" height="64" loading="lazy" decoding="async" />
 						</a>
 						<a href="https://www.linkedin.com/company/cdemproducciones/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
-							<img src="/rrss/rrss-linke.png" alt="LinkedIn" class="contacto-social__icon" />
+							<img src="/rrss/rrss-linke.webp" alt="LinkedIn" class="contacto-social__icon" width="64" height="64" loading="lazy" decoding="async" />
 						</a>
 						<a href="https://www.facebook.com/cdemconciertos" aria-label="Facebook" target="_blank" rel="noopener noreferrer" class="contacto-social__link">
-							<img src="/rrss/rrss-facebook.png" alt="Facebook" class="contacto-social__icon" />
+							<img src="/rrss/rrss-facebook.webp" alt="Facebook" class="contacto-social__icon" width="64" height="64" loading="lazy" decoding="async" />
 						</a>
 					</div>
 				</div>

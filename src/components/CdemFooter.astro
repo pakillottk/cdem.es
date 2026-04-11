@@ -8,7 +8,7 @@ import cdemLogo from "../assets/cdemLogo.webp";
   <div class="site-footer__inner">
     <div class="site-footer__brand">
       <a href="/"
-        ><img src={cdemLogo.src} alt="CDEM" class="site-footer__logo" /></a
+        ><img src={cdemLogo.src} alt="CDEM" class="site-footer__logo" width={cdemLogo.width} height={cdemLogo.height} /></a
       >
     </div>
     <div class="site-footer__links">
@@ -19,13 +19,13 @@ import cdemLogo from "../assets/cdemLogo.webp";
     </div>
     <div class="site-footer__social">
       <a href="https://www.instagram.com/cdem_agendaespectaculos/" aria-label="Instagram" target="_blank" rel="noopener noreferrer" class="site-footer__social-link"
-        ><img class="site-footer__social-icon" src="/rrss/rrss-ig.webp" alt="Instagram" loading="lazy" decoding="async" /></a
+        ><img class="site-footer__social-icon" src="/rrss/rrss-ig.webp" alt="Instagram" width="80" height="80" loading="lazy" decoding="async" /></a
       >
       <a href="https://www.linkedin.com/company/cdemproducciones/" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer" class="site-footer__social-link"
-        ><img class="site-footer__social-icon" src="/rrss/rrss-linke.webp" alt="LinkedIn" loading="lazy" decoding="async" /></a
+        ><img class="site-footer__social-icon" src="/rrss/rrss-linke.webp" alt="LinkedIn" width="80" height="80" loading="lazy" decoding="async" /></a
       >
       <a href="https://www.facebook.com/cdemconciertos" aria-label="Facebook" target="_blank" rel="noopener noreferrer" class="site-footer__social-link"
-        ><img class="site-footer__social-icon" src="/rrss/rrss-facebook.webp" alt="Facebook" loading="lazy" decoding="async" /></a
+        ><img class="site-footer__social-icon" src="/rrss/rrss-facebook.webp" alt="Facebook" width="80" height="80" loading="lazy" decoding="async" /></a
       >
     </div>
 
@@ -34,7 +34,7 @@ import cdemLogo from "../assets/cdemLogo.webp";
         Suscríbete a nuestra newsletter
       </h2>
       <div class="site-footer__form">
-        <NewsletterForm client:idle />
+        <NewsletterForm client:visible />
       </div>
     </div>
   </div>

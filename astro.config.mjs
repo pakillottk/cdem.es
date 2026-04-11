@@ -8,9 +8,11 @@ import cloudflare from '@astrojs/cloudflare';
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 import keystatic from '@keystatic/astro';
+import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
+  site: 'https://cdem.es',
   compressHTML: true,
   vite: {
     plugins: [tailwindcss()],
@@ -37,7 +39,23 @@ export default defineConfig({
   build: {
     client: './',
     server: './_worker.js',
-    inlineStylesheets: 'auto',
+    inlineStylesheets: 'always',
   },
-  integrations: [react(), markdoc(), keystatic()]
+  integrations: [
+    react(),
+    markdoc(),
+    keystatic(),
+    sitemap({
+      filter: (page) => {
+        let pathname = page;
+        try {
+          pathname = new URL(page).pathname;
+        } catch {}
+        const privatePrefixes = ['/keystatic', '/api/keystatic', '/admin'];
+        return !privatePrefixes.some(
+          (p) => pathname === p || pathname.startsWith(`${p}/`)
+        );
+      },
+    }),
+  ],
 });

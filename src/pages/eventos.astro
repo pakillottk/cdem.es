@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
 ---
 <Layout
   title="Eventos - CDEM"
@@ -10,7 +11,16 @@ import Layout from '../layouts/Layout.astro';
 		<!-- Hero eventos -->
 		<section class="eventos-hero">
 			<div class="eventos-hero__banner">
-				<img src="/home-foto.webp" alt="CDEM Producciones" loading="lazy" decoding="async" />
+				<img
+					src={HERO_IMG_SRC}
+					srcset={HERO_IMG_SRCSET}
+					sizes={HERO_IMG_SIZES}
+					alt="CDEM Producciones"
+					width="1920"
+					height="1080"
+					fetchpriority="high"
+					decoding="async"
+				/>
 				<div class="eventos-hero__overlay">
 					<p class="eventos-hero__quote">
 						La música como experiencia, el directo como lenguaje
@@ -27,7 +37,7 @@ import Layout from '../layouts/Layout.astro';
 				<article class="eventos-festival-card">
 					<a href="https://vivelinares.com/" target="_blank" class="eventos-festival-card__link">
 						<div class="eventos-festival-card__image">
-							<img src="/eventos/festivales/vive-linares.webp" alt="Vive Linares Fest" loading="lazy" decoding="async" />
+							<img src="/eventos/festivales/vive-linares.webp" alt="Vive Linares Fest" width="800" height="533" loading="lazy" decoding="async" />
 						</div>
 						<div class="eventos-festival-card__body">
 							<h2 class="eventos-festival-card__title">Vive Linares Fest</h2>
@@ -39,7 +49,7 @@ import Layout from '../layouts/Layout.astro';
 				<article class="eventos-festival-card">
 					<a href="https://www.instagram.com/festivaliberojoven/" class="eventos-festival-card__link">
 						<div class="eventos-festival-card__image">
-							<img src="/eventos/festivales/ibero-joven.webp" alt="Ibero Joven" loading="lazy" decoding="async" />
+							<img src="/eventos/festivales/ibero-joven.webp" alt="Ibero Joven" width="800" height="533" loading="lazy" decoding="async" />
 						</div>
 						<div class="eventos-festival-card__body">
 							<h2 class="eventos-festival-card__title">Ibero Joven</h2>
@@ -51,7 +61,7 @@ import Layout from '../layouts/Layout.astro';
 				<article class="eventos-festival-card">
 					<a href="https://www.instagram.com/saraolateoficial/" class="eventos-festival-card__link">
 						<div class="eventos-festival-card__image">
-							<img src="/eventos/festivales/sarao.webp" alt="Sarao Late" loading="lazy" decoding="async" />
+							<img src="/eventos/festivales/sarao.webp" alt="Sarao Late" width="800" height="533" loading="lazy" decoding="async" />
 						</div>
 						<div class="eventos-festival-card__body">
 							<h2 class="eventos-festival-card__title">Sarao Late</h2>
@@ -68,7 +78,7 @@ import Layout from '../layouts/Layout.astro';
 				<article class="eventos-festival-card">
 					<a href="https://www.enterticket.es/eventos/la-plazuela-ubeda-531737" class="eventos-festival-card__link">
 						<div class="eventos-festival-card__image">
-							<img src="/eventos/conciertos/la plazuela.webp" alt="La Plazuela" loading="lazy" decoding="async" />
+							<img src="/eventos/conciertos/la plazuela.webp" alt="La Plazuela" width="800" height="533" loading="lazy" decoding="async" />
 						</div>
 						<div class="eventos-festival-card__body">
 							<h2 class="eventos-festival-card__title">La plazuela</h2>
@@ -80,7 +90,7 @@ import Layout from '../layouts/Layout.astro';
 				<article class="eventos-festival-card">
 					<a href="https://www.enterticket.es/eventos/diana-navarro-417399" class="eventos-festival-card__link">
 						<div class="eventos-festival-card__image">
-							<img src="/eventos/conciertos/diana navarro.webp" alt="Diana Navarro" loading="lazy" decoding="async" />
+							<img src="/eventos/conciertos/diana navarro.webp" alt="Diana Navarro" width="800" height="533" loading="lazy" decoding="async" />
 						</div>
 						<div class="eventos-festival-card__body">
 							<h2 class="eventos-festival-card__title">Diana Navarro</h2>

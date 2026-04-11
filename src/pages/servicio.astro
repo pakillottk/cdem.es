@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
 ---
 <Layout
   title="Servicios - CDEM"
@@ -13,10 +14,14 @@ import Layout from '../layouts/Layout.astro';
 		>
 			<div class="max-w-5xl text-center space-y-4 w-full">
 				<img
-					src="/home-foto.webp"
+					src={HERO_IMG_SRC}
+					srcset={HERO_IMG_SRCSET}
+					sizes={HERO_IMG_SIZES}
 					alt="CDEM Producciones"
 					class="w-full h-[100px] object-cover object-top mx-auto"
-					loading="lazy"
+					width="1920"
+					height="1080"
+					fetchpriority="high"
 					decoding="async"
 				/>
 				<p class="text-base font-secondary uppercase sm:text-lg md:text-xl leading-relaxed font-medium">
@@ -39,6 +44,10 @@ import Layout from '../layouts/Layout.astro';
 								class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 object-cover"
 								src="/iconos/SERVICIOSorganizacionintegral.webp"
 								alt="Organización integral de festivales, conciertos y ciclos musicales"
+								width="112"
+								height="112"
+								loading="lazy"
+								decoding="async"
 							/>
 							<h2 class="text-base font-secondary sm:text-lg font-extrabold tracking-[0.2em] uppercase flex-1 text-left">
 								Organización integral de festivales, conciertos y ciclos musicales
@@ -58,6 +67,10 @@ import Layout from '../layouts/Layout.astro';
 								class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 object-cover"
 								src="/iconos/coordinacion-tecnica.webp"
 								alt="Coordinación técnica, logística y producción escénica"
+								width="112"
+								height="112"
+								loading="lazy"
+								decoding="async"
 							/>
 						</div>
 						<p class="mt-3 font-primary text-sm sm:text-base leading-relaxed font-medium w-full">
@@ -75,6 +88,10 @@ import Layout from '../layouts/Layout.astro';
 								class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 object-cover"
 								src="/iconos/SERVICIOSgestionartistas.webp"
 								alt="Gestión directa con artistas y oficinas de booking"
+								width="112"
+								height="112"
+								loading="lazy"
+								decoding="async"
 							/>
 							<h2 class="text-base font-secondary sm:text-lg font-extrabold tracking-[0.2em] uppercase flex-1 text-left">
 								Gestión directa con artistas y oficinas de booking
@@ -94,6 +111,10 @@ import Layout from '../layouts/Layout.astro';
 								class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 object-cover"
 								src="/iconos/curaduria-y-asesoramiento.webp"
 								alt="Curaduría y asesoramiento artístico"
+								width="112"
+								height="112"
+								loading="lazy"
+								decoding="async"
 							/>
 						</div>
 						<p class="mt-3 font-primary text-sm sm:text-base leading-relaxed font-medium w-full">
@@ -111,6 +132,10 @@ import Layout from '../layouts/Layout.astro';
 								class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 object-cover"
 								src="/iconos/SERVICIOS produccion blanco.webp"
 								alt="Producción ejecutiva y coordinación general"
+								width="112"
+								height="112"
+								loading="lazy"
+								decoding="async"
 							/>
 							<h2 class="text-base font-secondary sm:text-lg font-extrabold tracking-[0.2em] uppercase flex-1 text-left">
 								Producción ejecutiva y coordinación general
@@ -129,6 +154,10 @@ import Layout from '../layouts/Layout.astro';
 								class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 object-cover"
 								src="/iconos/SERVICIOSdiseno.webp"
 								alt="Diseño conceptual y dirección creativa"
+								width="112"
+								height="112"
+								loading="lazy"
+								decoding="async"
 							/>
 						</div>
 						<p class="mt-3 font-primary text-sm sm:text-base leading-relaxed font-medium w-full">
