@@ -9,9 +9,11 @@ set -euo pipefail
 
 # ── Alias: rama actual (o override via env) ────────────────────────────────────
 if [ -z "${BRANCH:-}" ]; then
-  # En CI (GitHub Actions) GITHUB_REF_NAME tiene el nombre real de la rama aunque
-  # el checkout esté en detached HEAD. Localmente se usa git como fallback.
-  RAW_BRANCH="${GITHUB_REF_NAME:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "preview")}"
+  # Orden de precedencia para obtener el nombre de la rama:
+  # 1. GITHUB_REF_NAME  → GitHub Actions
+  # 2. CF_PAGES_BRANCH  → Cloudflare Workers/Pages build CI
+  # 3. git              → ejecución local (puede devolver HEAD en detached)
+  RAW_BRANCH="${GITHUB_REF_NAME:-${CF_PAGES_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "preview")}}"
   # Solo caracteres permitidos por Cloudflare para aliases: [a-z0-9-]
   BRANCH=$(echo "$RAW_BRANCH" \
     | tr '[:upper:]' '[:lower:]' \
