@@ -1,8 +1,10 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY } from 'astro:env/server';
+import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TURNSTILE_TEST_MODE } from 'astro:env/server';
 
 async function verifyTurnstile(token: string): Promise<boolean> {
+  // En modo test (previews, e2e) se salta la verificación real con la API de Cloudflare.
+  if (TURNSTILE_TEST_MODE) return true;
   if (!TURNSTILE_SECRET_KEY) return true;
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
