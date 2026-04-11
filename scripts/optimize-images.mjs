@@ -97,12 +97,16 @@ const TASKS = {
     srcDir: PUBLIC,
     recursive: false,
     filter: (name) => name === "home foto.png",
-    quality: 72,
+    // Anchos grandes: calidad algo más alta; 640/960: más agresivo (LCP móvil / Lighthouse).
+    quality: 68,
+    webpEffort: 6,
     breakpoints: [
-      { file: "home-foto-640.webp", width: 640, quality: 66 },
-      { file: "home-foto-960.webp", width: 960, quality: 68 },
-      { file: "home-foto-1280.webp", width: 1280, quality: 70 },
-      { file: "home-foto-1920.webp", width: 1920, quality: 72 },
+      { file: "home-foto-640.webp", width: 640, quality: 52 },
+      // Entre 640 y 960: muchos móviles ~360–430 CSS px ×2 eligen antes 960w; 800w reduce píxeles y peso (LCP).
+      { file: "home-foto-800.webp", width: 800, quality: 46 },
+      { file: "home-foto-960.webp", width: 960, quality: 46 },
+      { file: "home-foto-1280.webp", width: 1280, quality: 58 },
+      { file: "home-foto-1920.webp", width: 1920, quality: 64 },
     ],
     legacyFile: "home-foto.webp",
   },
@@ -273,16 +277,19 @@ async function runTask(name, task) {
     const srcPath = files[0];
     const dir = dirname(srcPath);
     const q = task.quality;
+    const effort = task.webpEffort ?? 5;
     for (const bp of task.breakpoints) {
       const destPath = join(dir, bp.file);
       await processFile(srcPath, destPath, {
         width: bp.width,
         quality: bp.quality ?? q,
+        effort: bp.effort ?? effort,
       });
     }
     await processFile(srcPath, join(dir, task.legacyFile), {
       width: 1920,
       quality: q,
+      effort,
     });
     return;
   }
