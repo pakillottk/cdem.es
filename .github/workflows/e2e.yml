@@ -33,28 +33,32 @@ jobs:
 
       - run: npx playwright install --with-deps
 
+      # secrets no pueden usarse en if:; la lógica va en el shell.
       - name: Aviso si no se puede esperar a Cloudflare
-        if: >-
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/develop' &&
-          secrets.E2E_DEV_URL != '' &&
-          (secrets.CLOUDFLARE_API_TOKEN == '' || secrets.CLOUDFLARE_ACCOUNT_ID == '')
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        env:
+          E2E_DEV_URL: ${{ secrets.E2E_DEV_URL }}
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          echo "::warning::Configura los secrets CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID para esperar al despliegue de Pages antes de los e2e contra E2E_DEV_URL."
+          if [ -n "${E2E_DEV_URL:-}" ] && { [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ACCOUNT_ID:-}" ]; }; then
+            echo "::warning::Configura los secrets CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID para esperar al despliegue de Pages antes de los e2e contra E2E_DEV_URL."
+          fi
 
       - name: Esperar despliegue Cloudflare Pages (mismo commit)
-        if: >-
-          github.event_name == 'push' &&
-          github.ref == 'refs/heads/develop' &&
-          secrets.CLOUDFLARE_API_TOKEN != '' &&
-          secrets.CLOUDFLARE_ACCOUNT_ID != '' &&
-          secrets.E2E_DEV_URL != ''
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CF_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT != '' && vars.CLOUDFLARE_PAGES_PROJECT || 'cdem-es' }}
+          CF_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT || 'cdem-es' }}
           COMMIT_SHA: ${{ github.sha }}
-        run: bash .github/scripts/wait-cloudflare-pages-deployment.sh
+          E2E_DEV_URL: ${{ secrets.E2E_DEV_URL }}
+        run: |
+          if [ -z "${E2E_DEV_URL:-}" ] || [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ACCOUNT_ID:-}" ]; then
+            echo "Omitiendo espera a Cloudflare (faltan E2E_DEV_URL o credenciales de Cloudflare)."
+            exit 0
+          fi
+          bash .github/scripts/wait-cloudflare-pages-deployment.sh
 
       - name: Run Playwright
         run: npm run test:e2e
