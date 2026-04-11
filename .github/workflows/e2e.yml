@@ -74,6 +74,7 @@ jobs:
         run: npm run test:e2e
         env:
           E2E_BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || github.ref == 'refs/heads/develop' && secrets.E2E_DEV_URL || '' }}
+          E2E_PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
 
       - name: Resumen de fallos en Job Summary
         if: failure() && steps.playwright.outcome == 'failure'

@@ -30,9 +30,14 @@ echo "▶ Build con claves Turnstile de test (TURNSTILE_SITE_KEY baked in)…"
 TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run build
 
 echo "▶ Subiendo versión preview a Cloudflare Workers…"
+if [ -z "${PREVIEW_SECRET:-}" ]; then
+  echo "⚠ PREVIEW_SECRET no definida — los endpoints de actions no estarán protegidos."
+fi
+
 npx wrangler versions upload \
   --preview-alias "${BRANCH}" \
   --var TURNSTILE_TEST_MODE:true \
+  ${PREVIEW_SECRET:+--var PREVIEW_SECRET:"${PREVIEW_SECRET}"} \
   --message "preview: ${BRANCH}"
 
 echo "✓ Preview desplegado."

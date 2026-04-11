@@ -36,6 +36,9 @@ export default defineConfig({
       // Si es true, la verificación Turnstile usa las claves de test de Cloudflare (bypass real).
       // Útil en deploys de preview y en e2e contra entornos no productivos.
       TURNSTILE_TEST_MODE: envField.boolean({ context: 'server', access: 'public', optional: true, default: false }),
+      // Token requerido en test mode para proteger los endpoints de actions en previews.
+      // Se verifica via header x-preview-secret o cookie preview-token.
+      PREVIEW_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
   adapter: cloudflare(),

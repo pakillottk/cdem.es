@@ -25,6 +25,11 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // En remoto, añade el secret de preview para que el middleware lo deje pasar.
+    // Equivale a setear la cookie preview-token en DevTools para pruebas manuales.
+    ...(isRemote && process.env.E2E_PREVIEW_SECRET
+      ? { extraHTTPHeaders: { 'x-preview-secret': process.env.E2E_PREVIEW_SECRET } }
+      : {}),
   },
   projects: process.env.CI
     ? [
