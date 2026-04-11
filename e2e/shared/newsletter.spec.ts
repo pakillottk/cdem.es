@@ -1,11 +1,16 @@
 import { test, expect } from '@playwright/test';
 import { mockSuccessfulActions } from '../fixtures/actions-mock';
 import { mockTurnstile, waitForTurnstileTokenInForm } from '../utils/turnstile';
+import { isRemoteE2E } from '../utils/env';
 
 test.describe('Newsletter en el pie', () => {
-  test('formulario, Turnstile y envío simulado (éxito)', async ({ page }) => {
+  test('formulario, Turnstile y envío', async ({ page }) => {
     await mockTurnstile(page);
-    await mockSuccessfulActions(page);
+    // En local se mockea la Action para no registrar suscripciones reales.
+    // En remoto se deja pasar al Worker desplegado (suscripción real).
+    if (!isRemoteE2E) {
+      await mockSuccessfulActions(page);
+    }
     await page.goto('/');
 
     const footer = page.locator('.site-footer');
