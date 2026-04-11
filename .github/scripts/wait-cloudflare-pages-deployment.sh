@@ -14,6 +14,8 @@ INTERVAL_SEC="${WAIT_INTERVAL_SEC:-30}"
 
 commit_lc=$(echo "$COMMIT_SHA" | tr '[:upper:]' '[:lower:]')
 
+echo "Esperando despliegue en Cloudflare Pages — proyecto «${CF_PROJECT}», commit ${commit_lc:0:7}"
+
 for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
   # La API rechaza per_page alto (p. ej. 50); el máximo habitual es 20.
   row=""
@@ -25,8 +27,13 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
       --data-urlencode "per_page=20")
 
     if ! echo "$json" | jq -e '.success == true' >/dev/null 2>&1; then
-      echo "::error::Respuesta inválida de la API de Cloudflare"
+      err_code=$(echo "$json" | jq -r '.errors[0].code // empty')
+      err_msg=$(echo "$json" | jq -r '.errors[0].message // empty')
+      echo "::error::API Cloudflare: ${err_msg}"
       echo "$json" | jq .
+      if [ "$err_code" = "8000007" ]; then
+        echo "::error::El nombre de proyecto «${CF_PROJECT}» no existe en esta cuenta. En Cloudflare: Workers & Pages → copia el nombre del proyecto (slug). En GitHub: Settings → Secrets and variables → Actions → Variables → CLOUDFLARE_PAGES_PROJECT."
+      fi
       exit 1
     fi
 
