@@ -97,16 +97,18 @@ const TASKS = {
     srcDir: PUBLIC,
     recursive: false,
     filter: (name) => name === "home foto.png",
-    // Anchos grandes: calidad algo más alta; 640/960: más agresivo (LCP móvil / Lighthouse).
-    quality: 68,
+    // Anchos grandes: calidad algo más alta; 640/800/960 muy agresivo (LCP móvil; hero con opacity baja en CSS).
+    quality: 64,
     webpEffort: 6,
     breakpoints: [
-      { file: "home-foto-640.webp", width: 640, quality: 52 },
-      // Entre 640 y 960: muchos móviles ~360–430 CSS px ×2 eligen antes 960w; 800w reduce píxeles y peso (LCP).
-      { file: "home-foto-800.webp", width: 800, quality: 46 },
-      { file: "home-foto-960.webp", width: 960, quality: 46 },
-      { file: "home-foto-1280.webp", width: 1280, quality: 58 },
-      { file: "home-foto-1920.webp", width: 1920, quality: 64 },
+      { file: "home-foto-640.webp", width: 640, quality: 42 },
+      // ~360 CSS px ×2 ≈ 720 físicos: evita bajar al 800w si no hace falta.
+      { file: "home-foto-720.webp", width: 720, quality: 30 },
+      // Entre 720 y 960: móviles ~390–430 ×2 suelen caer en 800w.
+      { file: "home-foto-800.webp", width: 800, quality: 28 },
+      { file: "home-foto-960.webp", width: 960, quality: 34 },
+      { file: "home-foto-1280.webp", width: 1280, quality: 52 },
+      { file: "home-foto-1920.webp", width: 1920, quality: 58 },
     ],
     legacyFile: "home-foto.webp",
   },
