@@ -7,32 +7,13 @@
 #       BRANCH=mi-alias npm run deploy:preview   (alias personalizado)
 set -euo pipefail
 
-# ── DEBUG: dump de variables de entorno para detectar cuál tiene la rama ──────
-echo "=== DEBUG ENV (branch detection) ==="
-echo "GITHUB_REF_NAME   = ${GITHUB_REF_NAME:-<unset>}"
-echo "GITHUB_REF        = ${GITHUB_REF:-<unset>}"
-echo "CF_PAGES_BRANCH   = ${CF_PAGES_BRANCH:-<unset>}"
-echo "git abbrev-ref    = $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '<error>')"
-echo "git log --decorate= $(git log -1 --pretty=format:'%D' 2>/dev/null || echo '<error>')"
-echo "--- todas las vars que contengan BRANCH, REF o COMMIT ---"
-env | grep -iE 'branch|ref|commit|sha|head|cf_' | sort || true
-echo "==================================="
-
 # ── Alias: rama actual (o override via env) ────────────────────────────────────
 if [ -z "${BRANCH:-}" ]; then
-  RAW_BRANCH="${GITHUB_REF_NAME:-${CF_PAGES_BRANCH:-}}"
-  if [ -z "$RAW_BRANCH" ]; then
-    RAW_BRANCH=$(git log -1 --pretty=format:'%D' \
-      | tr ',' '\n' \
-      | grep -E '^\s*origin/' \
-      | head -1 \
-      | sed 's|.*origin/||' \
-      | tr -d ' \t' \
-      || true)
-  fi
-  if [ -z "$RAW_BRANCH" ]; then
-    RAW_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "preview")
-  fi
+  # 1. GITHUB_REF_NAME   → GitHub Actions
+  # 2. WORKERS_CI_BRANCH → Cloudflare Workers CI (git integration)
+  # 3. CF_PAGES_BRANCH   → Cloudflare Pages CI
+  # 4. git               → ejecución local
+  RAW_BRANCH="${GITHUB_REF_NAME:-${WORKERS_CI_BRANCH:-${CF_PAGES_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "preview")}}}"
   # Solo caracteres permitidos por Cloudflare para aliases: [a-z0-9-]
   BRANCH=$(echo "$RAW_BRANCH" \
     | tr '[:upper:]' '[:lower:]' \
