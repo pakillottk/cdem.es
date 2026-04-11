@@ -46,6 +46,26 @@ jobs:
             echo "::warning::Configura los secrets CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID para esperar al despliegue de Pages antes de los e2e contra E2E_DEV_URL."
           fi
 
+      - name: Diagnóstico token Cloudflare (debug temporal)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          echo "=== Verificar token ==="
+          curl -sS -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" | jq '{valid: .result.status, messages: .messages, errors: .errors}'
+
+          echo "=== Cuentas accesibles con este token ==="
+          curl -sS -X GET "https://api.cloudflare.com/client/v4/accounts?per_page=20" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            | jq '{success: .success, accounts: [(.result // [])[] | {id: .id, name: .name}], errors: .errors}'
+
+          echo "=== Proyectos Pages en la cuenta del secret CLOUDFLARE_ACCOUNT_ID ==="
+          curl -sS -X GET "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects?per_page=20" \
+            -H "Authorization: Bearer ${CF_API_TOKEN}" \
+            | jq '{success: .success, projects: [(.result // [])[] | {name: .name}], errors: .errors}'
+
       - name: Esperar despliegue Cloudflare Pages (mismo commit)
         if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         env:
