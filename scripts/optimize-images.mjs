@@ -55,11 +55,29 @@ const TASKS = {
     recursive: true,
     single: { width: 800, quality: 82 },
   },
-  // Iconos del home (mostrados ~284px; 300px cubre retina suave)
+  // Iconos /public/iconos: solo .webp (fuentes ya convertidas). Tamaños según uso en UI.
   iconos: {
     srcDir: join(PUBLIC, "iconos"),
-    recursive: false,
-    single: { width: 300, quality: 80 },
+    rules: [
+      {
+        test: (n) =>
+          [
+            "organizacion-integral.webp",
+            "gestion-artistas.webp",
+            "coordinacion-tecnica.webp",
+            "curaduria-y-asesoramiento.webp",
+          ].includes(n),
+        // UI ~284px; fuentes ~400px no se reducían con 568+withoutEnlargement
+        width: 284,
+        quality: 82,
+      },
+      {
+        test: (n) => n.startsWith("SERVICIOS") && n.endsWith(".webp"),
+        width: 224,
+        quality: 82,
+      },
+    ],
+    defaultRule: { width: 400, quality: 82 },
   },
   // Equipo nosotros (similar a grid de 3 cols → 1200px)
   nosotros: {
@@ -74,16 +92,17 @@ const TASKS = {
     single: { width: 128, quality: 85 },
   },
   // Hero home: variantes responsive + home-foto.webp (1920, OG/legacy)
+  // Calidad más baja en anchos pequeños (LCP móvil) sin tocar tanto el desktop grande.
   hero: {
     srcDir: PUBLIC,
     recursive: false,
     filter: (name) => name === "home foto.png",
-    quality: 75,
+    quality: 72,
     breakpoints: [
-      { file: "home-foto-640.webp", width: 640 },
-      { file: "home-foto-960.webp", width: 960 },
-      { file: "home-foto-1280.webp", width: 1280 },
-      { file: "home-foto-1920.webp", width: 1920 },
+      { file: "home-foto-640.webp", width: 640, quality: 66 },
+      { file: "home-foto-960.webp", width: 960, quality: 68 },
+      { file: "home-foto-1280.webp", width: 1280, quality: 70 },
+      { file: "home-foto-1920.webp", width: 1920, quality: 72 },
     ],
     legacyFile: "home-foto.webp",
   },
@@ -133,7 +152,7 @@ function getFilesInDirNonRecursive(dir) {
     .map((e) => join(dir, e.name));
 }
 
-async function processFile(srcPath, destPath, { width, quality, format = "webp" }) {
+async function processFile(srcPath, destPath, { width, quality, format = "webp", effort = 5 }) {
   const originalSize = statSync(srcPath).size;
 
   let pipeline = sharp(srcPath).resize({
@@ -143,7 +162,7 @@ async function processFile(srcPath, destPath, { width, quality, format = "webp" 
   });
 
   if (format === "webp") {
-    pipeline = pipeline.webp({ quality });
+    pipeline = pipeline.webp({ quality, effort });
   } else if (format === "png") {
     pipeline = pipeline.png({ quality, compressionLevel: 9 });
   }
@@ -203,6 +222,46 @@ async function runTask(name, task) {
     return;
   }
 
+  if (name === "iconos") {
+    if (!existsSync(task.srcDir)) {
+      console.log("  (omitido: no existe public/iconos)");
+      return;
+    }
+    const names = readdirSync(task.srcDir).filter(
+      (n) => n.endsWith(".webp") && statSync(join(task.srcDir, n)).isFile()
+    );
+    for (const n of names) {
+      const p = join(task.srcDir, n);
+      let rule = task.defaultRule;
+      for (const r of task.rules) {
+        if (r.test(n)) {
+          rule = r;
+          break;
+        }
+      }
+      const before = statSync(p).size;
+      const buf = await sharp(p)
+        .resize({
+          width: rule.width,
+          withoutEnlargement: true,
+          fit: "inside",
+        })
+        .webp({ quality: rule.quality, effort: 5 })
+        .toBuffer();
+      writeFileSync(p, buf);
+      const after = buf.length;
+      totalSaved += before - after;
+      totalOriginal += before;
+      filesProcessed++;
+      const pct = before ? (((before - after) / before) * 100).toFixed(0) : "0";
+      console.log(
+        `  ✓ ${n} (webp in-place)\n` +
+          `    ${sizeKB(before)} → ${sizeKB(after)} (${pct}% reducción)`
+      );
+    }
+    return;
+  }
+
   if (name === "hero") {
     const files = getFilesInDirNonRecursive(task.srcDir).filter((f) =>
       task.filter(basename(f))
@@ -216,7 +275,10 @@ async function runTask(name, task) {
     const q = task.quality;
     for (const bp of task.breakpoints) {
       const destPath = join(dir, bp.file);
-      await processFile(srcPath, destPath, { width: bp.width, quality: q });
+      await processFile(srcPath, destPath, {
+        width: bp.width,
+        quality: bp.quality ?? q,
+      });
     }
     await processFile(srcPath, join(dir, task.legacyFile), {
       width: 1920,
