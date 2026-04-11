@@ -8,6 +8,20 @@ set -euo pipefail
 : "${CF_PROJECT:?}"
 : "${COMMIT_SHA:?}"
 
+# GitHub Secrets a veces guardan un salto de línea al final al pegar; la API entonces busca «cdem-es⏎» y devuelve 8000007.
+cf_trim() {
+  printf '%s' "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -d '\r\n'
+}
+
+CF_ACCOUNT_ID=$(cf_trim "$CF_ACCOUNT_ID")
+CF_PROJECT=$(cf_trim "$CF_PROJECT")
+COMMIT_SHA=$(cf_trim "$COMMIT_SHA")
+
+if [ -z "$CF_PROJECT" ]; then
+  echo "::error::CLOUDFLARE_PAGES_PROJECT quedó vacío tras quitar espacios/saltos de línea. Vuelve a guardar el secret sin espacio extra al final."
+  exit 1
+fi
+
 API="https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects/${CF_PROJECT}/deployments"
 MAX_ATTEMPTS="${WAIT_MAX_ATTEMPTS:-40}"
 INTERVAL_SEC="${WAIT_INTERVAL_SEC:-30}"
@@ -32,7 +46,17 @@ for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
       echo "::error::API Cloudflare: ${err_msg}"
       echo "$json" | jq .
       if [ "$err_code" = "8000007" ]; then
-        echo "::error::El nombre de proyecto «${CF_PROJECT}» no existe en esta cuenta. En Cloudflare: Workers & Pages → copia el slug del proyecto. En GitHub: Actions → Secrets → CLOUDFLARE_PAGES_PROJECT."
+        echo "::error::Proyecto Pages no encontrado para esta cuenta (API 8000007)."
+        echo "::error::Comprueba: (1) CLOUDFLARE_ACCOUNT_ID = Account ID del panel (Overview → copiar Account ID), no el Zone ID del dominio. (2) El token con permiso «Account → Cloudflare Pages → Read». (3) CLOUDFLARE_PAGES_PROJECT = nombre del proyecto (p. ej. cdem-es), sin espacios extra."
+        list_json=$(curl -sS -G "https://api.cloudflare.com/client/v4/accounts/${CF_ACCOUNT_ID}/pages/projects" \
+          -H "Authorization: Bearer ${CF_API_TOKEN}" \
+          --data-urlencode "per_page=20")
+        if echo "$list_json" | jq -e '.success == true' >/dev/null 2>&1; then
+          names=$(echo "$list_json" | jq -r '(.result // []) | map(.name) | join(", ")')
+          echo "::notice::Proyectos Pages visibles para este token en esta cuenta: ${names:-ninguno}"
+        else
+          echo "::notice::No se pudo listar proyectos Pages; revisa token o CLOUDFLARE_ACCOUNT_ID."
+        fi
       fi
       exit 1
     fi
