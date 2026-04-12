@@ -27,7 +27,9 @@ echo "▶ Build con claves Turnstile de test (TURNSTILE_SITE_KEY baked in)…"
 
 # La site key (client/public) se bake en el bundle en tiempo de build.
 # La secret key se sobreescribe en runtime vía --var (ver más abajo).
-TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run build
+TURNSTILE_SITE_KEY=1x00000000000000000000AA \
+  TURNSTILE_TEST_MODE=true \
+  npm run build
 
 echo "▶ Subiendo versión preview a Cloudflare Workers…"
 if [ -z "${PREVIEW_SECRET:-}" ]; then
@@ -36,7 +38,6 @@ fi
 
 npx wrangler versions upload \
   --preview-alias "${BRANCH}" \
-  --var TURNSTILE_TEST_MODE:true \
   ${PREVIEW_SECRET:+--var PREVIEW_SECRET:"${PREVIEW_SECRET}"} \
   --message "preview: ${BRANCH}"
 
