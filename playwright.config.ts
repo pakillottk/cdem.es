@@ -25,10 +25,28 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    // En remoto, añade el secret de preview para que el middleware lo deje pasar.
-    // Equivale a setear la cookie preview-token en DevTools para pruebas manuales.
+    // En remoto, inyecta la cookie preview-token en el contexto del browser.
+    // Las cookies se envían automáticamente en TODOS los fetch del JS de la página,
+    // incluidos los de Astro Actions — a diferencia de extraHTTPHeaders que solo
+    // afecta a las peticiones que hace Playwright directamente.
     ...(isRemote && process.env.E2E_PREVIEW_SECRET
-      ? { extraHTTPHeaders: { 'x-preview-secret': process.env.E2E_PREVIEW_SECRET } }
+      ? {
+          storageState: {
+            cookies: [
+              {
+                name: 'preview-token',
+                value: process.env.E2E_PREVIEW_SECRET,
+                domain: new URL(baseURL).hostname,
+                path: '/',
+                httpOnly: false,
+                secure: baseURL.startsWith('https'),
+                sameSite: 'Lax' as const,
+                expires: -1,
+              },
+            ],
+            origins: [],
+          },
+        }
       : {}),
   },
   projects: process.env.CI
