@@ -12,5 +12,11 @@
 	},
 	"observability": {
     "enabled": true
+  },
+  "vars": {
+    // Producción: Turnstile real. El script deploy:preview sobreescribe con "true".
+    "TURNSTILE_TEST_MODE": "false",
+    // Producción: sin guard de preview. deploy:preview sobreescribe con el secret real.
+    "PREVIEW_SECRET": ""
   }
 }
