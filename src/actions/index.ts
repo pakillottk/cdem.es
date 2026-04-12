@@ -27,12 +27,11 @@ function verifyPreviewAccess(request: Request): void {
 // Documentada públicamente en https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
 
-async function verifyTurnstile(token: string): Promise<boolean> {
-  const isTestMode = TURNSTILE_TEST_MODE === 'true';
-  const secret = isTestMode ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
+async function verifyTurnstile(token: string): Promise<void> {
+  const secret = TURNSTILE_TEST_MODE === 'true' ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
   if (!secret) throw new ActionError({
     code: 'INTERNAL_SERVER_ERROR',
-    message: `[diag:turnstile-no-secret] test_mode=${isTestMode}`,
+    message: 'El formulario de verificación no está configurado correctamente.',
   });
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
@@ -42,9 +41,8 @@ async function verifyTurnstile(token: string): Promise<boolean> {
   const data = await res.json() as { success: boolean };
   if (!data.success) throw new ActionError({
     code: 'FORBIDDEN',
-    message: `[diag:turnstile-fail] test_mode=${isTestMode}`,
+    message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
   });
-  return true;
 }
 
 function buildEmailHtml(nombre: string, email: string, telefono: string | undefined, mensaje: string): string {
@@ -144,7 +142,7 @@ export const server = {
       if (!RESEND_API_KEY || !CONTACT_EMAIL_TO || !FROM_EMAIL) {
         throw new ActionError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `[diag:email-config] resend=${!!RESEND_API_KEY} to=${!!CONTACT_EMAIL_TO} from=${!!FROM_EMAIL}`,
+          message: 'El formulario de contacto no está configurado. Contacta con el administrador.',
         });
       }
       const res = await fetch('https://api.resend.com/emails', {
@@ -190,7 +188,7 @@ export const server = {
       if (!RESEND_API_KEY) {
         throw new ActionError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `[diag:newsletter-config] resend=${!!RESEND_API_KEY}`,
+          message: 'La suscripción no está configurada. Contacta con el administrador.',
         });
       }
       const res = await fetch('https://api.resend.com/contacts', {
