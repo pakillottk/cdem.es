@@ -9,16 +9,21 @@ const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
 async function verifyTurnstile(token: string): Promise<boolean> {
   const isTestMode = TURNSTILE_TEST_MODE === 'true';
   const secret = isTestMode ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
-  console.log(`[turnstile] test_mode=${isTestMode} secret_set=${!!secret} token_len=${token.length}`);
-  if (!secret) throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'TURNSTILE_SECRET_KEY no está configurada.' });
+  if (!secret) throw new ActionError({
+    code: 'INTERNAL_SERVER_ERROR',
+    message: `[diag:turnstile-no-secret] test_mode=${isTestMode}`,
+  });
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ secret, response: token }),
   });
   const data = await res.json() as { success: boolean };
-  console.log(`[turnstile] success=${data.success}`);
-  return data.success === true;
+  if (!data.success) throw new ActionError({
+    code: 'FORBIDDEN',
+    message: `[diag:turnstile-fail] test_mode=${isTestMode}`,
+  });
+  return true;
 }
 
 function buildEmailHtml(nombre: string, email: string, telefono: string | undefined, mensaje: string): string {
@@ -112,18 +117,12 @@ export const server = {
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
     handler: async ({ nombre, email, telefono, mensaje, turnstileToken }) => {
-      const isHuman = await verifyTurnstile(turnstileToken);
-      if (!isHuman) {
-        throw new ActionError({
-          code: 'FORBIDDEN',
-          message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
-        });
-      }
+      await verifyTurnstile(turnstileToken);
 
       if (!RESEND_API_KEY || !CONTACT_EMAIL_TO || !FROM_EMAIL) {
         throw new ActionError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'El formulario de contacto no está configurado. Contacta con el administrador.',
+          message: `[diag:email-config] resend=${!!RESEND_API_KEY} to=${!!CONTACT_EMAIL_TO} from=${!!FROM_EMAIL}`,
         });
       }
       const res = await fetch('https://api.resend.com/emails', {
@@ -163,18 +162,12 @@ export const server = {
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
     handler: async ({ nombre, email, turnstileToken }) => {
-      const isHuman = await verifyTurnstile(turnstileToken);
-      if (!isHuman) {
-        throw new ActionError({
-          code: 'FORBIDDEN',
-          message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
-        });
-      }
+      await verifyTurnstile(turnstileToken);
 
       if (!RESEND_API_KEY) {
         throw new ActionError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: 'La suscripción no está configurada. Contacta con el administrador.',
+          message: `[diag:newsletter-config] resend=${!!RESEND_API_KEY}`,
         });
       }
       const res = await fetch('https://api.resend.com/contacts', {
