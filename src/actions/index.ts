@@ -1,6 +1,27 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TURNSTILE_TEST_MODE } from 'astro:env/server';
+import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TURNSTILE_TEST_MODE, PREVIEW_SECRET } from 'astro:env/server';
+
+/**
+ * En test mode, verifica que la petición lleve el secret de preview.
+ * El cliente puede enviarlo como:
+ *   - Cookie:  preview-token=<PREVIEW_SECRET>  (DevTools → Application → Cookies → Add)
+ *   - Header:  x-preview-secret: <PREVIEW_SECRET>
+ */
+function verifyPreviewAccess(request: Request): void {
+  const isTestMode = TURNSTILE_TEST_MODE === 'true';
+  const secret = PREVIEW_SECRET ?? '';
+  if (!isTestMode || !secret) return;
+
+  const cookie = request.headers.get('cookie') ?? '';
+  const cookieVal = cookie.split(';').map(c => c.trim())
+    .find(c => c.startsWith('preview-token='))?.split('=')[1] ?? '';
+  const headerVal = request.headers.get('x-preview-secret') ?? '';
+
+  if (cookieVal !== secret && headerVal !== secret) {
+    throw new ActionError({ code: 'FORBIDDEN', message: 'Acceso no autorizado.' });
+  }
+}
 
 // Clave secreta de test de Cloudflare: acepta cualquier token y siempre devuelve success.
 // Documentada públicamente en https://developers.cloudflare.com/turnstile/troubleshooting/testing/
@@ -116,7 +137,8 @@ export const server = {
       mensaje: z.string().min(1, 'El mensaje es obligatorio'),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ nombre, email, telefono, mensaje, turnstileToken }) => {
+    handler: async ({ nombre, email, telefono, mensaje, turnstileToken }, context) => {
+      verifyPreviewAccess(context.request);
       await verifyTurnstile(turnstileToken);
 
       if (!RESEND_API_KEY || !CONTACT_EMAIL_TO || !FROM_EMAIL) {
@@ -161,7 +183,8 @@ export const server = {
       privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ nombre, email, turnstileToken }) => {
+    handler: async ({ nombre, email, turnstileToken }, context) => {
+      verifyPreviewAccess(context.request);
       await verifyTurnstile(turnstileToken);
 
       if (!RESEND_API_KEY) {
