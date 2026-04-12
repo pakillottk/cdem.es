@@ -1,16 +1,20 @@
 # Automático: push a cualquier rama excepto master (master usa Turnstile real y no tiene preview Worker).
 # Manual: workflow_dispatch; si base_url está vacío, la URL se construye desde el proyecto CF y la rama.
 #
-# La URL de prueba se forma con el alias de rama del Worker:
-#   https://{rama-sanitizada}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
-# Variable de repositorio (Settings → Variables): CLOUDFLARE_WORKERS_DOMAIN
-#   Valor: la parte workers.dev de la cuenta, ej. «cdemtic.workers.dev».
-#   Si no está definida, se usa «cdemtic.workers.dev» como valor por defecto.
+# URL de prueba (en orden de preferencia):
+#  1. inputs.base_url            → override manual en workflow_dispatch
+#  2. Version Preview URL        → https://{uuid-prefix}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
+#                                  URL inmutable por commit; obtenida de la API de versiones de CF.
+#  3. Alias de rama (fallback)   → https://{rama}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
+#                                  Se usa si faltan las credenciales de CF para consultar la API.
 #
+# Variable de repositorio (Settings → Variables):
+#   CLOUDFLARE_WORKERS_DOMAIN    → dominio workers.dev de la cuenta, ej. «cdemtic.workers.dev»
+#                                  (si no está definida se usa ese valor por defecto)
 # Secrets necesarios:
-#   CLOUDFLARE_API_TOKEN   → esperar a que el Worker esté desplegado
-#   CLOUDFLARE_ACCOUNT_ID  → ídem
-#   PREVIEW_SECRET         → cookie preview-token para endpoints de Astro Actions
+#   CLOUDFLARE_API_TOKEN         → consultar la API de versiones y esperar al despliegue
+#   CLOUDFLARE_ACCOUNT_ID        → ídem
+#   PREVIEW_SECRET               → cookie preview-token para endpoints de Astro Actions
 name: E2E Tests
 
 on:
@@ -61,10 +65,12 @@ jobs:
           echo "URL de prueba: ${BASE_URL}"
 
       - name: Esperar despliegue Worker Cloudflare
+        id: wait
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CF_WORKER: cdem-es
+          CF_WORKERS_DOMAIN: ${{ vars.CLOUDFLARE_WORKERS_DOMAIN }}
           # head_commit.timestamp en push; created_at en workflow_dispatch
           WORKFLOW_STARTED_AT: ${{ github.event.head_commit.timestamp || github.event.created_at }}
         run: |
@@ -82,7 +88,9 @@ jobs:
         id: playwright
         run: npm run test:e2e
         env:
-          E2E_BASE_URL: ${{ steps.preview_url.outputs.url }}
+          # Preferencia: Version Preview URL (inmutable por commit) obtenida del script de espera.
+          # Fallback: alias de rama construido en el paso anterior (si faltan credenciales CF).
+          E2E_BASE_URL: ${{ steps.wait.outputs.version_url || steps.preview_url.outputs.url }}
           E2E_PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
 
       - name: Resumen de fallos en Job Summary
