@@ -1,20 +1,26 @@
-# Automático: solo push a develop.
-# Manual: workflow_dispatch desde Actions; en ramas que no sean develop, deja base_url vacío
-# para build+preview en el runner, o indica la URL del despliegue a probar.
+# Automático: push a cualquier rama excepto master (master usa Turnstile real y no tiene preview Worker).
+# Manual: workflow_dispatch; si base_url está vacío, la URL se construye desde el proyecto CF y la rama.
 #
-# En push a develop, si existen CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID y E2E_DEV_URL,
-# se espera a que el Worker de Cloudflare esté desplegado antes de los e2e.
-# Secret CLOUDFLARE_WORKER = nombre exacto del script Worker (Workers & Pages → nombre del Worker).
+# La URL de prueba se forma con el alias de rama del Worker:
+#   https://{rama-sanitizada}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
+# Variable de repositorio (Settings → Variables): CLOUDFLARE_WORKERS_DOMAIN
+#   Valor: la parte workers.dev de la cuenta, ej. «cdemtic.workers.dev».
+#   Si no está definida, se usa «cdemtic.workers.dev» como valor por defecto.
+#
+# Secrets necesarios:
+#   CLOUDFLARE_API_TOKEN   → esperar a que el Worker esté desplegado
+#   CLOUDFLARE_ACCOUNT_ID  → ídem
+#   PREVIEW_SECRET         → cookie preview-token para endpoints de Astro Actions
 name: E2E Tests
 
 on:
   push:
-    branches:
-      - develop
+    branches-ignore:
+      - master
   workflow_dispatch:
     inputs:
       base_url:
-        description: 'URL a probar (vacío en develop = secret E2E_DEV_URL; vacío en otras ramas = preview en CI)'
+        description: 'URL a probar (vacío = se construye desde proyecto CF y rama)'
         required: false
         type: string
 
@@ -33,39 +39,42 @@ jobs:
 
       - run: npx playwright install --with-deps
 
-      # secrets no pueden usarse en if:; la lógica va en el shell.
-      - name: Aviso si no se puede esperar al Worker de Cloudflare
-        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+      - name: Construir URL del preview
+        id: preview_url
         env:
-          E2E_DEV_URL: ${{ secrets.E2E_DEV_URL }}
-          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          INPUT_BASE_URL: ${{ inputs.base_url }}
+          CF_WORKERS_DOMAIN: ${{ vars.CLOUDFLARE_WORKERS_DOMAIN }}
         run: |
-          if [ -n "${E2E_DEV_URL:-}" ] && { [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ACCOUNT_ID:-}" ]; }; then
-            echo "::warning::Configura los secrets CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID para esperar al despliegue del Worker antes de los e2e."
+          if [ -n "${INPUT_BASE_URL:-}" ]; then
+            BASE_URL="${INPUT_BASE_URL}"
+          else
+            # Sanitizar rama igual que deploy-preview.sh: solo [a-z0-9-]
+            BRANCH=$(echo "${GITHUB_REF_NAME}" \
+              | tr '[:upper:]' '[:lower:]' \
+              | sed 's/[^a-z0-9]/-/g' \
+              | sed 's/-\{2,\}/-/g'    \
+              | sed 's/^-\|-$//g')
+            DOMAIN="${CF_WORKERS_DOMAIN:-cdemtic.workers.dev}"
+            BASE_URL="https://${BRANCH}-cdem-es.${DOMAIN}"
           fi
+          echo "url=${BASE_URL}" >> "$GITHUB_OUTPUT"
+          echo "URL de prueba: ${BASE_URL}"
 
       - name: Esperar despliegue Worker Cloudflare
-        if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CF_WORKER: ${{ secrets.CLOUDFLARE_PAGES_PROJECT }}
-          WORKFLOW_STARTED_AT: ${{ github.event.head_commit.timestamp }}
-          E2E_DEV_URL: ${{ secrets.E2E_DEV_URL }}
+          CF_WORKER: cdem-es
+          # head_commit.timestamp en push; created_at en workflow_dispatch
+          WORKFLOW_STARTED_AT: ${{ github.event.head_commit.timestamp || github.event.created_at }}
         run: |
-          if [ -z "${E2E_DEV_URL:-}" ] || [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ACCOUNT_ID:-}" ]; then
-            echo "Omitiendo espera a Cloudflare (faltan E2E_DEV_URL o credenciales de Cloudflare)."
+          if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ACCOUNT_ID:-}" ]; then
+            echo "::warning::Faltan CLOUDFLARE_API_TOKEN o CLOUDFLARE_ACCOUNT_ID — omitiendo espera al despliegue."
             exit 0
           fi
-          if [ -z "${CF_WORKER:-}" ]; then
-            echo "::warning::Define el secret CLOUDFLARE_PAGES_PROJECT con el nombre exacto del Worker (Workers & Pages → nombre del script)."
-            exit 0
-          fi
-          # Convertir timestamp ISO a epoch para la comparación
-          WORKFLOW_STARTED_AT=$(date -d "${WORKFLOW_STARTED_AT}" +%s 2>/dev/null \
+          WORKFLOW_STARTED_AT=$(date -d "${WORKFLOW_STARTED_AT:-}" +%s 2>/dev/null \
             || date -j -f "%Y-%m-%dT%H:%M:%S" "${WORKFLOW_STARTED_AT%%+*}" +%s 2>/dev/null \
-            || echo "0")
+            || date -u +%s)
           export WORKFLOW_STARTED_AT
           bash .github/scripts/wait-cloudflare-pages-deployment.sh
 
@@ -73,7 +82,7 @@ jobs:
         id: playwright
         run: npm run test:e2e
         env:
-          E2E_BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || github.ref == 'refs/heads/develop' && secrets.E2E_DEV_URL || '' }}
+          E2E_BASE_URL: ${{ steps.preview_url.outputs.url }}
           E2E_PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
 
       - name: Resumen de fallos en Job Summary
