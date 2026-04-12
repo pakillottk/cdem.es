@@ -1,16 +1,48 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY } from 'astro:env/server';
+import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TURNSTILE_TEST_MODE, PREVIEW_SECRET } from 'astro:env/server';
 
-async function verifyTurnstile(token: string): Promise<boolean> {
-  if (!TURNSTILE_SECRET_KEY) return true;
+/**
+ * En test mode, verifica que la petición lleve el secret de preview.
+ * El cliente puede enviarlo como:
+ *   - Cookie:  preview-token=<PREVIEW_SECRET>  (DevTools → Application → Cookies → Add)
+ *   - Header:  x-preview-secret: <PREVIEW_SECRET>
+ */
+function verifyPreviewAccess(request: Request): void {
+  const isTestMode = TURNSTILE_TEST_MODE === 'true';
+  const secret = PREVIEW_SECRET ?? '';
+  if (!isTestMode || !secret) return;
+
+  const cookie = request.headers.get('cookie') ?? '';
+  const cookieVal = cookie.split(';').map(c => c.trim())
+    .find(c => c.startsWith('preview-token='))?.split('=')[1] ?? '';
+  const headerVal = request.headers.get('x-preview-secret') ?? '';
+
+  if (cookieVal !== secret && headerVal !== secret) {
+    throw new ActionError({ code: 'FORBIDDEN', message: 'Acceso no autorizado.' });
+  }
+}
+
+// Clave secreta de test de Cloudflare: acepta cualquier token y siempre devuelve success.
+// Documentada públicamente en https://developers.cloudflare.com/turnstile/troubleshooting/testing/
+const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
+
+async function verifyTurnstile(token: string): Promise<void> {
+  const secret = TURNSTILE_TEST_MODE === 'true' ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
+  if (!secret) throw new ActionError({
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'El formulario de verificación no está configurado correctamente.',
+  });
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ secret: TURNSTILE_SECRET_KEY, response: token }),
+    body: JSON.stringify({ secret, response: token }),
   });
   const data = await res.json() as { success: boolean };
-  return data.success === true;
+  if (!data.success) throw new ActionError({
+    code: 'FORBIDDEN',
+    message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
+  });
 }
 
 function buildEmailHtml(nombre: string, email: string, telefono: string | undefined, mensaje: string): string {
@@ -103,14 +135,9 @@ export const server = {
       mensaje: z.string().min(1, 'El mensaje es obligatorio'),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ nombre, email, telefono, mensaje, turnstileToken }) => {
-      const isHuman = await verifyTurnstile(turnstileToken);
-      if (!isHuman) {
-        throw new ActionError({
-          code: 'FORBIDDEN',
-          message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
-        });
-      }
+    handler: async ({ nombre, email, telefono, mensaje, turnstileToken }, context) => {
+      verifyPreviewAccess(context.request);
+      await verifyTurnstile(turnstileToken);
 
       if (!RESEND_API_KEY || !CONTACT_EMAIL_TO || !FROM_EMAIL) {
         throw new ActionError({
@@ -154,14 +181,9 @@ export const server = {
       privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ nombre, email, turnstileToken }) => {
-      const isHuman = await verifyTurnstile(turnstileToken);
-      if (!isHuman) {
-        throw new ActionError({
-          code: 'FORBIDDEN',
-          message: 'La verificación de seguridad ha fallado. Por favor, inténtalo de nuevo.',
-        });
-      }
+    handler: async ({ nombre, email, turnstileToken }, context) => {
+      verifyPreviewAccess(context.request);
+      await verifyTurnstile(turnstileToken);
 
       if (!RESEND_API_KEY) {
         throw new ActionError({

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { mockSuccessfulActions } from '../fixtures/actions-mock';
 import { mockTurnstile, waitForTurnstileTokenInForm } from '../utils/turnstile';
+import { isRemoteE2E } from '../utils/env';
 
 test.describe('Contacto', () => {
   test('datos de contacto y redes', async ({ page }) => {
@@ -29,15 +30,18 @@ test.describe('Contacto', () => {
     await form.scrollIntoViewIfNeeded();
     await waitForTurnstileTokenInForm(form);
     await form.getByRole('button', { name: /Enviar mensaje/i }).click();
-    // El servidor responde con errores de validación de campo (Zod)
     await expect(form.getByText(/Invalid input|obligatorio|no válido/i).first()).toBeVisible({
       timeout: 15_000,
     });
   });
 
-  test('flujo completo con mock: éxito y reenviar', async ({ page }) => {
+  test('flujo completo: éxito y reenviar', async ({ page }) => {
     await mockTurnstile(page);
-    await mockSuccessfulActions(page);
+    // En local se mockea la Action para no enviar correos reales.
+    // En remoto se deja pasar al Worker desplegado (correo real enviado).
+    if (!isRemoteE2E) {
+      await mockSuccessfulActions(page);
+    }
     await page.goto('/contacto');
     const form = page.locator('form').filter({ has: page.getByRole('button', { name: /Enviar mensaje/i }) });
     await form.scrollIntoViewIfNeeded();

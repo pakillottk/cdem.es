@@ -12,5 +12,9 @@
 	},
 	"observability": {
     "enabled": true
+  },
+  "vars": {
+    // Vacío en producción. deploy:preview lo sobreescribe con el secret real via --var.
+    "PREVIEW_SECRET": ""
   }
 }

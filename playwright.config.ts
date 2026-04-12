@@ -8,15 +8,46 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: isRemote ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
-  reporter: [
-    ['list'],
-    ['html', { open: 'never', outputFolder: 'playwright-report' }],
-  ],
+  // En CI remoto: 1 worker por navegador (3 en paralelo); en CI local: 1 para no saturar el servidor de preview.
+  workers: process.env.CI ? (isRemote ? 3 : 1) : undefined,
+  reporter: process.env.CI
+    ? [
+        // Anotaciones inline en el commit/PR de GitHub (errores visibles sin descargar nada).
+        ['github'],
+        // Resumen con tabla de resultados en la pestaña Summary del workflow.
+        ['html', { open: 'never', outputFolder: 'playwright-report' }],
+      ]
+    : [
+        ['list'],
+        ['html', { open: 'never', outputFolder: 'playwright-report' }],
+      ],
   use: {
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    // En remoto, inyecta la cookie preview-token en el contexto del browser.
+    // Las cookies se envían automáticamente en TODOS los fetch del JS de la página,
+    // incluidos los de Astro Actions — a diferencia de extraHTTPHeaders que solo
+    // afecta a las peticiones que hace Playwright directamente.
+    ...(isRemote && process.env.E2E_PREVIEW_SECRET
+      ? {
+          storageState: {
+            cookies: [
+              {
+                name: 'preview-token',
+                value: process.env.E2E_PREVIEW_SECRET,
+                domain: new URL(baseURL).hostname,
+                path: '/',
+                httpOnly: false,
+                secure: baseURL.startsWith('https'),
+                sameSite: 'Lax' as const,
+                expires: -1,
+              },
+            ],
+            origins: [],
+          },
+        }
+      : {}),
   },
   projects: process.env.CI
     ? [

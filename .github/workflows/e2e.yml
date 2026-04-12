@@ -1,16 +1,30 @@
-# Automático: solo push a develop.
-# Manual: workflow_dispatch desde Actions; en ramas que no sean develop, deja base_url vacío
-# para build+preview en el runner, o indica la URL del despliegue a probar.
+# Automático: push a cualquier rama excepto master (master usa Turnstile real y no tiene preview Worker).
+# Manual: workflow_dispatch; si base_url está vacío, la URL se construye desde el proyecto CF y la rama.
+#
+# URL de prueba (en orden de preferencia):
+#  1. inputs.base_url            → override manual en workflow_dispatch
+#  2. Version Preview URL        → https://{uuid-prefix}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
+#                                  URL inmutable por commit; obtenida de la API de versiones de CF.
+#  3. Alias de rama (fallback)   → https://{rama}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
+#                                  Se usa si faltan las credenciales de CF para consultar la API.
+#
+# Variable de repositorio (Settings → Variables):
+#   CLOUDFLARE_WORKERS_DOMAIN    → dominio workers.dev de la cuenta, ej. «cdemtic.workers.dev»
+#                                  (si no está definida se usa ese valor por defecto)
+# Secrets necesarios:
+#   CLOUDFLARE_API_TOKEN         → consultar la API de versiones y esperar al despliegue
+#   CLOUDFLARE_ACCOUNT_ID        → ídem
+#   PREVIEW_SECRET               → cookie preview-token para endpoints de Astro Actions
 name: E2E Tests
 
 on:
   push:
-    branches:
-      - develop
+    branches-ignore:
+      - master
   workflow_dispatch:
     inputs:
       base_url:
-        description: 'URL a probar (vacío en develop = secret E2E_DEV_URL; vacío en otras ramas = preview en CI)'
+        description: 'URL a probar (vacío = se construye desde proyecto CF y rama)'
         required: false
         type: string
 
@@ -18,9 +32,9 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -29,18 +43,81 @@ jobs:
 
       - run: npx playwright install --with-deps
 
+      - name: Construir URL del preview
+        id: preview_url
+        env:
+          INPUT_BASE_URL: ${{ inputs.base_url }}
+          CF_WORKERS_DOMAIN: ${{ vars.CLOUDFLARE_WORKERS_DOMAIN }}
+        run: |
+          if [ -n "${INPUT_BASE_URL:-}" ]; then
+            BASE_URL="${INPUT_BASE_URL}"
+          else
+            # Sanitizar rama igual que deploy-preview.sh: solo [a-z0-9-]
+            BRANCH=$(echo "${GITHUB_REF_NAME}" \
+              | tr '[:upper:]' '[:lower:]' \
+              | sed 's/[^a-z0-9]/-/g' \
+              | sed 's/-\{2,\}/-/g'    \
+              | sed 's/^-\|-$//g')
+            DOMAIN="${CF_WORKERS_DOMAIN:-cdemtic.workers.dev}"
+            BASE_URL="https://${BRANCH}-cdem-es.${DOMAIN}"
+          fi
+          echo "url=${BASE_URL}" >> "$GITHUB_OUTPUT"
+          echo "URL de prueba: ${BASE_URL}"
+
+      - name: Esperar despliegue Worker Cloudflare
+        id: wait
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_WORKER: cdem-es
+          CF_WORKERS_DOMAIN: ${{ vars.CLOUDFLARE_WORKERS_DOMAIN }}
+          # head_commit.timestamp en push; created_at en workflow_dispatch
+          WORKFLOW_STARTED_AT: ${{ github.event.head_commit.timestamp || github.event.created_at }}
+        run: |
+          if [ -z "${CF_API_TOKEN:-}" ] || [ -z "${CF_ACCOUNT_ID:-}" ]; then
+            echo "::warning::Faltan CLOUDFLARE_API_TOKEN o CLOUDFLARE_ACCOUNT_ID — omitiendo espera al despliegue."
+            exit 0
+          fi
+          WORKFLOW_STARTED_AT=$(date -d "${WORKFLOW_STARTED_AT:-}" +%s 2>/dev/null \
+            || date -j -f "%Y-%m-%dT%H:%M:%S" "${WORKFLOW_STARTED_AT%%+*}" +%s 2>/dev/null \
+            || date -u +%s)
+          export WORKFLOW_STARTED_AT
+          bash .github/scripts/wait-cloudflare-pages-deployment.sh
+
       - name: Run Playwright
+        id: playwright
         run: npm run test:e2e
         env:
-          E2E_BASE_URL: ${{ inputs.base_url != '' && inputs.base_url || github.ref == 'refs/heads/develop' && secrets.E2E_DEV_URL || '' }}
+          # Preferencia: Version Preview URL (inmutable por commit) obtenida del script de espera.
+          # Fallback: alias de rama construido en el paso anterior (si faltan credenciales CF).
+          E2E_BASE_URL: ${{ steps.wait.outputs.version_url || steps.preview_url.outputs.url }}
+          E2E_PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
 
-      - uses: actions/upload-artifact@v4
+      - name: Resumen de fallos en Job Summary
+        if: failure() && steps.playwright.outcome == 'failure'
+        run: |
+          echo "## ❌ E2E Tests — fallos detectados" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f playwright-report/index.html ]; then
+            echo "El informe completo está disponible en el artefacto **playwright-report**." >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -d test-results ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Tests fallidos" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            find test-results -name 'test-failed-*.txt' -exec cat {} \; 2>/dev/null \
+              || find test-results -name '*.txt' -exec cat {} \; 2>/dev/null \
+              || echo "(sin detalle de texto disponible)"
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
           path: playwright-report/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-results

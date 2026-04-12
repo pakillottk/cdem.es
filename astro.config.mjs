@@ -33,6 +33,13 @@ export default defineConfig({
       FROM_EMAIL: envField.string({ context: 'server', access: 'secret', optional: true }),
       TURNSTILE_SITE_KEY: envField.string({ context: 'client', access: 'public', optional: true }),
       TURNSTILE_SECRET_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // Si es true, la verificación Turnstile usa las claves de test de Cloudflare (bypass real).
+      // Útil en deploys de preview y en e2e contra entornos no productivos.
+      // 'true' | undefined — se compara como string porque wrangler --var siempre entrega strings.
+      TURNSTILE_TEST_MODE: envField.string({ context: 'server', access: 'public', optional: true }),
+      // Token requerido en test mode para proteger los endpoints de actions en previews.
+      // Se verifica via header x-preview-secret o cookie preview-token.
+      PREVIEW_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
   adapter: cloudflare(),
