@@ -1,20 +1,19 @@
 # Automático: push a cualquier rama excepto master (master usa Turnstile real y no tiene preview Worker).
 # Manual: workflow_dispatch; si base_url está vacío, la URL se construye desde el proyecto CF y la rama.
 #
-# URL de prueba (en orden de preferencia):
-#  1. inputs.base_url            → override manual en workflow_dispatch
-#  2. Version Preview URL        → https://{uuid-prefix}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
-#                                  URL inmutable por commit; obtenida de la API de versiones de CF.
-#  3. Alias de rama (fallback)   → https://{rama}-cdem-es.{CLOUDFLARE_WORKERS_DOMAIN}
-#                                  Se usa si faltan las credenciales de CF para consultar la API.
+# Jobs en paralelo:
+#   install  → npm ci + caché de navegadores Playwright
+#   wait-cf  → espera al Worker desplegado, resuelve Version Preview URL (inmutable por commit)
+#              Fallback si faltan credenciales: alias de rama https://{rama}-cdem-es.{domain}
+#   test     → corre Playwright contra la URL resuelta (espera install + wait-cf)
 #
 # Variable de repositorio (Settings → Variables):
-#   CLOUDFLARE_WORKERS_DOMAIN    → dominio workers.dev de la cuenta, ej. «cdemtic.workers.dev»
-#                                  (si no está definida se usa ese valor por defecto)
+#   CLOUDFLARE_WORKERS_DOMAIN  → dominio workers.dev de la cuenta, ej. «cdemtic.workers.dev»
+#                                (si no está definida se usa ese valor por defecto)
 # Secrets necesarios:
-#   CLOUDFLARE_API_TOKEN         → consultar la API de versiones y esperar al despliegue
-#   CLOUDFLARE_ACCOUNT_ID        → ídem
-#   PREVIEW_SECRET               → cookie preview-token para endpoints de Astro Actions
+#   CLOUDFLARE_API_TOKEN       → consultar la API de versiones y esperar al despliegue
+#   CLOUDFLARE_ACCOUNT_ID      → ídem
+#   PREVIEW_SECRET             → cookie preview-token para endpoints de Astro Actions
 name: E2E Tests
 
 on:
@@ -29,7 +28,10 @@ on:
         type: string
 
 jobs:
-  e2e:
+
+  # ── 1. Instalar deps y navegadores ────────────────────────────────────────
+  install:
+    name: Instalar deps y navegadores
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -41,10 +43,28 @@ jobs:
 
       - run: npm ci
 
-      - run: npx playwright install --with-deps
+      - name: Caché de navegadores Playwright
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Construir URL del preview
-        id: preview_url
+      - name: Instalar navegadores Playwright
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+  # ── 2. Esperar despliegue Cloudflare y resolver URL ───────────────────────
+  wait-cf:
+    name: Esperar despliegue Cloudflare
+    runs-on: ubuntu-latest
+    outputs:
+      base_url: ${{ steps.select_url.outputs.base_url }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Construir URL de alias de rama (fallback)
+        id: branch_url
         env:
           INPUT_BASE_URL: ${{ inputs.base_url }}
           CF_WORKERS_DOMAIN: ${{ vars.CLOUDFLARE_WORKERS_DOMAIN }}
@@ -62,9 +82,9 @@ jobs:
             BASE_URL="https://${BRANCH}-cdem-es.${DOMAIN}"
           fi
           echo "url=${BASE_URL}" >> "$GITHUB_OUTPUT"
-          echo "URL de prueba: ${BASE_URL}"
+          echo "URL de alias de rama: ${BASE_URL}"
 
-      - name: Esperar despliegue Worker Cloudflare
+      - name: Esperar despliegue y obtener Version Preview URL
         id: wait
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -82,15 +102,49 @@ jobs:
             || date -j -f "%Y-%m-%dT%H:%M:%S" "${WORKFLOW_STARTED_AT%%+*}" +%s 2>/dev/null \
             || date -u +%s)
           export WORKFLOW_STARTED_AT
+          # El script escribe version_url en $GITHUB_OUTPUT si tiene éxito
           bash .github/scripts/wait-cloudflare-pages-deployment.sh
+
+      - name: Seleccionar URL final
+        id: select_url
+        run: |
+          # Preferir Version Preview URL (inmutable por commit); si no hay, usar alias de rama.
+          VERSION_URL="${{ steps.wait.outputs.version_url }}"
+          BRANCH_URL="${{ steps.branch_url.outputs.url }}"
+          FINAL="${VERSION_URL:-$BRANCH_URL}"
+          echo "base_url=${FINAL}" >> "$GITHUB_OUTPUT"
+          echo "URL de prueba: ${FINAL}"
+
+  # ── 3. Ejecutar tests E2E ─────────────────────────────────────────────────
+  test:
+    name: Playwright E2E
+    needs: [install, wait-cf]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Restaurar caché de navegadores Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      # Instala siempre las dependencias de sistema (--with-deps); los binarios
+      # de los navegadores se saltan si ya están en caché.
+      - run: npx playwright install --with-deps
 
       - name: Run Playwright
         id: playwright
         run: npm run test:e2e
         env:
-          # Preferencia: Version Preview URL (inmutable por commit) obtenida del script de espera.
-          # Fallback: alias de rama construido en el paso anterior (si faltan credenciales CF).
-          E2E_BASE_URL: ${{ steps.wait.outputs.version_url || steps.preview_url.outputs.url }}
+          E2E_BASE_URL: ${{ needs.wait-cf.outputs.base_url }}
           E2E_PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
 
       - name: Resumen de fallos en Job Summary
