@@ -7,7 +7,7 @@ import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TUR
 const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
 
 async function verifyTurnstile(token: string): Promise<boolean> {
-  const secret = TURNSTILE_TEST_MODE ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
+  const secret = TURNSTILE_TEST_MODE === 'true' ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
   if (!secret) throw new ActionError({ code: 'INTERNAL_SERVER_ERROR', message: 'TURNSTILE_SECRET_KEY no está configurada.' });
   const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
     method: 'POST',
