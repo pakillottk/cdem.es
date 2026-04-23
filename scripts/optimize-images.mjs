@@ -15,6 +15,7 @@ import {
   existsSync,
   mkdirSync,
   writeFileSync,
+  unlinkSync,
 } from "node:fs";
 import { join, basename, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -35,6 +36,7 @@ const TASKS = {
     srcDir: join(PUBLIC, "producciones"),
     recursive: false,
     single: { width: 800, quality: 82 },
+    removeOriginals: true,
   },
   // Galerías de producciones (en subcarpetas; se usan como thumb en react-image-gallery + full en modal 1100px, 2x = 2200)
   producciones_gallery: {
@@ -42,6 +44,7 @@ const TASKS = {
     recursive: true,
     thumb: { width: 800, quality: 80 },
     full: { width: 2200, quality: 85 },
+    removeOriginals: true,
   },
   // Booking (grid 3 cols, sin modal → 800px)
   booking: {
@@ -197,6 +200,13 @@ function toWebpPath(srcPath, suffix = "") {
   return join(dir, base + suffix + ".webp");
 }
 
+function cleanupOriginal(srcPath, outputs, removeOriginals) {
+  if (!removeOriginals) return;
+  if (!outputs.every((out) => existsSync(out))) return;
+  unlinkSync(srcPath);
+  console.log(`  🗑  eliminado original: ${basename(srcPath)}`);
+}
+
 // ── Procesado por tarea ────────────────────────────────────────────────────
 
 async function runTask(name, task) {
@@ -223,6 +233,7 @@ async function runTask(name, task) {
         if (!existsSync(fullPath)) {
           await processFile(srcPath, fullPath, task.full);
         }
+        cleanupOriginal(srcPath, [thumbPath, fullPath], task.removeOriginals);
       }
     }
     return;
@@ -306,6 +317,7 @@ async function runTask(name, task) {
       if (!existsSync(destPath)) {
         await processFile(srcPath, destPath, task.single);
       }
+      cleanupOriginal(srcPath, [destPath], task.removeOriginals);
     }
     return;
   }
