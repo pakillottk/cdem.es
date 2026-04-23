@@ -31,6 +31,11 @@ const productions: Production[] = [
     images: buildImagesFromManifest("ViveLinares", "Vive Linares"),
   },
   {
+    name: "Sarao",
+    coverSrc: "/producciones/portada sarao late.webp",
+    images: buildImagesFromManifest("Sarao", "Sarao"),
+  },
+  {
     name: "Festival de Jazz",
     coverSrc: "/producciones/portada festival jazz.webp",
     images: buildImagesFromManifest("FestivalJazz", "Festival de Jazz"),

@@ -37,8 +37,52 @@ export default {
   ],
   "IberoJoven": [
     {
+      "thumb": "2-thumb.webp",
+      "full": "2-full.webp"
+    },
+    {
+      "thumb": "a-thumb.webp",
+      "full": "a-full.webp"
+    },
+    {
+      "thumb": "d-thumb.webp",
+      "full": "d-full.webp"
+    },
+    {
+      "thumb": "dd-thumb.webp",
+      "full": "dd-full.webp"
+    },
+    {
+      "thumb": "dg-thumb.webp",
+      "full": "dg-full.webp"
+    },
+    {
+      "thumb": "dgfsfg-thumb.webp",
+      "full": "dgfsfg-full.webp"
+    },
+    {
+      "thumb": "f-thumb.webp",
+      "full": "f-full.webp"
+    },
+    {
       "thumb": "PHOTO-2026-02-25-18-20-52-thumb.webp",
       "full": "PHOTO-2026-02-25-18-20-52-full.webp"
+    },
+    {
+      "thumb": "q-thumb.webp",
+      "full": "q-full.webp"
+    },
+    {
+      "thumb": "WhatsApp Image 2026-04-21 at 12.51.11-thumb.webp",
+      "full": "WhatsApp Image 2026-04-21 at 12.51.11-full.webp"
+    },
+    {
+      "thumb": "WhatsApp Image 2026-04-21 at 12.51.11s-thumb.webp",
+      "full": "WhatsApp Image 2026-04-21 at 12.51.11s-full.webp"
+    },
+    {
+      "thumb": "xxxx-thumb.webp",
+      "full": "xxxx-full.webp"
     }
   ],
   "JCReyes": [
@@ -135,6 +179,228 @@ export default {
     {
       "thumb": "PHOTO-2026-02-25-18-22-21-thumb.webp",
       "full": "PHOTO-2026-02-25-18-22-21-full.webp"
+    }
+  ],
+  "Sarao": [
+    {
+      "thumb": "2-thumb.webp",
+      "full": "2-full.webp"
+    },
+    {
+      "thumb": "3-thumb.webp",
+      "full": "3-full.webp"
+    },
+    {
+      "thumb": "4-thumb.webp",
+      "full": "4-full.webp"
+    },
+    {
+      "thumb": "6-thumb.webp",
+      "full": "6-full.webp"
+    },
+    {
+      "thumb": "7-thumb.webp",
+      "full": "7-full.webp"
+    },
+    {
+      "thumb": "8-thumb.webp",
+      "full": "8-full.webp"
+    },
+    {
+      "thumb": "9-thumb.webp",
+      "full": "9-full.webp"
+    },
+    {
+      "thumb": "IMG_0984web-thumb.webp",
+      "full": "IMG_0984web-full.webp"
+    },
+    {
+      "thumb": "IMG_1022web_1-thumb.webp",
+      "full": "IMG_1022web_1-full.webp"
+    },
+    {
+      "thumb": "IMG_1186web-thumb.webp",
+      "full": "IMG_1186web-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_2-thumb.webp",
+      "full": "IMG_1192web_2-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0001_PXL_20260418_090359025.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0001_PXL_20260418_090359025.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0002_PXL_20260418_090318119-thumb.webp",
+      "full": "IMG_1192web_11.png_0002_PXL_20260418_090318119-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0003_PXL_20260418_090327671.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0003_PXL_20260418_090327671.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0004_PXL_20260418_090254492.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0004_PXL_20260418_090254492.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0005_PXL_20260418_090224332-thumb.webp",
+      "full": "IMG_1192web_11.png_0005_PXL_20260418_090224332-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0006_PXL_20260418_090236201.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0006_PXL_20260418_090236201.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0007_PXL_20260418_090140217.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0007_PXL_20260418_090140217.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0008_PXL_20260418_090129623.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0008_PXL_20260418_090129623.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0009_PXL_20260418_090117453-thumb.webp",
+      "full": "IMG_1192web_11.png_0009_PXL_20260418_090117453-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0010_PXL_20260418_090100692.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0010_PXL_20260418_090100692.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0011_PXL_20260418_090049572-thumb.webp",
+      "full": "IMG_1192web_11.png_0011_PXL_20260418_090049572-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0012_PXL_20260418_090025067-thumb.webp",
+      "full": "IMG_1192web_11.png_0012_PXL_20260418_090025067-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0013_PXL_20260418_085226973.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0013_PXL_20260418_085226973.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0014_PXL_20260418_090001396-thumb.webp",
+      "full": "IMG_1192web_11.png_0014_PXL_20260418_090001396-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0015_PXL_20260418_085204599.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0015_PXL_20260418_085204599.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0016_PXL_20260418_085209240.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0016_PXL_20260418_085209240.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0017_PXL_20260418_085139899-thumb.webp",
+      "full": "IMG_1192web_11.png_0017_PXL_20260418_085139899-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0018_PXL_20260418_085043715.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0018_PXL_20260418_085043715.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0019_PXL_20260418_085020926.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0019_PXL_20260418_085020926.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0020_PXL_20260418_084947238-thumb.webp",
+      "full": "IMG_1192web_11.png_0020_PXL_20260418_084947238-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0021_PXL_20260418_084909655.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0021_PXL_20260418_084909655.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0022_PXL_20260418_084848600.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0022_PXL_20260418_084848600.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0023_PXL_20260418_085006496.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0023_PXL_20260418_085006496.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0024_PXL_20260418_073626825.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0024_PXL_20260418_073626825.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0025_PXL_20260418_061049398.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0025_PXL_20260418_061049398.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0026_PXL_20260417_111811117.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0026_PXL_20260417_111811117.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0027_IMG_0880web-thumb.webp",
+      "full": "IMG_1192web_11.png_0027_IMG_0880web-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0028_PXL_20260418_210444037.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0028_PXL_20260418_210444037.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0029_PXL_20260418_200309240-thumb.webp",
+      "full": "IMG_1192web_11.png_0029_PXL_20260418_200309240-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0030_PXL_20260418_200154551-thumb.webp",
+      "full": "IMG_1192web_11.png_0030_PXL_20260418_200154551-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0031_PXL_20260418_200220861.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0031_PXL_20260418_200220861.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0032_PXL_20260418_180857841-thumb.webp",
+      "full": "IMG_1192web_11.png_0032_PXL_20260418_180857841-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0033_PXL_20260418_180846340.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0033_PXL_20260418_180846340.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0034_PXL_20260418_180841968.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0034_PXL_20260418_180841968.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0035_PXL_20260418_134850310.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0035_PXL_20260418_134850310.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0036_PXL_20260418_105010782-thumb.webp",
+      "full": "IMG_1192web_11.png_0036_PXL_20260418_105010782-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0038_PXL_20260418_090947845.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0038_PXL_20260418_090947845.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0039_PXL_20260418_090853277-thumb.webp",
+      "full": "IMG_1192web_11.png_0039_PXL_20260418_090853277-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0040_PXL_20260418_090813613.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0040_PXL_20260418_090813613.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0041_PXL_20260418_090806213.MP-thumb.webp",
+      "full": "IMG_1192web_11.png_0041_PXL_20260418_090806213.MP-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web_11.png_0042_Fondo-thumb.webp",
+      "full": "IMG_1192web_11.png_0042_Fondo-full.webp"
+    },
+    {
+      "thumb": "IMG_1192web-thumb.webp",
+      "full": "IMG_1192web-full.webp"
+    },
+    {
+      "thumb": "IMG_1259web-thumb.webp",
+      "full": "IMG_1259web-full.webp"
+    },
+    {
+      "thumb": "IMG_1272web-thumb.webp",
+      "full": "IMG_1272web-full.webp"
     }
   ],
   "ViveLinares": [
