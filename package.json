@@ -28,7 +28,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.1.6",
+    "astro": "^6.1.10",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-image-gallery": "^2.1.2",
