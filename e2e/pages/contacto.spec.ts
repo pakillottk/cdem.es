@@ -7,7 +7,7 @@ test.describe('Contacto', () => {
   test('datos de contacto y redes', async ({ page }) => {
     await page.goto('/contacto');
     await expect(page.getByText('Creación y Diseño de Eventos Musicales S.L.')).toBeVisible();
-    await expect(page.getByRole('link', { name: /953 66 69 04/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /953 65 69 04/ })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Instagram' }).first()).toBeVisible();
   });
 
