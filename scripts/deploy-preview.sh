@@ -35,6 +35,9 @@ echo "▶ Subiendo versión preview a Cloudflare Workers…"
 if [ -z "${PREVIEW_SECRET:-}" ]; then
   echo "⚠ PREVIEW_SECRET no definida — los endpoints de actions no estarán protegidos."
 fi
+if [ -z "${KEYSTATIC_GITHUB_CLIENT_ID:-}" ] || [ -z "${KEYSTATIC_GITHUB_CLIENT_SECRET:-}" ] || [ -z "${KEYSTATIC_SECRET:-}" ]; then
+  echo "⚠ Faltan secrets de Keystatic — configúralos en Cloudflare Workers o en el entorno CI."
+fi
 
 npx wrangler versions upload \
   --preview-alias "${BRANCH}" \

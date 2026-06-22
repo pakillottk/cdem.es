@@ -4,11 +4,14 @@ import { defineConfig, envField } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 import cloudflare from '@astrojs/cloudflare';
+import node from '@astrojs/node';
 
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
-import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
+import { keystaticSetup } from './integrations/keystatic-setup.mjs';
+
+const isProdBuild = process.env.NODE_ENV === 'production';
 
 // https://astro.build/config
 export default defineConfig({
@@ -17,13 +20,13 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     resolve: {
-      dedupe: ['react', 'react-dom', 'react-dom/server'],
+      dedupe: ['react', 'react-dom', 'react-dom/server', '@keystar/ui', '@keystatic/core'],
     },
     optimizeDeps: {
-      exclude: ['@keystatic/astro']
+      exclude: ['@keystatic/astro'],
     },
     ssr: {
-      noExternal: ['swiper'],
+      noExternal: ['swiper', '@keystatic/core', '@keystar/ui'],
     },
   },
   env: {
@@ -40,18 +43,25 @@ export default defineConfig({
       // Token requerido en test mode para proteger los endpoints de actions en previews.
       // Se verifica via header x-preview-secret o cookie preview-token.
       PREVIEW_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // Keystatic: 'github' en despliegues; omitir o 'local' en desarrollo.
+      KEYSTATIC_STORAGE: envField.string({ context: 'server', access: 'public', optional: true }),
+      KEYSTATIC_GITHUB_CLIENT_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
+      KEYSTATIC_GITHUB_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      KEYSTATIC_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
     },
   },
-  adapter: cloudflare(),
-  build: {
-    client: './',
-    server: './_worker.js',
-    inlineStylesheets: 'always',
-  },
+  adapter: isProdBuild ? cloudflare() : node({ mode: 'standalone' }),
+  build: isProdBuild
+    ? {
+        client: './',
+        server: './_worker.js',
+        inlineStylesheets: 'always',
+      }
+    : {},
   integrations: [
     react(),
     markdoc(),
-    keystatic(),
+    keystaticSetup(),
     sitemap({
       filter: (page) => {
         let pathname = page;

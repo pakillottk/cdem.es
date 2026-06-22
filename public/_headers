@@ -216,6 +216,49 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
 
+# CMS Keystatic (SSR): sin caché
+/keystatic
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/keystatic/*
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/api/keystatic
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/api/keystatic/*
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/admin
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
+/admin/*
+  Cache-Control: no-store, no-cache, must-revalidate, private
+  CDN-Cache-Control: no-store
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+
 # Resto (CMS, Actions, _image, etc.): sin caché larga en edge
 /*
   Cache-Control: public, max-age=0, must-revalidate
