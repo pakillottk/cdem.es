@@ -30,14 +30,17 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  // En Workers, exigir GitHub storage. En dev/preview local (var ausente), permitir CMS.
-  if (
-    import.meta.env.PROD &&
-    import.meta.env.KEYSTATIC_STORAGE != null &&
-    import.meta.env.KEYSTATIC_STORAGE !== '' &&
-    import.meta.env.KEYSTATIC_STORAGE !== 'github'
-  ) {
-    return new Response('Not Found', { status: 404 });
+  // En producción: fail-closed — solo GitHub storage con OAuth configurado.
+  if (import.meta.env.PROD) {
+    const storage = import.meta.env.KEYSTATIC_STORAGE;
+    const oauthReady =
+      Boolean(import.meta.env.KEYSTATIC_GITHUB_CLIENT_ID) &&
+      Boolean(import.meta.env.KEYSTATIC_GITHUB_CLIENT_SECRET) &&
+      Boolean(import.meta.env.KEYSTATIC_SECRET);
+
+    if (storage !== 'github' || !oauthReady) {
+      return new Response('Not Found', { status: 404 });
+    }
   }
 
   const response = await next();

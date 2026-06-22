@@ -33,7 +33,8 @@ TURNSTILE_SITE_KEY=1x00000000000000000000AA \
 
 echo "▶ Subiendo versión preview a Cloudflare Workers…"
 if [ -z "${PREVIEW_SECRET:-}" ]; then
-  echo "⚠ PREVIEW_SECRET no definida — los endpoints de actions no estarán protegidos."
+  echo "✗ PREVIEW_SECRET es obligatoria en previews (Turnstile test mode activo)."
+  exit 1
 fi
 if [ -z "${KEYSTATIC_GITHUB_CLIENT_ID:-}" ] || [ -z "${KEYSTATIC_GITHUB_CLIENT_SECRET:-}" ] || [ -z "${KEYSTATIC_SECRET:-}" ]; then
   echo "⚠ Faltan secrets de Keystatic — configúralos en Cloudflare Workers o en el entorno CI."
