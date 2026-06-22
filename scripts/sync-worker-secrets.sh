@@ -10,6 +10,8 @@ if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
 fi
 
 WORKER_NAME="${WORKER_NAME:-cdem-es}"
+# Workers con versiones (preview/prod en Wrangler 4) exigen versions secret put.
+SECRET_PUT=(npx wrangler versions secret put)
 
 # Orden: Keystatic (CMS) → contacto → Turnstile prod
 SECRETS=(
@@ -27,8 +29,8 @@ for name in "${SECRETS[@]}"; do
   # Indirect expansion: valor de la variable cuyo nombre está en $name
   value="${!name:-}"
   if [ -n "$value" ]; then
-    echo "▶ wrangler secret put ${name}"
-    echo "$value" | npx wrangler secret put "$name" --name "$WORKER_NAME"
+    echo "▶ wrangler versions secret put ${name}"
+    echo "$value" | "${SECRET_PUT[@]}" "$name" --name "$WORKER_NAME"
     synced=$((synced + 1))
   fi
 done
