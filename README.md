@@ -41,8 +41,21 @@ La app define estas variables (opcionales) para el flujo de contacto:
 - `RESEND_API_KEY`
 - `CONTACT_EMAIL_TO`
 - `FROM_EMAIL`
+- `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY`
+- `PREVIEW_SECRET` (previews y E2E remoto)
 
-En Cloudflare Pages, configuralas en **Settings -> Environment variables**.
+### CMS Keystatic (eventos)
+
+- En **local**: no definas `KEYSTATIC_STORAGE` → storage en filesystem. Arranca `npm run dev` y abre `http://localhost:4321/keystatic` (alias: `/admin`). Las imágenes de eventos se suben desde el campo **Imagen** (no hace falta escribir rutas).
+- En desarrollo usamos el adapter Node (no Cloudflare) para que el admin de Keystatic hidrate bien; el deploy sigue siendo Cloudflare Workers.
+- En **Cloudflare** (staging/producción): `KEYSTATIC_STORAGE=github` + secrets OAuth (`KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `KEYSTATIC_SECRET`).
+- Publicar en el CMS crea commits en Git; el workflow `.github/workflows/deploy.yml` reconstruye y despliega al cambiar `src/content/**` o `public/eventos/**`.
+- Staging: rama `develop`. Producción: rama `master`. En el admin de Keystatic puedes cambiar de rama antes de publicar.
+- Recomendado: proteger `/keystatic`, `/admin` y `/api/keystatic` con **Cloudflare Access** además del login GitHub.
+
+Copia `.env.example` a `.env` o `.dev.vars` para desarrollo local.
+
+En Cloudflare Workers, configura las variables en **Settings → Variables and Secrets**.
 
 ## Estructura del Proyecto
 
@@ -56,6 +69,7 @@ En Cloudflare Pages, configuralas en **Settings -> Environment variables**.
 |-- src/
 |   |-- actions/              # Actions del servidor
 |   |-- components/           # Componentes Astro/React
+|   |-- content/              # Contenido CMS (eventos, posts)
 |   |-- data/                 # Datos estaticos y manifiesto generado
 |   |-- layouts/              # Layout base
 |   |-- pages/                # Rutas del sitio

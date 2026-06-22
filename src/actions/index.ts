@@ -10,8 +10,15 @@ import { RESEND_API_KEY, CONTACT_EMAIL_TO, FROM_EMAIL, TURNSTILE_SECRET_KEY, TUR
  */
 function verifyPreviewAccess(request: Request): void {
   const isTestMode = TURNSTILE_TEST_MODE === 'true';
+  if (!isTestMode) return;
+
   const secret = PREVIEW_SECRET ?? '';
-  if (!isTestMode || !secret) return;
+  if (!secret) {
+    throw new ActionError({
+      code: 'FORBIDDEN',
+      message: 'Formulario no disponible en este entorno.',
+    });
+  }
 
   const cookie = request.headers.get('cookie') ?? '';
   const cookieVal = cookie.split(';').map(c => c.trim())
@@ -26,6 +33,15 @@ function verifyPreviewAccess(request: Request): void {
 // Clave secreta de test de Cloudflare: acepta cualquier token y siempre devuelve success.
 // Documentada públicamente en https://developers.cloudflare.com/turnstile/troubleshooting/testing/
 const TURNSTILE_TEST_SECRET = '1x0000000000000000000000000000000AA';
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 async function verifyTurnstile(token: string): Promise<void> {
   const secret = TURNSTILE_TEST_MODE === 'true' ? TURNSTILE_TEST_SECRET : TURNSTILE_SECRET_KEY;
@@ -46,6 +62,11 @@ async function verifyTurnstile(token: string): Promise<void> {
 }
 
 function buildEmailHtml(nombre: string, email: string, telefono: string | undefined, mensaje: string): string {
+  const safeNombre = escapeHtml(nombre);
+  const safeEmail = escapeHtml(email);
+  const safeTelefono = telefono ? escapeHtml(telefono) : undefined;
+  const safeMensaje = escapeHtml(mensaje);
+
   return `
 <!DOCTYPE html>
 <html lang="es">
@@ -81,27 +102,27 @@ function buildEmailHtml(nombre: string, email: string, telefono: string | undefi
                 <tr>
                   <td style="padding-bottom:16px;border-bottom:1px solid #1a1a1a;">
                     <p style="margin:0 0 4px;color:#ffffff80;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;">Nombre</p>
-                    <p style="margin:0;color:#ffffff;font-size:15px;">${nombre}</p>
+                    <p style="margin:0;color:#ffffff;font-size:15px;">${safeNombre}</p>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:16px 0;border-bottom:1px solid #1a1a1a;">
                     <p style="margin:0 0 4px;color:#ffffff80;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;">Email</p>
-                    <p style="margin:0;color:#22d3ee;font-size:15px;">${email}</p>
+                    <p style="margin:0;color:#22d3ee;font-size:15px;">${safeEmail}</p>
                   </td>
                 </tr>
-                ${telefono ? `
+                ${safeTelefono ? `
                 <tr>
                   <td style="padding:16px 0;border-bottom:1px solid #1a1a1a;">
                     <p style="margin:0 0 4px;color:#ffffff80;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;">Teléfono</p>
-                    <p style="margin:0;color:#ffffff;font-size:15px;">${telefono}</p>
+                    <p style="margin:0;color:#ffffff;font-size:15px;">${safeTelefono}</p>
                   </td>
                 </tr>
                 ` : ''}
                 <tr>
                   <td style="padding-top:16px;">
                     <p style="margin:0 0 8px;color:#ffffff80;font-size:10px;letter-spacing:0.25em;text-transform:uppercase;">Mensaje</p>
-                    <p style="margin:0;color:#ffffff;font-size:15px;line-height:1.7;white-space:pre-wrap;">${mensaje}</p>
+                    <p style="margin:0;color:#ffffff;font-size:15px;line-height:1.7;white-space:pre-wrap;">${safeMensaje}</p>
                   </td>
                 </tr>
               </table>
@@ -112,7 +133,7 @@ function buildEmailHtml(nombre: string, email: string, telefono: string | undefi
           <tr>
             <td style="background-color:#111111;padding:20px 40px;border-top:1px solid #222222;">
               <p style="margin:0;color:#ffffff40;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;">
-                Este mensaje fue enviado desde el formulario de contacto de cdem.es &mdash; Responde directamente a este email para contactar con ${nombre}.
+                Este mensaje fue enviado desde el formulario de contacto de cdem.es &mdash; Responde directamente a este email para contactar con ${safeNombre}.
               </p>
             </td>
           </tr>
