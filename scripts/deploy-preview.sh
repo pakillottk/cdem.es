@@ -50,10 +50,13 @@ if [ -z "${KEYSTATIC_GITHUB_CLIENT_ID:-}" ] || [ -z "${KEYSTATIC_GITHUB_CLIENT_S
   exit 1
 fi
 
-bash scripts/sync-worker-secrets.sh
+SECRETS_FILE=$(mktemp)
+trap 'rm -f "$SECRETS_FILE"' EXIT
+bash scripts/sync-worker-secrets.sh "$SECRETS_FILE"
 
 npx wrangler versions upload \
   --preview-alias "${BRANCH}" \
+  --secrets-file "$SECRETS_FILE" \
   --var PREVIEW_SECRET:"${PREVIEW_SECRET}" \
   --var TURNSTILE_TEST_MODE:true \
   --message "preview: ${BRANCH}"

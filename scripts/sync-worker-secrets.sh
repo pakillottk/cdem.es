@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
-# Sincroniza secrets del entorno al Worker de Cloudflare (cdem-es).
-# GitHub Actions define las vars en el job; Wrangler solo las usa en runtime
-# si están registradas como Worker secrets (no basta con exportarlas en el shell).
+# Escribe secrets del entorno a un fichero para Wrangler (--secrets-file).
+# Los secrets deben ir en el mismo upload que crea la versión; si se hace
+# `versions secret put` antes de `versions upload`, la versión nueva no los hereda.
+#
+# Uso:  bash scripts/sync-worker-secrets.sh /tmp/worker-secrets.json
 set -euo pipefail
 
-if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
-  echo "✗ CLOUDFLARE_API_TOKEN no definida."
+OUTFILE="${1:-}"
+if [ -z "$OUTFILE" ]; then
+  echo "✗ Uso: $0 <ruta-salida.json>" >&2
   exit 1
 fi
-
-WORKER_NAME="${WORKER_NAME:-cdem-es}"
-# Workers con versiones (preview/prod en Wrangler 4) exigen versions secret put.
-SECRET_PUT=(npx wrangler versions secret put)
 
 # Orden: Keystatic (CMS) → contacto → Turnstile prod
 SECRETS=(
@@ -24,20 +23,23 @@ SECRETS=(
   TURNSTILE_SECRET_KEY
 )
 
-synced=0
-for name in "${SECRETS[@]}"; do
-  # Indirect expansion: valor de la variable cuyo nombre está en $name
-  value="${!name:-}"
-  if [ -n "$value" ]; then
-    echo "▶ wrangler versions secret put ${name}"
-    echo "$value" | "${SECRET_PUT[@]}" "$name" --name "$WORKER_NAME"
-    synced=$((synced + 1))
-  fi
-done
+export SECRETS_JSON_NAMES="${SECRETS[*]}"
+node --input-type=module -e "
+import { writeFileSync } from 'node:fs';
 
-if [ "$synced" -eq 0 ]; then
-  echo "⚠ Ningún secret en el entorno — el Worker no recibirá variables nuevas."
-  echo "  Define secrets en GitHub Actions o exporta las vars antes del deploy."
+const names = (process.env.SECRETS_JSON_NAMES ?? '').split(/\\s+/).filter(Boolean);
+const out = {};
+for (const name of names) {
+  const value = process.env[name];
+  if (value) out[name] = value;
+}
+writeFileSync(process.argv[1], JSON.stringify(out));
+" "$OUTFILE"
+
+count=$(node -e "console.log(Object.keys(JSON.parse(require('fs').readFileSync(process.argv[1],'utf8'))).length)" "$OUTFILE")
+if [ "$count" -eq 0 ]; then
+  echo "⚠ Ningún secret en el entorno — el Worker no recibirá variables nuevas." >&2
+  echo "  Define secrets en GitHub Actions o en Workers → Settings → Variables." >&2
 else
-  echo "✓ ${synced} secret(s) sincronizados en ${WORKER_NAME}."
+  echo "✓ ${count} secret(s) listos para --secrets-file."
 fi

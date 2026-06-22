@@ -9,8 +9,9 @@
 #   KEYSTATIC_GITHUB_CLIENT_SECRET
 #   KEYSTATIC_SECRET
 #
-# Esos secrets deben existir en GitHub Actions Y sincronizarse al Worker en cada
-# deploy (scripts/sync-worker-secrets.sh). Sin ellos /keystatic devuelve 404.
+# Esos secrets deben existir en GitHub Actions (o en Workers Builds) y pasarse
+# al upload con --secrets-file (scripts/sync-worker-secrets.sh). Sin ellos
+# /keystatic devuelve 404.
 #
 # CLOUDFLARE_API_TOKEN — crear en dash.cloudflare.com/profile/api-tokens
 #   Plantilla: «Edit Cloudflare Workers» + añadir manualmente:
