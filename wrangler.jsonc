@@ -4,6 +4,9 @@
   "compatibility_date": "2025-12-10",
   "compatibility_flags": [
     "nodejs_compat",
+    // Evita que Astro detecte Node en workerd y devuelva [object Object] en SSR.
+    // https://github.com/withastro/astro/issues/14511
+    "disable_nodejs_process_v2",
     "global_fetch_strictly_public"
   ],
 	"assets": {

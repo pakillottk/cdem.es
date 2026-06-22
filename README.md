@@ -53,9 +53,9 @@ La app define estas variables (opcionales) para el flujo de contacto:
 - Staging: rama `develop`. Producción: rama `master`. En el admin de Keystatic puedes cambiar de rama antes de publicar.
 - Recomendado: proteger `/keystatic`, `/admin` y `/api/keystatic` con **Cloudflare Access** además del login GitHub.
 
-Copia `.env.example` a `.env` o `.dev.vars` para desarrollo local.
+Copia `.env.example` a `.env` o `.dev.vars` para desarrollo local. Para probar `/keystatic` con `wrangler dev`, añade también las vars de Keystatic en `.dev.vars`.
 
-En **Cloudflare Workers**, los secrets deben inyectarse en cada versión con `--secrets-file` (el deploy ejecuta `scripts/sync-worker-secrets.sh` antes del upload). Si despliegas con **Workers Builds** (integración Git de Cloudflare), define los mismos secrets como variables de build en el dashboard. También puedes definirlos a mano en **Workers → cdem-es → Settings → Variables and Secrets**.
+En **Cloudflare Workers**, `wrangler.jsonc` incluye `disable_nodejs_process_v2` junto a `nodejs_compat` (sin eso las rutas SSR devuelven `[object Object]`). Los secrets deben inyectarse en cada versión con `--secrets-file` (el deploy ejecuta `scripts/sync-worker-secrets.sh` antes del upload). Si despliegas con **Workers Builds**, define los mismos secrets como variables de build en el dashboard.
 
 ## Estructura del Proyecto
 
