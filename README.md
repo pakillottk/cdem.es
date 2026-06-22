@@ -55,7 +55,7 @@ La app define estas variables (opcionales) para el flujo de contacto:
 
 Copia `.env.example` a `.env` o `.dev.vars` para desarrollo local.
 
-En Cloudflare Workers, configura las variables en **Settings → Variables and Secrets**.
+En **Cloudflare Workers**, los secrets deben estar en el Worker (no basta con GitHub Actions): el deploy ejecuta `scripts/sync-worker-secrets.sh` → `wrangler secret put`. También puedes definirlos a mano en **Workers → cdem-es → Settings → Variables and Secrets**.
 
 ## Estructura del Proyecto
 

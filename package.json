@@ -14,7 +14,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "deploy": "npm run build && npx wrangler deploy",
+    "deploy": "npm run build && bash scripts/sync-worker-secrets.sh && npx wrangler deploy",
     "deploy:preview": "bash scripts/deploy-preview.sh",
     "astro": "astro"
   },
