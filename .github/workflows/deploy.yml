@@ -2,12 +2,26 @@
 # Complementa la integración Git de Cloudflare Workers si existe.
 #
 # Secrets necesarios (Settings → Secrets):
-#   CLOUDFLARE_API_TOKEN
+#   CLOUDFLARE_API_TOKEN          → ver permisos abajo
 #   CLOUDFLARE_ACCOUNT_ID
 #   PREVIEW_SECRET              → solo previews (deploy:preview)
 #   KEYSTATIC_GITHUB_CLIENT_ID
 #   KEYSTATIC_GITHUB_CLIENT_SECRET
 #   KEYSTATIC_SECRET
+#
+# Esos secrets deben existir en GitHub Actions Y sincronizarse al Worker en cada
+# deploy (scripts/sync-worker-secrets.sh). Sin ellos /keystatic devuelve 404.
+#
+# CLOUDFLARE_API_TOKEN — crear en dash.cloudflare.com/profile/api-tokens
+#   Plantilla: «Edit Cloudflare Workers» + añadir manualmente:
+#     User → Memberships → Read
+#     User → User Details → Read
+#   En la cuenta correcta, permisos mínimos:
+#     Account → Workers Scripts → Edit      (script, versions, assets-upload)
+#     Account → Workers KV Storage → Edit   (binding SESSION de Astro)
+#     Account → Cloudflare Images → Edit    (transformación de imágenes)
+#   Si sigue fallando con error 10000: el usuario del token necesita rol
+#   «Cloudflare Workers Admin» (o Super Administrator) en la cuenta.
 #
 # Variables de repositorio:
 #   CLOUDFLARE_WORKERS_DOMAIN   → ej. cdemtic.workers.dev
