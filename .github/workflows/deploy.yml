@@ -13,6 +13,10 @@
 #   CLOUDFLARE_WORKERS_DOMAIN   → ej. cdemtic.workers.dev
 name: Deploy
 
+permissions:
+  contents: read
+  actions: write # caché npm en setup-node
+
 on:
   push:
     branches:
