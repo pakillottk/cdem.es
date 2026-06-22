@@ -29,6 +29,7 @@ echo "▶ Build con claves Turnstile de test (TURNSTILE_SITE_KEY baked in)…"
 # La secret key se sobreescribe en runtime vía --var (ver más abajo).
 TURNSTILE_SITE_KEY=1x00000000000000000000AA \
   TURNSTILE_TEST_MODE=true \
+  KEYSTATIC_STORAGE=github \
   npm run build
 
 echo "▶ Subiendo versión preview a Cloudflare Workers…"

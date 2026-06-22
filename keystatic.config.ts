@@ -4,6 +4,14 @@ const GITHUB_REPO = 'pakillottk/cdem.es' as const;
 
 /** Git en despliegues; local en desarrollo (`npm run dev`). */
 function getStorage() {
+  // astro build no recibe secrets de Workers; en prod el CMS siempre usa GitHub.
+  if (process.env.NODE_ENV === 'production') {
+    return {
+      kind: 'github' as const,
+      repo: GITHUB_REPO,
+    };
+  }
+
   const storage = import.meta.env.KEYSTATIC_STORAGE;
   if (storage === 'github') {
     return {

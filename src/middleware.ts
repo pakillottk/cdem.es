@@ -1,6 +1,15 @@
 import { defineMiddleware } from 'astro:middleware';
+import { getSecret } from 'astro:env/server';
 
 const CMS_PREFIXES = ['/keystatic', '/api/keystatic', '/admin'] as const;
+
+function isGithubOAuthReady(): boolean {
+  return (
+    Boolean(getSecret('KEYSTATIC_GITHUB_CLIENT_ID')) &&
+    Boolean(getSecret('KEYSTATIC_GITHUB_CLIENT_SECRET')) &&
+    Boolean(getSecret('KEYSTATIC_SECRET'))
+  );
+}
 
 function isCmsRoute(pathname: string): boolean {
   return CMS_PREFIXES.some(
@@ -30,17 +39,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next();
   }
 
-  // En producción: fail-closed — solo GitHub storage con OAuth configurado.
-  if (import.meta.env.PROD) {
-    const storage = import.meta.env.KEYSTATIC_STORAGE;
-    const oauthReady =
-      Boolean(import.meta.env.KEYSTATIC_GITHUB_CLIENT_ID) &&
-      Boolean(import.meta.env.KEYSTATIC_GITHUB_CLIENT_SECRET) &&
-      Boolean(import.meta.env.KEYSTATIC_SECRET);
-
-    if (storage !== 'github' || !oauthReady) {
-      return new Response('Not Found', { status: 404 });
-    }
+  // Con storage GitHub, exige OAuth configurado (getSecret lee en runtime).
+  if (getSecret('KEYSTATIC_STORAGE') === 'github' && !isGithubOAuthReady()) {
+    return new Response('Not Found', { status: 404 });
   }
 
   const response = await next();
