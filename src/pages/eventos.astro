@@ -2,18 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import EventosCard from '../components/EventosCard.astro';
 import { getCollection } from 'astro:content';
-import { sortEventos, resolveEventoImageUrl } from '../lib/eventos';
+import { groupPublishedEventos, toEventoCardView } from '../lib/eventos';
 import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
 
 const allEventos = await getCollection('eventos');
-const published = allEventos.filter((evento) => evento.data.published !== false);
-
-const festivales = sortEventos(
-  published.filter((evento) => evento.data.category === 'festivales'),
-);
-const conciertos = sortEventos(
-  published.filter((evento) => evento.data.category === 'conciertos'),
-);
+const { festivales, conciertos } = groupPublishedEventos(allEventos);
 ---
 <Layout
   title="Eventos - CDEM"
@@ -45,13 +38,7 @@ const conciertos = sortEventos(
       <h2 class="eventos-categorias__title">Festivales</h2>
       <div id="eventos-festivales-list" class="eventos-festivales-list">
         {festivales.map((evento) => (
-          <EventosCard
-            title={evento.data.title}
-            href={evento.data.externalUrl}
-            image={resolveEventoImageUrl(evento.data.image, evento.id)}
-            imageAlt={evento.data.imageAlt}
-            openInNewTab={evento.data.openInNewTab}
-          />
+          <EventosCard {...toEventoCardView(evento)} />
         ))}
       </div>
     </section>
@@ -60,13 +47,7 @@ const conciertos = sortEventos(
       <h2 class="eventos-categorias__title">Conciertos</h2>
       <div id="eventos-conciertos-list" class="eventos-festivales-list">
         {conciertos.map((evento) => (
-          <EventosCard
-            title={evento.data.title}
-            href={evento.data.externalUrl}
-            image={resolveEventoImageUrl(evento.data.image, evento.id)}
-            imageAlt={evento.data.imageAlt}
-            openInNewTab={evento.data.openInNewTab}
-          />
+          <EventosCard {...toEventoCardView(evento)} />
         ))}
       </div>
     </section>
