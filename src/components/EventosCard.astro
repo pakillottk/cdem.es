@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  href: string;
+  image: string;
+  imageAlt: string;
+  openInNewTab?: boolean;
+}
+
+const { title, href, image, imageAlt, openInNewTab = false } = Astro.props;
+---
+<article class="eventos-festival-card">
+  <a
+    href={href}
+    {...(openInNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    class="eventos-festival-card__link"
+  >
+    <div class="eventos-festival-card__image">
+      <img
+        src={image}
+        alt={imageAlt}
+        width="800"
+        height="533"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="eventos-festival-card__body">
+      <h2 class="eventos-festival-card__title">{title}</h2>
+    </div>
+  </a>
+</article>

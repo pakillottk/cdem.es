@@ -1,0 +1,17 @@
+---
+export const prerender = false;
+
+import { KeystaticApp } from '../../components/KeystaticApp.tsx';
+---
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CMS · CDEM</title>
+  </head>
+  <body>
+    <KeystaticApp client:only="react" />
+  </body>
+</html>
