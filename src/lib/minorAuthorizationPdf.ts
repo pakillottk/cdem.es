@@ -1,16 +1,23 @@
-import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFPage } from 'pdf-lib';
+import { PDFDocument, StandardFonts, rgb, type PDFFont, type PDFImage, type PDFPage } from 'pdf-lib';
+import type { MinorRecord } from './minorAuthorization';
 
 export interface MinorAuthorizationPdfInput {
   requesterName: string;
   eventName: string;
   eventDate?: string;
+  entryCode?: string;
+  minorCount: number;
+  minors: MinorRecord[];
   minorName: string;
   minorBirthDate: string;
   minorDni?: string;
   parentName: string;
   parentDni: string;
   parentPhone: string;
-  parentAddress?: string;
+  hasSecondTutor: boolean;
+  secondParentName?: string;
+  secondParentDni?: string;
+  secondParentPhone?: string;
   companionName?: string;
   companionDni?: string;
   companionPhone?: string;
@@ -23,6 +30,19 @@ const PAGE_WIDTH = 595.28;
 const PAGE_HEIGHT = 841.89;
 const MARGIN = 48;
 const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
+const MIN_CONTENT_Y = 200;
+
+const LEGAL_CLAUSES = [
+  'El firmante declara que los datos facilitados son veraces y que ostenta la patria potestad, tutela o guarda legal sobre el/los menor(es) autorizado(s).',
+  'El firmante asume la responsabilidad por la asistencia del/de los menor(es) al evento y por el cumplimiento de las normas de acceso y conducta del recinto.',
+  'Creación y Diseño de Eventos Musicales S.L. tratará los datos personales con la finalidad de gestionar esta autorización, conforme a su Política de Privacidad (cdem.es/politica-de-privacidad). La base legitimadora es el consentimiento del interesado y, en su caso, el cumplimiento de obligaciones legales.',
+  'Los datos se conservarán durante el tiempo necesario para la gestión de la autorización y el plazo legalmente exigible. El interesado puede ejercer sus derechos de acceso, rectificación, supresión, limitación, oposición y portabilidad en cdemcontratacion@gmail.com, así como reclamar ante la AEPD (www.aepd.es).',
+  'Este documento constituye la manifestación expresa de consentimiento del tutor o tutores firmantes para la asistencia del/de los menor(es) al evento indicado.',
+];
+
+function isFilled(value?: string): boolean {
+  return Boolean(value?.trim());
+}
 
 function formatDate(date: string | undefined): string {
   if (!date) return '';
@@ -120,6 +140,115 @@ function drawField(
   return cursorY - 4;
 }
 
+function drawFieldIfFilled(
+  page: PDFPage,
+  label: string,
+  value: string | undefined,
+  x: number,
+  y: number,
+  regular: PDFFont,
+  bold: PDFFont,
+): number {
+  if (!isFilled(value)) return y;
+  return drawField(page, label, value!.trim(), x, y, regular, bold);
+}
+
+type PdfContext = {
+  pdf: PDFDocument;
+  page: PDFPage;
+  regular: PDFFont;
+  bold: PDFFont;
+  y: number;
+};
+
+function ensureSpace(ctx: PdfContext, needed: number): void {
+  if (ctx.y - needed >= MIN_CONTENT_Y) return;
+  ctx.page = ctx.pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+  ctx.y = PAGE_HEIGHT - MARGIN;
+}
+
+function drawLegalClauses(ctx: PdfContext): void {
+  const fontSize = 7.5;
+  const lineHeight = 10;
+  const clauseGap = 6;
+  const totalLines = LEGAL_CLAUSES.reduce(
+    (count, clause) => count + wrapText(clause, ctx.regular, fontSize, CONTENT_WIDTH).length,
+    0,
+  );
+  const totalHeight = totalLines * lineHeight + (LEGAL_CLAUSES.length - 1) * clauseGap + 16;
+  ensureSpace(ctx, totalHeight);
+
+  ctx.y = drawSectionTitle(ctx.page, 'Información legal', MARGIN, ctx.y - 8, ctx.bold);
+  for (const clause of LEGAL_CLAUSES) {
+    const lines = wrapText(clause, ctx.regular, fontSize, CONTENT_WIDTH);
+    ctx.y = drawLines(
+      ctx.page,
+      lines,
+      MARGIN,
+      ctx.y,
+      ctx.regular,
+      fontSize,
+      lineHeight,
+      rgb(0.35, 0.38, 0.42),
+    ) - clauseGap;
+  }
+}
+
+function drawSignatureBlock(
+  ctx: PdfContext,
+  input: MinorAuthorizationPdfInput,
+  signatureWidth: number,
+  signatureHeight: number,
+  signature: PDFImage,
+): void {
+  ensureSpace(ctx, signatureHeight + 100);
+
+  ctx.page.drawLine({
+    start: { x: MARGIN, y: ctx.y },
+    end: { x: MARGIN + CONTENT_WIDTH, y: ctx.y },
+    thickness: 0.75,
+    color: rgb(0.82, 0.82, 0.82),
+  });
+  ctx.y -= 24;
+
+  ctx.page.drawText(`En ${input.locality}`, {
+    x: MARGIN,
+    y: ctx.y,
+    size: 11,
+    font: ctx.regular,
+    color: rgb(0.07, 0.07, 0.07),
+  });
+  ctx.page.drawText(`Fecha de firma: ${input.signedAt}`, {
+    x: MARGIN,
+    y: ctx.y - 18,
+    size: 11,
+    font: ctx.regular,
+    color: rgb(0.07, 0.07, 0.07),
+  });
+
+  const signatureY = ctx.y - signatureHeight - 8;
+  ctx.page.drawText('Firma', {
+    x: PAGE_WIDTH - MARGIN - signatureWidth,
+    y: signatureY + signatureHeight + 12,
+    size: 10,
+    font: ctx.regular,
+    color: rgb(0.42, 0.45, 0.5),
+  });
+  ctx.page.drawImage(signature, {
+    x: PAGE_WIDTH - MARGIN - signatureWidth,
+    y: signatureY,
+    width: signatureWidth,
+    height: signatureHeight,
+  });
+  ctx.page.drawLine({
+    start: { x: PAGE_WIDTH - MARGIN - signatureWidth, y: signatureY - 4 },
+    end: { x: PAGE_WIDTH - MARGIN, y: signatureY - 4 },
+    thickness: 0.75,
+    color: rgb(0.07, 0.07, 0.07),
+  });
+  ctx.y = signatureY - 20;
+}
+
 export async function buildMinorAuthorizationPdf(
   input: MinorAuthorizationPdfInput,
   logoPng: Uint8Array,
@@ -157,76 +286,74 @@ export async function buildMinorAuthorizationPdf(
   });
 
   const eventDate = formatDate(input.eventDate);
+  const minorLabel = input.minorCount > 1 ? 'los menores indicados' : 'el menor indicado';
   const intro = eventDate
-    ? `Autorizo al menor indicado a acceder al evento ${input.eventName} el ${eventDate} y acepto la responsabilidad derivada de su asistencia.`
-    : `Autorizo al menor indicado a acceder al evento ${input.eventName} y acepto la responsabilidad derivada de su asistencia.`;
+    ? `Autorizo a ${minorLabel} a acceder al evento ${input.eventName} el ${eventDate} y acepto la responsabilidad derivada de su asistencia.`
+    : `Autorizo a ${minorLabel} a acceder al evento ${input.eventName} y acepto la responsabilidad derivada de su asistencia.`;
 
-  let y = PAGE_HEIGHT - MARGIN - logoHeight - 78;
-  y = drawLines(page, wrapText(intro, regular, 12, CONTENT_WIDTH), MARGIN, y, regular, 12, 18) - 10;
+  const ctx: PdfContext = { pdf, page, regular, bold, y: PAGE_HEIGHT - MARGIN - logoHeight - 78 };
+  ctx.y = drawLines(page, wrapText(intro, regular, 12, CONTENT_WIDTH), MARGIN, ctx.y, regular, 12, 18) - 10;
+  ctx.y = drawFieldIfFilled(page, 'Código de la entrada', input.entryCode, MARGIN, ctx.y, regular, bold);
 
-  y = drawSectionTitle(page, '1) Datos del menor', MARGIN, y, bold);
-  y = drawField(page, 'Nombre y apellidos', input.minorName, MARGIN, y, regular, bold);
-  y = drawField(page, 'Fecha de nacimiento', formatDate(input.minorBirthDate), MARGIN, y, regular, bold);
-  y = drawField(page, 'DNI', input.minorDni?.trim() || '-', MARGIN, y, regular, bold);
+  let sectionNum = 1;
+  ctx.y = drawSectionTitle(page, `${sectionNum}) Datos del menor`, MARGIN, ctx.y, bold);
+  sectionNum += 1;
+  for (const [index, minor] of input.minors.entries()) {
+    if (input.minors.length > 1) {
+      page.drawText(`Menor ${index + 1}`, {
+        x: MARGIN,
+        y: ctx.y,
+        size: 11,
+        font: bold,
+        color: rgb(0.42, 0.45, 0.5),
+      });
+      ctx.y -= 18;
+    }
+    ctx.y = drawField(page, 'Nombre y apellidos', minor.name, MARGIN, ctx.y, regular, bold);
+    ctx.y = drawField(page, 'Fecha de nacimiento', formatDate(minor.birthDate), MARGIN, ctx.y, regular, bold);
+    ctx.y = drawFieldIfFilled(page, 'DNI', minor.dni, MARGIN, ctx.y, regular, bold);
+  }
 
-  y = drawSectionTitle(page, '2) Padre, madre o tutor legal', MARGIN, y - 8, bold);
-  y = drawField(page, 'Nombre y apellidos', input.parentName, MARGIN, y, regular, bold);
-  y = drawField(page, 'DNI', input.parentDni, MARGIN, y, regular, bold);
-  y = drawField(page, 'Teléfono', input.parentPhone, MARGIN, y, regular, bold);
-  y = drawField(page, 'Domicilio', input.parentAddress?.trim() || '-', MARGIN, y, regular, bold);
+  ctx.y = drawSectionTitle(page, `${sectionNum}) Padre, madre o tutor legal`, MARGIN, ctx.y - 8, bold);
+  sectionNum += 1;
+  ctx.y = drawField(page, 'Nombre y apellidos', input.parentName, MARGIN, ctx.y, regular, bold);
+  ctx.y = drawField(page, 'DNI', input.parentDni, MARGIN, ctx.y, regular, bold);
+  ctx.y = drawField(page, 'Teléfono', input.parentPhone, MARGIN, ctx.y, regular, bold);
 
-  y = drawSectionTitle(page, '3) Adulto acompañante o custodio alternativo', MARGIN, y - 8, bold);
-  y = drawField(page, 'Nombre y apellidos', input.companionName?.trim() || '-', MARGIN, y, regular, bold);
-  y = drawField(page, 'DNI', input.companionDni?.trim() || '-', MARGIN, y, regular, bold);
-  y = drawField(page, 'Teléfono', input.companionPhone?.trim() || '-', MARGIN, y, regular, bold);
+  const hasSecondTutorData = input.hasSecondTutor && (
+    isFilled(input.secondParentName) || isFilled(input.secondParentDni) || isFilled(input.secondParentPhone)
+  );
+  if (hasSecondTutorData) {
+    ctx.y = drawSectionTitle(page, `${sectionNum}) Segundo tutor que autoriza`, MARGIN, ctx.y - 8, bold);
+    sectionNum += 1;
+    ctx.y = drawFieldIfFilled(page, 'Nombre y apellidos', input.secondParentName, MARGIN, ctx.y, regular, bold);
+    ctx.y = drawFieldIfFilled(page, 'DNI', input.secondParentDni, MARGIN, ctx.y, regular, bold);
+    ctx.y = drawFieldIfFilled(page, 'Teléfono', input.secondParentPhone, MARGIN, ctx.y, regular, bold);
+  }
+
+  const hasCompanionData = isFilled(input.companionName)
+    || isFilled(input.companionDni)
+    || isFilled(input.companionPhone);
+  if (hasCompanionData) {
+    ctx.y = drawSectionTitle(
+      page,
+      `${sectionNum}) Adulto acompañante o custodio alternativo`,
+      MARGIN,
+      ctx.y - 8,
+      bold,
+    );
+    ctx.y = drawFieldIfFilled(page, 'Nombre y apellidos', input.companionName, MARGIN, ctx.y, regular, bold);
+    ctx.y = drawFieldIfFilled(page, 'DNI', input.companionDni, MARGIN, ctx.y, regular, bold);
+    ctx.y = drawFieldIfFilled(page, 'Teléfono', input.companionPhone, MARGIN, ctx.y, regular, bold);
+  }
 
   const signature = await pdf.embedPng(input.signaturePng);
   const signatureScale = Math.min(180 / signature.width, 70 / signature.height);
   const signatureWidth = signature.width * signatureScale;
   const signatureHeight = signature.height * signatureScale;
-  const footerY = 120;
 
-  page.drawLine({
-    start: { x: MARGIN, y: footerY + 88 },
-    end: { x: MARGIN + CONTENT_WIDTH, y: footerY + 88 },
-    thickness: 0.75,
-    color: rgb(0.82, 0.82, 0.82),
-  });
-
-  page.drawText(`En ${input.locality}`, {
-    x: MARGIN,
-    y: footerY + 58,
-    size: 11,
-    font: regular,
-    color: rgb(0.07, 0.07, 0.07),
-  });
-  page.drawText(`Fecha de firma: ${input.signedAt}`, {
-    x: MARGIN,
-    y: footerY + 40,
-    size: 11,
-    font: regular,
-    color: rgb(0.07, 0.07, 0.07),
-  });
-
-  page.drawText('Firma', {
-    x: PAGE_WIDTH - MARGIN - signatureWidth,
-    y: footerY + signatureHeight + 12,
-    size: 10,
-    font: regular,
-    color: rgb(0.42, 0.45, 0.5),
-  });
-  page.drawImage(signature, {
-    x: PAGE_WIDTH - MARGIN - signatureWidth,
-    y: footerY,
-    width: signatureWidth,
-    height: signatureHeight,
-  });
-  page.drawLine({
-    start: { x: PAGE_WIDTH - MARGIN - signatureWidth, y: footerY - 4 },
-    end: { x: PAGE_WIDTH - MARGIN, y: footerY - 4 },
-    thickness: 0.75,
-    color: rgb(0.07, 0.07, 0.07),
-  });
+  drawSignatureBlock(ctx, input, signatureWidth, signatureHeight, signature);
+  drawLegalClauses(ctx);
 
   return pdf.save();
 }

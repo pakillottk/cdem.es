@@ -1,5 +1,6 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
+import { getCollection } from 'astro:content';
 import {
   RESEND_API_KEY,
   CONTACT_EMAIL_TO,
@@ -9,10 +10,13 @@ import {
   PREVIEW_SECRET,
   MINOR_AUTH_SECRET,
 } from 'astro:env/server';
+import type { MinorRecord } from '../lib/minorAuthorization';
 import {
   createMinorAuthorizationToken,
   normalizeDni,
   verifyMinorAuthorizationToken,
+  buildMinorsFromRequest,
+  getMinorsFromPayload,
 } from '../lib/minorAuthorization';
 import {
   buildMinorAuthorizationPdf,
@@ -20,6 +24,7 @@ import {
   pdfBytesToBase64,
   signatureDataUrlToPngBytes,
 } from '../lib/minorAuthorizationPdf';
+import { isActiveEventoSelection } from '../lib/eventos';
 
 /**
  * En test mode, verifica que la petición lleve el secret de preview.
@@ -38,10 +43,6 @@ function verifyPreviewAccess(request: Request): void {
       message: 'Formulario no disponible en este entorno.',
     });
   }
-
-  // ponytail: en localhost no exigimos cookie; en preview sí (evita abuso del Turnstile de test).
-  const host = new URL(request.url).hostname;
-  if (host === 'localhost' || host === '127.0.0.1') return;
 
   const cookie = request.headers.get('cookie') ?? '';
   const cookieVal = cookie.split(';').map(c => c.trim())
@@ -131,13 +132,16 @@ interface CompletedMinorAuthorizationEmailInput {
   requesterName: string;
   eventName: string;
   eventDate?: string;
-  minorName: string;
-  minorBirthDate: string;
-  minorDni?: string;
+  entryCode?: string;
+  minorCount: number;
+  minors: MinorRecord[];
   parentName: string;
   parentDni: string;
   parentPhone: string;
-  parentAddress?: string;
+  hasSecondTutor: boolean;
+  secondParentName?: string;
+  secondParentDni?: string;
+  secondParentPhone?: string;
   companionName?: string;
   companionDni?: string;
   companionPhone?: string;
@@ -146,18 +150,30 @@ interface CompletedMinorAuthorizationEmailInput {
   signatureDataUrl: string;
 }
 
+function buildMinorsEmailRows(minors: MinorRecord[]): string {
+  return minors.map((minor, index) => {
+    const prefix = minors.length > 1 ? `<tr><td colspan="1" style="padding:12px 0 4px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#6b7280;">Menor ${index + 1}</td></tr>` : '';
+    return `
+      ${prefix}
+      <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${escapeHtml(minor.name)}</td></tr>
+      <tr><td style="padding:4px 0;"><strong>Fecha de nacimiento:</strong> ${formatDate(minor.birthDate)}</td></tr>
+      <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${minor.dni ? escapeHtml(minor.dni) : '—'}</td></tr>
+    `;
+  }).join('');
+}
+
 function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthorizationEmailInput): string {
   const safe = {
     requesterName: escapeHtml(data.requesterName),
     eventName: escapeHtml(data.eventName),
     eventDate: formatDate(data.eventDate),
-    minorName: escapeHtml(data.minorName),
-    minorBirthDate: formatDate(data.minorBirthDate),
-    minorDni: data.minorDni ? escapeHtml(data.minorDni) : '—',
+    entryCode: data.entryCode ? escapeHtml(data.entryCode) : '',
     parentName: escapeHtml(data.parentName),
     parentDni: escapeHtml(data.parentDni),
     parentPhone: escapeHtml(data.parentPhone),
-    parentAddress: data.parentAddress ? escapeHtml(data.parentAddress) : '—',
+    secondParentName: data.secondParentName ? escapeHtml(data.secondParentName) : '—',
+    secondParentDni: data.secondParentDni ? escapeHtml(data.secondParentDni) : '—',
+    secondParentPhone: data.secondParentPhone ? escapeHtml(data.secondParentPhone) : '—',
     companionName: data.companionName ? escapeHtml(data.companionName) : '—',
     companionDni: data.companionDni ? escapeHtml(data.companionDni) : '—',
     companionPhone: data.companionPhone ? escapeHtml(data.companionPhone) : '—',
@@ -165,6 +181,19 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
     signedAt: escapeHtml(data.signedAt),
     signatureDataUrl: escapeHtml(data.signatureDataUrl),
   };
+  const minorLabel = data.minorCount > 1 ? 'los menores indicados' : 'el menor indicado';
+  const minorsRows = buildMinorsEmailRows(data.minors);
+  const secondTutorSection = data.hasSecondTutor ? `
+              <h2 style="margin:30px 0 12px;font-size:20px;">3) Segundo tutor que autoriza</h2>
+              <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
+                <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.secondParentName}</td></tr>
+                <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.secondParentDni}</td></tr>
+                <tr><td style="padding:4px 0;"><strong>Teléfono:</strong> ${safe.secondParentPhone}</td></tr>
+              </table>
+  ` : '';
+  const companionHeading = data.hasSecondTutor
+    ? '4) Adulto acompañante o custodio alternativo'
+    : '3) Adulto acompañante o custodio alternativo';
 
   return `
 <!DOCTYPE html>
@@ -195,14 +224,13 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
                 Adjunto encontrarás el documento firmado en PDF con el logo de CDEM.
               </p>
               <p style="margin:28px 0 0;font-size:16px;line-height:1.7;">
-                Autorizo al menor indicado a acceder al evento <strong>${safe.eventName}</strong>${safe.eventDate ? ` el <strong>${safe.eventDate}</strong>` : ''} y acepto la responsabilidad derivada de su asistencia.
+                Autorizo a ${minorLabel} a acceder al evento <strong>${safe.eventName}</strong>${safe.eventDate ? ` el <strong>${safe.eventDate}</strong>` : ''} y acepto la responsabilidad derivada de su asistencia.
               </p>
+              ${safe.entryCode ? `<p style="margin:12px 0 0;font-size:14px;line-height:1.7;"><strong>Código de la entrada:</strong> ${safe.entryCode}</p>` : ''}
 
               <h2 style="margin:34px 0 12px;font-size:20px;">1) Datos del menor</h2>
               <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
-                <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.minorName}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>Fecha de nacimiento:</strong> ${safe.minorBirthDate}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.minorDni}</td></tr>
+                ${minorsRows}
               </table>
 
               <h2 style="margin:30px 0 12px;font-size:20px;">2) Padre, madre o tutor legal</h2>
@@ -210,10 +238,10 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
                 <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.parentName}</td></tr>
                 <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.parentDni}</td></tr>
                 <tr><td style="padding:4px 0;"><strong>Teléfono:</strong> ${safe.parentPhone}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>Domicilio:</strong> ${safe.parentAddress}</td></tr>
               </table>
+              ${secondTutorSection}
 
-              <h2 style="margin:30px 0 12px;font-size:20px;">3) Adulto acompañante o custodio alternativo</h2>
+              <h2 style="margin:30px 0 12px;font-size:20px;">${companionHeading}</h2>
               <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
                 <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.companionName}</td></tr>
                 <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.companionDni}</td></tr>
@@ -479,39 +507,95 @@ export const server = {
   minorAuthorizationRequest: defineAction({
     accept: 'form',
     input: z.object({
-      requesterName: z.string().min(1, 'El nombre del tutor es obligatorio'),
-      requesterEmail: z.string().email('Email no válido'),
+      requesterName: z.string().min(1, 'El nombre y apellidos es obligatorio'),
+      requesterEmail: z.string().min(1, 'El correo electrónico es obligatorio').email('Email no válido'),
       eventName: z.string().min(1, 'El nombre del evento es obligatorio'),
       eventDate: z.string().optional(),
-      minorName: z.string().min(1, 'El nombre del menor es obligatorio'),
+      entryCode: z.string().optional(),
+      minorCount: z.enum(['1', '2', '3']),
+      minorName: z.string().min(1, 'El nombre y apellidos es obligatorio'),
       minorBirthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
       minorDni: z.string().optional(),
-      parentName: z.string().min(1, 'El nombre del tutor es obligatorio'),
+      minor2Name: z.string().optional(),
+      minor2BirthDate: z.string().optional(),
+      minor2Dni: z.string().optional(),
+      minor3Name: z.string().optional(),
+      minor3BirthDate: z.string().optional(),
+      minor3Dni: z.string().optional(),
+      hasSecondTutor: z.enum(['yes', 'no']),
+      secondParentName: z.string().optional(),
+      secondParentDni: z.string().optional(),
+      secondParentPhone: z.string().optional(),
+      parentName: z.string().min(1, 'El nombre y apellidos es obligatorio'),
       parentDni: z.string().min(1, 'El DNI del tutor es obligatorio'),
       parentPhone: z.string().min(1, 'El teléfono del tutor es obligatorio'),
-      parentAddress: z.string().optional(),
       companionName: z.string().optional(),
       companionDni: z.string().optional(),
       companionPhone: z.string().optional(),
+      privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
+    }).superRefine((data, ctx) => {
+      if (data.minorCount >= '2') {
+        if (!data.minor2Name?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['minor2Name'], message: 'El nombre y apellidos del menor 2 es obligatorio' });
+        }
+        if (!data.minor2BirthDate?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['minor2BirthDate'], message: 'La fecha de nacimiento del menor 2 es obligatoria' });
+        }
+      }
+      if (data.minorCount === '3') {
+        if (!data.minor3Name?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['minor3Name'], message: 'El nombre y apellidos del menor 3 es obligatorio' });
+        }
+        if (!data.minor3BirthDate?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['minor3BirthDate'], message: 'La fecha de nacimiento del menor 3 es obligatoria' });
+        }
+      }
+      if (data.hasSecondTutor === 'yes') {
+        if (!data.secondParentName?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['secondParentName'], message: 'El nombre y apellidos del segundo tutor es obligatorio' });
+        }
+        if (!data.secondParentDni?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['secondParentDni'], message: 'El DNI del segundo tutor es obligatorio' });
+        }
+        if (!data.secondParentPhone?.trim()) {
+          ctx.addIssue({ code: 'custom', path: ['secondParentPhone'], message: 'El teléfono del segundo tutor es obligatorio' });
+        }
+      }
     }),
     handler: async (input, context) => {
       verifyPreviewAccess(context.request);
       await verifyTurnstile(input.turnstileToken);
 
+      const eventos = await getCollection('eventos');
+      if (!isActiveEventoSelection(eventos, input.eventName, input.eventDate)) {
+        throw new ActionError({
+          code: 'BAD_REQUEST',
+          message: 'El evento seleccionado no está disponible.',
+        });
+      }
+
+      const minors = buildMinorsFromRequest(input);
+      const hasSecondTutor = input.hasSecondTutor === 'yes';
       const secret = getMinorAuthSecret();
       const token = await createMinorAuthorizationToken({
         requesterName: input.requesterName,
         requesterEmail: input.requesterEmail,
         eventName: input.eventName,
         eventDate: input.eventDate,
-        minorName: input.minorName,
-        minorBirthDate: input.minorBirthDate,
-        minorDni: input.minorDni,
+        entryCode: input.entryCode,
+        minorCount: Number(input.minorCount),
+        minors,
+        minorName: minors[0].name,
+        minorBirthDate: minors[0].birthDate,
+        minorDni: minors[0].dni,
         parentName: input.parentName,
         parentDni: input.parentDni,
         parentPhone: input.parentPhone,
-        parentAddress: input.parentAddress,
+        hasSecondTutor,
+        secondParentName: hasSecondTutor ? input.secondParentName : undefined,
+        secondParentDni: hasSecondTutor ? input.secondParentDni : undefined,
+        secondParentPhone: hasSecondTutor ? input.secondParentPhone : undefined,
         companionName: input.companionName,
         companionDni: input.companionDni,
         companionPhone: input.companionPhone,
@@ -521,18 +605,13 @@ export const server = {
       const signatureLink = new URL('/autorizacion-menores/firma', requestUrl.origin);
       signatureLink.searchParams.set('token', token);
 
-      if (import.meta.env.DEV) {
-        console.log('[autorización menores] Enlace de firma:\n', signatureLink.toString());
-        if (!RESEND_API_KEY || !FROM_EMAIL) {
-          return { sent: true, linkGenerated: true };
-        }
-      }
+      const minorNamesLabel = minors.map((minor) => minor.name).join(', ');
 
       await sendResendEmail({
         from: `CDEM Web <${FROM_EMAIL}>`,
         to: [input.requesterEmail],
         ...(CONTACT_EMAIL_TO ? { bcc: [CONTACT_EMAIL_TO] } : {}),
-        subject: `Firma pendiente: autorización para ${input.minorName}`,
+        subject: `Firma pendiente: autorización para ${minorNamesLabel}`,
         html: buildMinorAuthorizationRequestEmailHtml(
           input.requesterName,
           input.eventName,
@@ -552,10 +631,15 @@ export const server = {
       const secret = getMinorAuthSecret();
       try {
         const { payload } = await verifyMinorAuthorizationToken(token, secret);
+        const minors = getMinorsFromPayload(payload);
         return {
-          minorName: payload.minorName,
+          minorName: minors.map((minor) => minor.name).join(', '),
+          minorCount: payload.minorCount ?? minors.length,
           eventName: payload.eventName,
+          entryCode: payload.entryCode,
           parentName: payload.parentName,
+          hasSecondTutor: payload.hasSecondTutor ?? false,
+          secondParentName: payload.secondParentName,
         };
       } catch (error) {
         throw new ActionError({
@@ -581,7 +665,12 @@ export const server = {
 
       const secret = getMinorAuthSecret();
       const { payload } = await verifyMinorAuthorizationToken(token, secret);
-      if (normalizeDni(parentDni) !== normalizeDni(payload.parentDni)) {
+      const allowedDnis = [payload.parentDni];
+      if (payload.hasSecondTutor && payload.secondParentDni) {
+        allowedDnis.push(payload.secondParentDni);
+      }
+      const normalizedParentDni = normalizeDni(parentDni);
+      if (!allowedDnis.some((dni) => normalizeDni(dni) === normalizedParentDni)) {
         throw new ActionError({
           code: 'BAD_REQUEST',
           message: 'El DNI del tutor no coincide con el del formulario inicial.',
@@ -595,19 +684,26 @@ export const server = {
 
       const origin = new URL(context.request.url).origin;
       const logoPng = await fetchPdfAsset(origin, '/favicon-cdem.png');
+      const minors = getMinorsFromPayload(payload);
 
       const pdfBytes = await buildMinorAuthorizationPdf(
         {
           requesterName: payload.requesterName,
           eventName: payload.eventName,
           eventDate: payload.eventDate,
+          entryCode: payload.entryCode,
+          minorCount: payload.minorCount ?? minors.length,
+          minors,
           minorName: payload.minorName,
           minorBirthDate: payload.minorBirthDate,
           minorDni: payload.minorDni,
           parentName: payload.parentName,
           parentDni: normalizeDni(payload.parentDni),
           parentPhone: payload.parentPhone,
-          parentAddress: payload.parentAddress,
+          hasSecondTutor: payload.hasSecondTutor ?? false,
+          secondParentName: payload.secondParentName,
+          secondParentDni: payload.secondParentDni,
+          secondParentPhone: payload.secondParentPhone,
           companionName: payload.companionName,
           companionDni: payload.companionDni,
           companionPhone: payload.companionPhone,
@@ -618,28 +714,14 @@ export const server = {
         logoPng,
       );
 
-      const pdfFilename = `autorizacion-${payload.minorName.trim().replace(/\s+/g, '-').toLowerCase()}.pdf`;
-
-      if (import.meta.env.DEV && (!RESEND_API_KEY || !FROM_EMAIL)) {
-        try {
-          const { writeFileSync } = await import('node:fs');
-          writeFileSync('public/dev-autorizacion.pdf', pdfBytes);
-          const previewOrigin = new URL(context.request.url).origin;
-          console.log(`[autorización menores] PDF de prueba: ${previewOrigin}/dev-autorizacion.pdf`);
-        } catch {
-          console.log(`[autorización menores] PDF generado: ${pdfFilename} (${pdfBytes.length} bytes)`);
-        }
-        return {
-          signed: true,
-          parentDni: normalizeDni(payload.parentDni),
-        };
-      }
+      const pdfFilename = `autorizacion-${minors.map((minor) => minor.name.trim().replace(/\s+/g, '-').toLowerCase()).join('-')}.pdf`;
+      const minorNamesLabel = minors.map((minor) => minor.name).join(', ');
 
       await sendResendEmail({
         from: `CDEM Web <${FROM_EMAIL}>`,
         to: CONTACT_EMAIL_TO ? [payload.requesterEmail, CONTACT_EMAIL_TO] : [payload.requesterEmail],
         reply_to: payload.requesterEmail,
-        subject: `Autorización firmada: ${payload.minorName}`,
+        subject: `Autorización firmada: ${minorNamesLabel}`,
         attachments: [
           {
             filename: pdfFilename,
@@ -650,13 +732,16 @@ export const server = {
           requesterName: payload.requesterName,
           eventName: payload.eventName,
           eventDate: payload.eventDate,
-          minorName: payload.minorName,
-          minorBirthDate: payload.minorBirthDate,
-          minorDni: payload.minorDni,
+          entryCode: payload.entryCode,
+          minorCount: payload.minorCount ?? minors.length,
+          minors,
           parentName: payload.parentName,
           parentDni: normalizeDni(payload.parentDni),
           parentPhone: payload.parentPhone,
-          parentAddress: payload.parentAddress,
+          hasSecondTutor: payload.hasSecondTutor ?? false,
+          secondParentName: payload.secondParentName,
+          secondParentDni: payload.secondParentDni,
+          secondParentPhone: payload.secondParentPhone,
           companionName: payload.companionName,
           companionDni: payload.companionDni,
           companionPhone: payload.companionPhone,

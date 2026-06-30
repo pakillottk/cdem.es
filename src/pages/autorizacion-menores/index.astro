@@ -1,6 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import MinorAuthorizationRequestForm from '../../components/MinorAuthorizationRequestForm';
+import { getCollection } from 'astro:content';
+import { getActiveEventosForForm } from '../../lib/eventos';
+
+const activeEventos = getActiveEventosForForm(await getCollection('eventos'));
 ---
 
 <Layout
@@ -17,6 +21,6 @@ import MinorAuthorizationRequestForm from '../../components/MinorAuthorizationRe
       </p>
     </div>
 
-    <MinorAuthorizationRequestForm client:visible />
+    <MinorAuthorizationRequestForm client:visible events={activeEventos} />
   </section>
 </Layout>

@@ -7,8 +7,12 @@ import Turnstile from './Turnstile';
 interface MinorAuthorizationSignFormProps {
   token: string;
   minorName: string;
+  minorCount: number;
   eventName: string;
+  entryCode?: string;
   parentName: string;
+  hasSecondTutor: boolean;
+  secondParentName?: string;
 }
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
@@ -22,8 +26,12 @@ const labelClass =
 export default function MinorAuthorizationSignForm({
   token,
   minorName,
+  minorCount,
   eventName,
+  entryCode,
   parentName,
+  hasSecondTutor,
+  secondParentName,
 }: MinorAuthorizationSignFormProps) {
   const [state, setState] = useState<FormState>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -94,8 +102,12 @@ export default function MinorAuthorizationSignForm({
     <form onSubmit={handleSubmit} noValidate className="border-2 border-black px-6 sm:px-8 py-8 sm:py-10 space-y-6 font-secondary">
       <div className="rounded-md border border-black/15 bg-black/[0.03] px-4 py-3 text-sm text-black/70">
         <p><strong>Evento:</strong> {eventName}</p>
-        <p><strong>Menor:</strong> {minorName}</p>
+        {entryCode && <p><strong>Código de la entrada:</strong> {entryCode}</p>}
+        <p><strong>{minorCount > 1 ? 'Menores' : 'Menor'}:</strong> {minorName}</p>
         <p><strong>Tutor:</strong> {parentName}</p>
+        {hasSecondTutor && secondParentName && (
+          <p><strong>Segundo tutor:</strong> {secondParentName}</p>
+        )}
       </div>
 
       {state === 'error' && (
@@ -118,7 +130,7 @@ export default function MinorAuthorizationSignForm({
         />
         {fieldErrors.parentDni && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.parentDni}</p>}
         <p className="text-xs text-black/55 mt-1">
-          Debe coincidir exactamente con el DNI indicado en el primer formulario.
+          Debe coincidir exactamente con el DNI del primer o segundo tutor indicado en el formulario inicial.
         </p>
       </div>
 

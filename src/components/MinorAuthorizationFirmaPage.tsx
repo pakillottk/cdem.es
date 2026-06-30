@@ -6,8 +6,12 @@ type PageState = 'loading' | 'ready' | 'error';
 
 interface Payload {
   minorName: string;
+  minorCount: number;
   eventName: string;
+  entryCode?: string;
   parentName: string;
+  hasSecondTutor: boolean;
+  secondParentName?: string;
 }
 
 export default function MinorAuthorizationFirmaPage() {
@@ -61,8 +65,12 @@ export default function MinorAuthorizationFirmaPage() {
     <MinorAuthorizationSignForm
       token={token}
       minorName={payload.minorName}
+      minorCount={payload.minorCount}
       eventName={payload.eventName}
+      entryCode={payload.entryCode}
       parentName={payload.parentName}
+      hasSecondTutor={payload.hasSecondTutor}
+      secondParentName={payload.secondParentName}
     />
   );
 }

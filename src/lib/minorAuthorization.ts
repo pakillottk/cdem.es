@@ -1,15 +1,28 @@
+export interface MinorRecord {
+  name: string;
+  birthDate: string;
+  dni?: string;
+}
+
 export interface MinorAuthorizationPayload {
   requesterName: string;
   requesterEmail: string;
   eventName: string;
   eventDate?: string;
+  entryCode?: string;
+  minorCount?: number;
+  minors?: MinorRecord[];
+  /** Primer menor; conservado para tokens antiguos y compatibilidad. */
   minorName: string;
   minorBirthDate: string;
   minorDni?: string;
   parentName: string;
   parentDni: string;
   parentPhone: string;
-  parentAddress?: string;
+  hasSecondTutor?: boolean;
+  secondParentName?: string;
+  secondParentDni?: string;
+  secondParentPhone?: string;
   companionName?: string;
   companionDni?: string;
   companionPhone?: string;
@@ -68,11 +81,75 @@ export function normalizeDni(value: string): string {
   return value.trim().toUpperCase().replace(/\s+/g, '');
 }
 
+export function normalizeMinorRecords(minors: MinorRecord[]): MinorRecord[] {
+  return minors.map((minor) => ({
+    name: minor.name.trim(),
+    birthDate: minor.birthDate,
+    dni: minor.dni?.trim() || undefined,
+  }));
+}
+
+export interface MinorAuthorizationRequestFields {
+  minorCount: string;
+  minorName: string;
+  minorBirthDate: string;
+  minorDni?: string;
+  minor2Name?: string;
+  minor2BirthDate?: string;
+  minor2Dni?: string;
+  minor3Name?: string;
+  minor3BirthDate?: string;
+  minor3Dni?: string;
+  hasSecondTutor: string;
+  secondParentName?: string;
+  secondParentDni?: string;
+  secondParentPhone?: string;
+}
+
+export function buildMinorsFromRequest(input: MinorAuthorizationRequestFields): MinorRecord[] {
+  const count = Number(input.minorCount);
+  const minors: MinorRecord[] = [
+    {
+      name: input.minorName,
+      birthDate: input.minorBirthDate,
+      dni: input.minorDni,
+    },
+  ];
+  if (count >= 2) {
+    minors.push({
+      name: input.minor2Name ?? '',
+      birthDate: input.minor2BirthDate ?? '',
+      dni: input.minor2Dni,
+    });
+  }
+  if (count >= 3) {
+    minors.push({
+      name: input.minor3Name ?? '',
+      birthDate: input.minor3BirthDate ?? '',
+      dni: input.minor3Dni,
+    });
+  }
+  return normalizeMinorRecords(minors);
+}
+
+export function getMinorsFromPayload(payload: MinorAuthorizationPayload): MinorRecord[] {
+  if (payload.minors?.length) return payload.minors;
+  return normalizeMinorRecords([
+    {
+      name: payload.minorName,
+      birthDate: payload.minorBirthDate,
+      dni: payload.minorDni,
+    },
+  ]);
+}
+
 export async function createMinorAuthorizationToken(
   payload: MinorAuthorizationPayload,
   secret: string,
 ): Promise<string> {
   const now = Date.now();
+  const minors = normalizeMinorRecords(payload.minors);
+  const firstMinor = minors[0];
   const envelope: SignedTokenEnvelope = {
     payload: {
       ...payload,
@@ -80,13 +157,21 @@ export async function createMinorAuthorizationToken(
       requesterEmail: payload.requesterEmail.trim(),
       eventName: payload.eventName.trim(),
       eventDate: payload.eventDate?.trim() || undefined,
-      minorName: payload.minorName.trim(),
-      minorBirthDate: payload.minorBirthDate,
-      minorDni: payload.minorDni?.trim() || undefined,
+      entryCode: payload.entryCode?.trim() || undefined,
+      minorCount: payload.minorCount,
+      minors,
+      minorName: firstMinor.name,
+      minorBirthDate: firstMinor.birthDate,
+      minorDni: firstMinor.dni,
       parentName: payload.parentName.trim(),
       parentDni: normalizeDni(payload.parentDni),
       parentPhone: payload.parentPhone.trim(),
-      parentAddress: payload.parentAddress?.trim() || undefined,
+      hasSecondTutor: payload.hasSecondTutor,
+      secondParentName: payload.hasSecondTutor ? payload.secondParentName?.trim() : undefined,
+      secondParentDni: payload.hasSecondTutor && payload.secondParentDni
+        ? normalizeDni(payload.secondParentDni)
+        : undefined,
+      secondParentPhone: payload.hasSecondTutor ? payload.secondParentPhone?.trim() : undefined,
       companionName: payload.companionName?.trim() || undefined,
       companionDni: payload.companionDni ? normalizeDni(payload.companionDni) : undefined,
       companionPhone: payload.companionPhone?.trim() || undefined,
