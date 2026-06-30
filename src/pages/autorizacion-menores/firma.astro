@@ -1,0 +1,24 @@
+---
+export const prerender = false;
+
+import Layout from '../../layouts/Layout.astro';
+import MinorAuthorizationFirmaPage from '../../components/MinorAuthorizationFirmaPage';
+---
+
+<Layout
+  title="Autorización de menores: Firma - CDEM"
+  description="Firma la autorización para menores."
+>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+    <div class="mb-8 sm:mb-10 text-center">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-[0.12em] uppercase text-black">
+        Autorización de menores: Firma
+      </h1>
+      <p class="mt-3 text-sm sm:text-base text-black/60">
+        Firma de autorización para menores.
+      </p>
+    </div>
+
+    <MinorAuthorizationFirmaPage client:load />
+  </section>
+</Layout>

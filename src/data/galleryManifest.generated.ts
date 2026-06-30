@@ -507,6 +507,166 @@ export default {
     {
       "thumb": "29-thumb.webp",
       "full": "29-full.webp"
+    },
+    {
+      "thumb": "IMG_2145web-thumb.webp",
+      "full": "IMG_2145web-full.webp"
+    },
+    {
+      "thumb": "IMG_2147web-thumb.webp",
+      "full": "IMG_2147web-full.webp"
+    },
+    {
+      "thumb": "IMG_2152web-thumb.webp",
+      "full": "IMG_2152web-full.webp"
+    },
+    {
+      "thumb": "IMG_2153web-thumb.webp",
+      "full": "IMG_2153web-full.webp"
+    },
+    {
+      "thumb": "IMG_2155web-thumb.webp",
+      "full": "IMG_2155web-full.webp"
+    },
+    {
+      "thumb": "IMG_2156web-thumb.webp",
+      "full": "IMG_2156web-full.webp"
+    },
+    {
+      "thumb": "IMG_2157web-thumb.webp",
+      "full": "IMG_2157web-full.webp"
+    },
+    {
+      "thumb": "IMG_2158web-thumb.webp",
+      "full": "IMG_2158web-full.webp"
+    },
+    {
+      "thumb": "IMG_2161web-thumb.webp",
+      "full": "IMG_2161web-full.webp"
+    },
+    {
+      "thumb": "IMG_2164web-thumb.webp",
+      "full": "IMG_2164web-full.webp"
+    },
+    {
+      "thumb": "IMG_2166web-thumb.webp",
+      "full": "IMG_2166web-full.webp"
+    },
+    {
+      "thumb": "IMG_2167web-thumb.webp",
+      "full": "IMG_2167web-full.webp"
+    },
+    {
+      "thumb": "IMG_2168web-thumb.webp",
+      "full": "IMG_2168web-full.webp"
+    },
+    {
+      "thumb": "IMG_2169web-thumb.webp",
+      "full": "IMG_2169web-full.webp"
+    },
+    {
+      "thumb": "IMG_2170web-thumb.webp",
+      "full": "IMG_2170web-full.webp"
+    },
+    {
+      "thumb": "IMG_2229web-thumb.webp",
+      "full": "IMG_2229web-full.webp"
+    },
+    {
+      "thumb": "IMG_2231web-thumb.webp",
+      "full": "IMG_2231web-full.webp"
+    },
+    {
+      "thumb": "IMG_2234web-thumb.webp",
+      "full": "IMG_2234web-full.webp"
+    },
+    {
+      "thumb": "IMG_2245web-thumb.webp",
+      "full": "IMG_2245web-full.webp"
+    },
+    {
+      "thumb": "IMG_2246web-thumb.webp",
+      "full": "IMG_2246web-full.webp"
+    },
+    {
+      "thumb": "IMG_2250web-thumb.webp",
+      "full": "IMG_2250web-full.webp"
+    },
+    {
+      "thumb": "IMG_2252web-thumb.webp",
+      "full": "IMG_2252web-full.webp"
+    },
+    {
+      "thumb": "IMG_2361web-thumb.webp",
+      "full": "IMG_2361web-full.webp"
+    },
+    {
+      "thumb": "IMG_2363web-thumb.webp",
+      "full": "IMG_2363web-full.webp"
+    },
+    {
+      "thumb": "IMG_2366web-thumb.webp",
+      "full": "IMG_2366web-full.webp"
+    },
+    {
+      "thumb": "IMG_2368web-thumb.webp",
+      "full": "IMG_2368web-full.webp"
+    },
+    {
+      "thumb": "IMG_2370web-thumb.webp",
+      "full": "IMG_2370web-full.webp"
+    },
+    {
+      "thumb": "IMG_2371web-thumb.webp",
+      "full": "IMG_2371web-full.webp"
+    },
+    {
+      "thumb": "IMG_2376web_1-thumb.webp",
+      "full": "IMG_2376web_1-full.webp"
+    },
+    {
+      "thumb": "IMG_2376web-thumb.webp",
+      "full": "IMG_2376web-full.webp"
+    },
+    {
+      "thumb": "IMG_2377web-thumb.webp",
+      "full": "IMG_2377web-full.webp"
+    },
+    {
+      "thumb": "IMG_2378web-thumb.webp",
+      "full": "IMG_2378web-full.webp"
+    },
+    {
+      "thumb": "IMG_2379web-thumb.webp",
+      "full": "IMG_2379web-full.webp"
+    },
+    {
+      "thumb": "IMG_2380web-thumb.webp",
+      "full": "IMG_2380web-full.webp"
+    },
+    {
+      "thumb": "IMG_2382web-thumb.webp",
+      "full": "IMG_2382web-full.webp"
+    },
+    {
+      "thumb": "IMG_2384web-thumb.webp",
+      "full": "IMG_2384web-full.webp"
+    },
+    {
+      "thumb": "IMG_2385web-thumb.webp",
+      "full": "IMG_2385web-full.webp"
+    },
+    {
+      "thumb": "IMG_2387web-thumb.webp",
+      "full": "IMG_2387web-full.webp"
+    },
+    {
+      "thumb": "IMG_2389web-thumb.webp",
+      "full": "IMG_2389web-full.webp"
+    },
+    {
+      "thumb": "IMG_2390web-thumb.webp",
+      "full": "IMG_2390web-full.webp"
     }
   ]
 } as Record<string, { thumb: string; full: string }[]>;
