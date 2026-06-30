@@ -142,33 +142,12 @@ interface CompletedMinorAuthorizationEmailInput {
   eventName: string;
   eventDate?: string;
   entryCode?: string;
-  minorCount: number;
   minors: MinorRecord[];
   parentName: string;
-  parentDni: string;
-  parentPhone?: string;
   hasSecondTutor: boolean;
   secondParentName?: string;
-  secondParentDni?: string;
-  secondParentPhone?: string;
-  companionName?: string;
-  companionDni?: string;
-  companionPhone?: string;
   locality: string;
   signedAt: string;
-  signatureDataUrl: string;
-}
-
-function buildMinorsEmailRows(minors: MinorRecord[]): string {
-  return minors.map((minor, index) => {
-    const prefix = minors.length > 1 ? `<tr><td colspan="1" style="padding:12px 0 4px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#6b7280;">Menor ${index + 1}</td></tr>` : '';
-    return `
-      ${prefix}
-      <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${escapeHtml(minor.name)}</td></tr>
-      <tr><td style="padding:4px 0;"><strong>Fecha de nacimiento:</strong> ${formatDate(minor.birthDate)}</td></tr>
-      <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${minor.dni ? escapeHtml(minor.dni) : '—'}</td></tr>
-    `;
-  }).join('');
 }
 
 function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthorizationEmailInput): string {
@@ -177,32 +156,21 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
     eventName: escapeHtml(data.eventName),
     eventDate: formatDate(data.eventDate),
     entryCode: data.entryCode ? escapeHtml(data.entryCode) : '',
+    minorNames: escapeHtml(data.minors.map((minor) => minor.name).join(', ')),
     parentName: escapeHtml(data.parentName),
-    parentDni: escapeHtml(data.parentDni),
-    parentPhone: data.parentPhone ? escapeHtml(data.parentPhone) : '—',
-    secondParentName: data.secondParentName ? escapeHtml(data.secondParentName) : '—',
-    secondParentDni: data.secondParentDni ? escapeHtml(data.secondParentDni) : '—',
-    secondParentPhone: data.secondParentPhone ? escapeHtml(data.secondParentPhone) : '—',
-    companionName: data.companionName ? escapeHtml(data.companionName) : '—',
-    companionDni: data.companionDni ? escapeHtml(data.companionDni) : '—',
-    companionPhone: data.companionPhone ? escapeHtml(data.companionPhone) : '—',
+    secondParentName: data.secondParentName ? escapeHtml(data.secondParentName) : '',
     locality: escapeHtml(data.locality),
     signedAt: escapeHtml(data.signedAt),
-    signatureDataUrl: escapeHtml(data.signatureDataUrl),
   };
-  const minorLabel = data.minorCount > 1 ? 'los menores indicados' : 'el menor indicado';
-  const minorsRows = buildMinorsEmailRows(data.minors);
-  const secondTutorSection = data.hasSecondTutor ? `
-              <h2 style="margin:30px 0 12px;font-size:20px;">3) Segundo tutor que autoriza</h2>
-              <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
-                <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.secondParentName}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.secondParentDni}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>Teléfono:</strong> ${safe.secondParentPhone}</td></tr>
-              </table>
-  ` : '';
-  const companionHeading = data.hasSecondTutor
-    ? '4) Adulto acompañante o custodio alternativo'
-    : '3) Adulto acompañante o custodio alternativo';
+  const eventLine = safe.eventDate
+    ? `<tr><td style="padding:6px 0;"><strong>Fecha del evento:</strong> ${safe.eventDate}</td></tr>`
+    : '';
+  const entryCodeLine = safe.entryCode
+    ? `<tr><td style="padding:6px 0;"><strong>Código de entrada:</strong> ${safe.entryCode}</td></tr>`
+    : '';
+  const secondTutorLine = data.hasSecondTutor && safe.secondParentName
+    ? `<tr><td style="padding:6px 0;"><strong>Segundo tutor:</strong> ${safe.secondParentName}</td></tr>`
+    : '';
 
   return `
 <!DOCTYPE html>
@@ -212,63 +180,35 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Autorización firmada</title>
 </head>
-<body style="margin:0;padding:24px;background:#f3f4f6;font-family:Arial,sans-serif;color:#111111;">
-  <table width="100%" cellpadding="0" cellspacing="0">
+<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:Arial,sans-serif;color:#111111;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px;">
     <tr>
       <td align="center">
-        <table width="720" cellpadding="0" cellspacing="0" style="max-width:720px;width:100%;background:#ffffff;padding:40px 44px;border:1px solid #d1d5db;">
+        <table width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border:1px solid #dddddd;">
           <tr>
-            <td>
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:24px;">
-                <div>
-                  <p style="margin:0 0 8px;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#6b7280;">CDEM</p>
-                  <h1 style="margin:0;font-size:34px;line-height:1.1;">Autorización de menores</h1>
-                </div>
-                <div style="text-align:right;">
-                  <p style="margin:0;font-size:12px;color:#6b7280;">Solicitante</p>
-                  <p style="margin:4px 0 0;font-size:14px;">${safe.requesterName}</p>
-                </div>
-              </div>
-              <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#374151;background:#f9fafb;border:1px solid #e5e7eb;padding:12px 14px;">
-                Adjunto encontrarás el documento firmado en PDF con el logo de CDEM.
+            <td style="padding:32px 36px;background:#000000;color:#ffffff;">
+              <h1 style="margin:0;font-size:24px;">Autorización de menores</h1>
+              <p style="margin:8px 0 0;font-size:14px;color:#ffffffcc;">Documento firmado correctamente</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px 36px;">
+              <p style="margin:0 0 16px;font-size:16px;">Hola ${safe.requesterName},</p>
+              <p style="margin:0 0 20px;font-size:15px;line-height:1.7;">
+                La autorización ha quedado firmada. Adjuntamos el PDF con todos los datos y la firma manuscrita.
               </p>
-              <p style="margin:28px 0 0;font-size:16px;line-height:1.7;">
-                Autorizo a ${minorLabel} a acceder al evento <strong>${safe.eventName}</strong>${safe.eventDate ? ` el <strong>${safe.eventDate}</strong>` : ''} y acepto la responsabilidad derivada de su asistencia.
+              <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;background:#f9fafb;border:1px solid #e5e7eb;padding:16px 18px;">
+                <tr><td style="padding:6px 0;"><strong>Evento:</strong> ${safe.eventName}</td></tr>
+                ${eventLine}
+                <tr><td style="padding:6px 0;"><strong>${data.minors.length > 1 ? 'Menores' : 'Menor'}:</strong> ${safe.minorNames}</td></tr>
+                <tr><td style="padding:6px 0;"><strong>Firmado por:</strong> ${safe.parentName}</td></tr>
+                ${secondTutorLine}
+                ${entryCodeLine}
+                <tr><td style="padding:6px 0;"><strong>Lugar y fecha:</strong> ${safe.locality}, ${safe.signedAt}</td></tr>
+              </table>
+              <p style="margin:20px 0 0;font-size:13px;line-height:1.6;color:#666666;">
+                Guarda el PDF adjunto; es la copia oficial del documento firmado.
               </p>
-              ${safe.entryCode ? `<p style="margin:12px 0 0;font-size:14px;line-height:1.7;"><strong>Código de la entrada:</strong> ${safe.entryCode}</p>` : ''}
-
-              <h2 style="margin:34px 0 12px;font-size:20px;">1) Datos del menor</h2>
-              <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
-                ${minorsRows}
-              </table>
-
-              <h2 style="margin:30px 0 12px;font-size:20px;">2) Padre, madre o tutor legal</h2>
-              <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
-                <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.parentName}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.parentDni}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>Teléfono:</strong> ${safe.parentPhone}</td></tr>
-              </table>
-              ${secondTutorSection}
-
-              <h2 style="margin:30px 0 12px;font-size:20px;">${companionHeading}</h2>
-              <table width="100%" cellpadding="0" cellspacing="0" style="font-size:14px;line-height:1.7;">
-                <tr><td style="padding:4px 0;"><strong>Nombre y apellidos:</strong> ${safe.companionName}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>DNI:</strong> ${safe.companionDni}</td></tr>
-                <tr><td style="padding:4px 0;"><strong>Teléfono:</strong> ${safe.companionPhone}</td></tr>
-              </table>
-
-              <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:40px;border-top:1px solid #d1d5db;padding-top:20px;">
-                <tr>
-                  <td style="vertical-align:bottom;font-size:14px;">
-                    En <strong>${safe.locality}</strong><br />
-                    Fecha de firma: <strong>${safe.signedAt}</strong>
-                  </td>
-                  <td style="text-align:right;">
-                    <p style="margin:0 0 8px;font-size:12px;color:#6b7280;">Firma</p>
-                    <img src="${safe.signatureDataUrl}" alt="Firma manuscrita" style="max-width:220px;max-height:110px;border-bottom:1px solid #111111;" />
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
         </table>
@@ -748,21 +688,12 @@ export const server = {
           eventName: payload.eventName,
           eventDate: payload.eventDate,
           entryCode: payload.entryCode,
-          minorCount: payload.minorCount ?? minors.length,
           minors,
           parentName: payload.parentName,
-          parentDni: normalizeDni(payload.parentDni),
-          parentPhone: payload.parentPhone,
           hasSecondTutor: payload.hasSecondTutor ?? false,
           secondParentName: payload.secondParentName,
-          secondParentDni: payload.secondParentDni,
-          secondParentPhone: payload.secondParentPhone,
-          companionName: payload.companionName,
-          companionDni: payload.companionDni,
-          companionPhone: payload.companionPhone,
           locality,
           signedAt,
-          signatureDataUrl,
         }),
       });
 
