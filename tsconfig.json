@@ -5,7 +5,11 @@
     "**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "playwright-report",
+    "test-results",
+    "coverage",
+    ".wrangler"
   ],
   "compilerOptions": {
     "jsx": "react-jsx",
