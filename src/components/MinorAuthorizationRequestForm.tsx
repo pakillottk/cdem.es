@@ -2,6 +2,7 @@ import { actions, isInputError } from 'astro:actions';
 import { TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { useState } from 'react';
 import type { EventoFormOption } from '../lib/eventos';
+import { SIGNATURE_TOKEN_TTL_MINUTES } from '../lib/minorAuthorization';
 import Turnstile from './Turnstile';
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
@@ -79,7 +80,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
           Solicitud enviada
         </h2>
         <p className="text-sm text-black/60 max-w-md mx-auto">
-          Te hemos enviado un correo con el enlace para firmar la autorización. Revisa tu bandeja de entrada.
+          Te hemos enviado un correo con el enlace para firmar la autorización. Tienes {SIGNATURE_TOKEN_TTL_MINUTES} minutos para completar la firma.
         </p>
       </div>
     );

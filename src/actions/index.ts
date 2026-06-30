@@ -17,6 +17,7 @@ import {
   verifyMinorAuthorizationToken,
   buildMinorsFromRequest,
   getMinorsFromPayload,
+  SIGNATURE_TOKEN_TTL_MINUTES,
 } from '../lib/minorAuthorization';
 import {
   buildMinorAuthorizationPdf,
@@ -107,6 +108,9 @@ function buildMinorAuthorizationRequestEmailHtml(name: string, eventName: string
               <p style="margin:0 0 16px;font-size:16px;">Hola ${safeName},</p>
               <p style="margin:0 0 16px;font-size:15px;line-height:1.7;">
                 Hemos recibido tu solicitud. Para completar la autorización, abre el enlace de abajo y firma el documento.
+              </p>
+              <p style="margin:0 0 16px;padding:12px 14px;background:#fff7ed;border:1px solid #fed7aa;font-size:14px;line-height:1.6;color:#9a3412;">
+                Importante: tienes <strong>${SIGNATURE_TOKEN_TTL_MINUTES} minutos</strong> para firmar. Pasado ese tiempo, el enlace caducará y tendrás que enviar una nueva solicitud.
               </p>
               <p style="margin:0 0 24px;">
                 <a href="${safeLink}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:14px 22px;border-radius:999px;font-size:14px;font-weight:700;">
