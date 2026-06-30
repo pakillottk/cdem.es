@@ -1,0 +1,26 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MinorAuthorizationRequestForm from '../../components/MinorAuthorizationRequestForm';
+import { getCollection } from 'astro:content';
+import { getActiveEventosForForm } from '../../lib/eventos';
+
+const activeEventos = getActiveEventosForForm(await getCollection('eventos'));
+---
+
+<Layout
+  title="Autorización de menores - CDEM"
+  description="Solicita la autorización para menores y recibe un enlace por correo para firmar el documento."
+>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+    <div class="mb-8 sm:mb-10 text-center">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-[0.12em] uppercase text-black">
+        Autorización de menores
+      </h1>
+      <p class="mt-3 text-sm sm:text-base text-black/60">
+        Rellena el formulario y te enviaremos un enlace para firmar la autorización.
+      </p>
+    </div>
+
+    <MinorAuthorizationRequestForm client:visible events={activeEventos} />
+  </section>
+</Layout>
