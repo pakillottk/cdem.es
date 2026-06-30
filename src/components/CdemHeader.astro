@@ -11,7 +11,7 @@ const navItems = [
   { href: "/contacto", label: "Contacto" },
 ];
 
-const normalizePath = (path) =>
+const normalizePath = (path: string) =>
   path.length > 1 ? path.replace(/\/+$/, "") : path;
 const currentPath = normalizePath(Astro.url.pathname);
 ---

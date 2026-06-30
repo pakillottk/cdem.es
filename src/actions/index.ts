@@ -17,14 +17,9 @@ import {
   verifyMinorAuthorizationToken,
   buildMinorsFromRequest,
   getMinorsFromPayload,
+  assertValidPdfBase64,
   SIGNATURE_TOKEN_TTL_MINUTES,
 } from '../lib/minorAuthorization';
-import {
-  buildMinorAuthorizationPdf,
-  fetchPdfAsset,
-  pdfBytesToBase64,
-  signatureDataUrlToPngBytes,
-} from '../lib/minorAuthorizationPdf';
 import { isActiveEventoSelection } from '../lib/eventos';
 
 /** Campo de formulario opcional: acepta null/undefined, normaliza '' a undefined. */
@@ -44,7 +39,7 @@ const optionalString = z
  */
 function verifyPreviewAccess(request: Request): void {
   const isTestMode = TURNSTILE_TEST_MODE === 'true';
-  if (!isTestMode || import.meta.env.DEV) return;
+  if (!isTestMode) return;
 
   const secret = PREVIEW_SECRET ?? '';
   if (!secret) {
@@ -654,11 +649,21 @@ export const server = {
         return {
           minorName: minors.map((minor) => minor.name).join(', '),
           minorCount: payload.minorCount ?? minors.length,
+          minors,
+          requesterName: payload.requesterName,
           eventName: payload.eventName,
+          eventDate: payload.eventDate,
           entryCode: payload.entryCode,
           parentName: payload.parentName,
+          parentDni: payload.parentDni,
+          parentPhone: payload.parentPhone,
           hasSecondTutor: payload.hasSecondTutor ?? false,
           secondParentName: payload.secondParentName,
+          secondParentDni: payload.secondParentDni,
+          secondParentPhone: payload.secondParentPhone,
+          companionName: payload.companionName,
+          companionDni: payload.companionDni,
+          companionPhone: payload.companionPhone,
         };
       } catch (error) {
         throw new ActionError({
@@ -676,9 +681,11 @@ export const server = {
       parentDni: z.string().min(1, 'El DNI del tutor es obligatorio'),
       locality: z.string().min(1, 'La localidad es obligatoria'),
       signatureDataUrl: z.string().regex(/^data:image\/png;base64,/, 'La firma no es válida'),
+      signedAt: z.string().min(1, 'Falta la fecha de firma'),
+      pdfBase64: z.string().min(1, 'Falta el documento firmado'),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
-    handler: async ({ token, parentDni, locality, signatureDataUrl, turnstileToken }, context) => {
+    handler: async ({ token, parentDni, locality, signatureDataUrl, signedAt, pdfBase64, turnstileToken }, context) => {
       verifyPreviewAccess(context.request);
       await verifyTurnstile(turnstileToken);
 
@@ -695,44 +702,16 @@ export const server = {
           message: 'El DNI del tutor no coincide con el del formulario inicial.',
         });
       }
-      const signedAt = new Intl.DateTimeFormat('es-ES', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-      }).format(new Date());
+      try {
+        assertValidPdfBase64(pdfBase64);
+      } catch {
+        throw new ActionError({
+          code: 'BAD_REQUEST',
+          message: 'El documento firmado no es válido. Recarga la página e inténtalo de nuevo.',
+        });
+      }
 
-      const origin = new URL(context.request.url).origin;
-      const logoPng = await fetchPdfAsset(origin, '/favicon-cdem.png');
       const minors = getMinorsFromPayload(payload);
-
-      const pdfBytes = await buildMinorAuthorizationPdf(
-        {
-          requesterName: payload.requesterName,
-          eventName: payload.eventName,
-          eventDate: payload.eventDate,
-          entryCode: payload.entryCode,
-          minorCount: payload.minorCount ?? minors.length,
-          minors,
-          minorName: payload.minorName,
-          minorBirthDate: payload.minorBirthDate,
-          minorDni: payload.minorDni,
-          parentName: payload.parentName,
-          parentDni: normalizeDni(payload.parentDni),
-          parentPhone: payload.parentPhone,
-          hasSecondTutor: payload.hasSecondTutor ?? false,
-          secondParentName: payload.secondParentName,
-          secondParentDni: payload.secondParentDni,
-          secondParentPhone: payload.secondParentPhone,
-          companionName: payload.companionName,
-          companionDni: payload.companionDni,
-          companionPhone: payload.companionPhone,
-          locality,
-          signedAt,
-          signaturePng: signatureDataUrlToPngBytes(signatureDataUrl),
-        },
-        logoPng,
-      );
-
       const pdfFilename = `autorizacion-${minors.map((minor) => minor.name.trim().replace(/\s+/g, '-').toLowerCase()).join('-')}.pdf`;
       const minorNamesLabel = minors.map((minor) => minor.name).join(', ');
 
@@ -744,7 +723,7 @@ export const server = {
         attachments: [
           {
             filename: pdfFilename,
-            content: pdfBytesToBase64(pdfBytes),
+            content: pdfBase64,
           },
         ],
         html: buildMinorAuthorizationCompletedEmailHtml({

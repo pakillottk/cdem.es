@@ -3,16 +3,37 @@ import { TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { useState } from 'react';
 import SignaturePad from './SignaturePad';
 import Turnstile from './Turnstile';
+import type { MinorRecord } from '../lib/minorAuthorization';
+import {
+  buildMinorAuthorizationPdf,
+  fetchPdfAsset,
+  pdfBytesToBase64,
+  signatureDataUrlToPngBytes,
+} from '../lib/minorAuthorizationPdf';
+
+export interface SignPayload {
+  minorName: string;
+  minorCount: number;
+  minors: MinorRecord[];
+  requesterName: string;
+  eventName: string;
+  eventDate?: string;
+  entryCode?: string;
+  parentName: string;
+  parentDni: string;
+  parentPhone?: string;
+  hasSecondTutor: boolean;
+  secondParentName?: string;
+  secondParentDni?: string;
+  secondParentPhone?: string;
+  companionName?: string;
+  companionDni?: string;
+  companionPhone?: string;
+}
 
 interface MinorAuthorizationSignFormProps {
   token: string;
-  minorName: string;
-  minorCount: number;
-  eventName: string;
-  entryCode?: string;
-  parentName: string;
-  hasSecondTutor: boolean;
-  secondParentName?: string;
+  payload: SignPayload;
 }
 
 type FormState = 'idle' | 'submitting' | 'success' | 'error';
@@ -23,16 +44,28 @@ const inputClass =
 const labelClass =
   'block text-sm sm:text-xs uppercase tracking-[0.25em] text-black/70';
 
+function formatSignedAt(): string {
+  return new Intl.DateTimeFormat('es-ES', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date());
+}
+
 export default function MinorAuthorizationSignForm({
   token,
-  minorName,
-  minorCount,
-  eventName,
-  entryCode,
-  parentName,
-  hasSecondTutor,
-  secondParentName,
+  payload,
 }: MinorAuthorizationSignFormProps) {
+  const {
+    minorName,
+    minorCount,
+    eventName,
+    entryCode,
+    parentName,
+    hasSecondTutor,
+    secondParentName,
+  } = payload;
+
   const [state, setState] = useState<FormState>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -59,8 +92,50 @@ export default function MinorAuthorizationSignForm({
     setErrorMessage('');
 
     const formData = new FormData(event.currentTarget);
+    const locality = String(formData.get('locality') ?? '').trim();
+    const signedAt = formatSignedAt();
+
+    let pdfBase64: string;
+    try {
+      const logoPng = await fetchPdfAsset(window.location.origin, '/favicon-cdem.png');
+      const pdfBytes = await buildMinorAuthorizationPdf(
+        {
+          requesterName: payload.requesterName,
+          eventName: payload.eventName,
+          eventDate: payload.eventDate,
+          entryCode: payload.entryCode,
+          minorCount: payload.minorCount,
+          minors: payload.minors,
+          minorName: payload.minors[0]?.name ?? payload.minorName,
+          minorBirthDate: payload.minors[0]?.birthDate ?? '',
+          minorDni: payload.minors[0]?.dni,
+          parentName: payload.parentName,
+          parentDni: payload.parentDni,
+          parentPhone: payload.parentPhone,
+          hasSecondTutor: payload.hasSecondTutor,
+          secondParentName: payload.secondParentName,
+          secondParentDni: payload.secondParentDni,
+          secondParentPhone: payload.secondParentPhone,
+          companionName: payload.companionName,
+          companionDni: payload.companionDni,
+          companionPhone: payload.companionPhone,
+          locality,
+          signedAt,
+          signaturePng: signatureDataUrlToPngBytes(signatureDataUrl),
+        },
+        logoPng,
+      );
+      pdfBase64 = pdfBytesToBase64(pdfBytes);
+    } catch {
+      setErrorMessage('No se pudo generar el documento. Inténtalo de nuevo.');
+      setState('error');
+      return;
+    }
+
     formData.set('token', token);
     formData.set('signatureDataUrl', signatureDataUrl);
+    formData.set('signedAt', signedAt);
+    formData.set('pdfBase64', pdfBase64);
     formData.set('turnstileToken', turnstileToken);
 
     const { data, error } = await actions.minorAuthorizationSign(formData);
