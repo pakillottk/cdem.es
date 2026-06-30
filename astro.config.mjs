@@ -43,6 +43,7 @@ export default defineConfig({
       // Token requerido en test mode para proteger los endpoints de actions en previews.
       // Se verifica via header x-preview-secret o cookie preview-token.
       PREVIEW_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      MINOR_AUTH_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
       // Keystatic: 'github' en despliegues; omitir o 'local' en desarrollo.
       KEYSTATIC_STORAGE: envField.string({ context: 'server', access: 'public', optional: true }),
       KEYSTATIC_GITHUB_CLIENT_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
