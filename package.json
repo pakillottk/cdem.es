@@ -40,6 +40,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "devalue": "^5.7.1"
+    "devalue": "^5.8.1"
   }
 }
