@@ -244,8 +244,8 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
           {fieldErrors.parentDni && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.parentDni}</p>}
         </div>
         <div className="space-y-1">
-          <label htmlFor="parentPhone" className={labelClass}>Teléfono del tutor</label>
-          <input id="parentPhone" name="parentPhone" type="tel" required className={`${inputClass} ${fieldErrors.parentPhone ? 'border-red-500' : ''}`} />
+          <label htmlFor="parentPhone" className={labelClass}>Teléfono del tutor (opcional)</label>
+          <input id="parentPhone" name="parentPhone" type="tel" className={`${inputClass} ${fieldErrors.parentPhone ? 'border-red-500' : ''}`} />
           {fieldErrors.parentPhone && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.parentPhone}</p>}
         </div>
       </div>
@@ -294,8 +294,8 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
               {fieldErrors.secondParentDni && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.secondParentDni}</p>}
             </div>
             <div className="space-y-1">
-              <label htmlFor="secondParentPhone" className={labelClass}>Teléfono del tutor</label>
-              <input id="secondParentPhone" name="secondParentPhone" type="tel" required className={`${inputClass} ${fieldErrors.secondParentPhone ? 'border-red-500' : ''}`} />
+              <label htmlFor="secondParentPhone" className={labelClass}>Teléfono del tutor (opcional)</label>
+              <input id="secondParentPhone" name="secondParentPhone" type="tel" className={`${inputClass} ${fieldErrors.secondParentPhone ? 'border-red-500' : ''}`} />
               {fieldErrors.secondParentPhone && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.secondParentPhone}</p>}
             </div>
           </div>

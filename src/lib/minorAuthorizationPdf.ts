@@ -13,7 +13,7 @@ export interface MinorAuthorizationPdfInput {
   minorDni?: string;
   parentName: string;
   parentDni: string;
-  parentPhone: string;
+  parentPhone?: string;
   hasSecondTutor: boolean;
   secondParentName?: string;
   secondParentDni?: string;
@@ -333,7 +333,7 @@ export async function buildMinorAuthorizationPdf(
   sectionNum += 1;
   ctx.y = drawField(page, 'Nombre y apellidos', input.parentName, MARGIN, ctx.y, regular, bold);
   ctx.y = drawField(page, 'DNI', input.parentDni, MARGIN, ctx.y, regular, bold);
-  ctx.y = drawField(page, 'Teléfono', input.parentPhone, MARGIN, ctx.y, regular, bold);
+  ctx.y = drawFieldIfFilled(page, 'Teléfono', input.parentPhone, MARGIN, ctx.y, regular, bold);
 
   const hasSecondTutorData = input.hasSecondTutor && (
     isFilled(input.secondParentName) || isFilled(input.secondParentDni) || isFilled(input.secondParentPhone)

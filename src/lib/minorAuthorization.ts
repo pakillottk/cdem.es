@@ -18,7 +18,7 @@ export interface MinorAuthorizationPayload {
   minorDni?: string;
   parentName: string;
   parentDni: string;
-  parentPhone: string;
+  parentPhone?: string;
   hasSecondTutor?: boolean;
   secondParentName?: string;
   secondParentDni?: string;
@@ -166,7 +166,7 @@ export async function createMinorAuthorizationToken(
       minorDni: firstMinor.dni,
       parentName: payload.parentName.trim(),
       parentDni: normalizeDni(payload.parentDni),
-      parentPhone: payload.parentPhone.trim(),
+      parentPhone: payload.parentPhone?.trim() || undefined,
       hasSecondTutor: payload.hasSecondTutor,
       secondParentName: payload.hasSecondTutor ? payload.secondParentName?.trim() : undefined,
       secondParentDni: payload.hasSecondTutor && payload.secondParentDni

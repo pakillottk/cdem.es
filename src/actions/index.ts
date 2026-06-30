@@ -1,5 +1,5 @@
 import { defineAction, ActionError } from 'astro:actions';
-import { z } from 'astro:schema';
+import { z } from 'astro/zod';
 import { getCollection } from 'astro:content';
 import {
   RESEND_API_KEY,
@@ -27,6 +27,15 @@ import {
 } from '../lib/minorAuthorizationPdf';
 import { isActiveEventoSelection } from '../lib/eventos';
 
+/** Campo de formulario opcional: acepta null/undefined, normaliza '' a undefined. */
+const optionalString = z
+  .string()
+  .nullish()
+  .transform((val) => {
+    const trimmed = val?.trim();
+    return trimmed || undefined;
+  });
+
 /**
  * En test mode, verifica que la petición lleve el secret de preview.
  * El cliente puede enviarlo como:
@@ -35,7 +44,7 @@ import { isActiveEventoSelection } from '../lib/eventos';
  */
 function verifyPreviewAccess(request: Request): void {
   const isTestMode = TURNSTILE_TEST_MODE === 'true';
-  if (!isTestMode) return;
+  if (!isTestMode || import.meta.env.DEV) return;
 
   const secret = PREVIEW_SECRET ?? '';
   if (!secret) {
@@ -141,7 +150,7 @@ interface CompletedMinorAuthorizationEmailInput {
   minors: MinorRecord[];
   parentName: string;
   parentDni: string;
-  parentPhone: string;
+  parentPhone?: string;
   hasSecondTutor: boolean;
   secondParentName?: string;
   secondParentDni?: string;
@@ -174,7 +183,7 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
     entryCode: data.entryCode ? escapeHtml(data.entryCode) : '',
     parentName: escapeHtml(data.parentName),
     parentDni: escapeHtml(data.parentDni),
-    parentPhone: escapeHtml(data.parentPhone),
+    parentPhone: data.parentPhone ? escapeHtml(data.parentPhone) : '—',
     secondParentName: data.secondParentName ? escapeHtml(data.secondParentName) : '—',
     secondParentDni: data.secondParentDni ? escapeHtml(data.secondParentDni) : '—',
     secondParentPhone: data.secondParentPhone ? escapeHtml(data.secondParentPhone) : '—',
@@ -283,13 +292,22 @@ async function sendResendEmail(payload: Record<string, unknown>): Promise<void> 
     });
   }
 
+  const body = { ...payload };
+  const fromIsResendTest = typeof body.from === 'string' && body.from.includes('resend.dev');
+  if (import.meta.env.DEV && fromIsResendTest && CONTACT_EMAIL_TO) {
+    const originalTo = body.to;
+    body.to = [CONTACT_EMAIL_TO];
+    delete body.bcc;
+    console.warn(`[Resend] Modo test: redirigiendo correo de ${JSON.stringify(originalTo)} a ${CONTACT_EMAIL_TO}`);
+  }
+
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${RESEND_API_KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -422,7 +440,7 @@ export const server = {
     input: z.object({
       nombre: z.string().min(1, 'El nombre es obligatorio'),
       email: z.string().email('Email no válido'),
-      telefono: z.string().optional(),
+      telefono: optionalString,
       mensaje: z.string().min(1, 'El mensaje es obligatorio'),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }),
@@ -514,28 +532,28 @@ export const server = {
       requesterName: z.string().min(1, 'El nombre y apellidos es obligatorio'),
       requesterEmail: z.string().min(1, 'El correo electrónico es obligatorio').email('Email no válido'),
       eventName: z.string().min(1, 'El nombre del evento es obligatorio'),
-      eventDate: z.string().optional(),
-      entryCode: z.string().optional(),
+      eventDate: optionalString,
+      entryCode: optionalString,
       minorCount: z.enum(['1', '2', '3']),
       minorName: z.string().min(1, 'El nombre y apellidos es obligatorio'),
       minorBirthDate: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
-      minorDni: z.string().optional(),
-      minor2Name: z.string().optional(),
-      minor2BirthDate: z.string().optional(),
-      minor2Dni: z.string().optional(),
-      minor3Name: z.string().optional(),
-      minor3BirthDate: z.string().optional(),
-      minor3Dni: z.string().optional(),
+      minorDni: optionalString,
+      minor2Name: optionalString,
+      minor2BirthDate: optionalString,
+      minor2Dni: optionalString,
+      minor3Name: optionalString,
+      minor3BirthDate: optionalString,
+      minor3Dni: optionalString,
       hasSecondTutor: z.enum(['yes', 'no']),
-      secondParentName: z.string().optional(),
-      secondParentDni: z.string().optional(),
-      secondParentPhone: z.string().optional(),
+      secondParentName: optionalString,
+      secondParentDni: optionalString,
+      secondParentPhone: optionalString,
       parentName: z.string().min(1, 'El nombre y apellidos es obligatorio'),
       parentDni: z.string().min(1, 'El DNI del tutor es obligatorio'),
-      parentPhone: z.string().min(1, 'El teléfono del tutor es obligatorio'),
-      companionName: z.string().optional(),
-      companionDni: z.string().optional(),
-      companionPhone: z.string().optional(),
+      parentPhone: optionalString,
+      companionName: optionalString,
+      companionDni: optionalString,
+      companionPhone: optionalString,
       privacidad: z.literal('on', { error: 'Debes aceptar la política de privacidad' }),
       turnstileToken: z.string().min(1, 'Token de verificación requerido'),
     }).superRefine((data, ctx) => {
@@ -561,9 +579,6 @@ export const server = {
         }
         if (!data.secondParentDni?.trim()) {
           ctx.addIssue({ code: 'custom', path: ['secondParentDni'], message: 'El DNI del segundo tutor es obligatorio' });
-        }
-        if (!data.secondParentPhone?.trim()) {
-          ctx.addIssue({ code: 'custom', path: ['secondParentPhone'], message: 'El teléfono del segundo tutor es obligatorio' });
         }
       }
     }),
