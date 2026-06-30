@@ -1,0 +1,54 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import MinorAuthorizationSignForm from '../../components/MinorAuthorizationSignForm';
+import { MINOR_AUTH_SECRET, PREVIEW_SECRET } from 'astro:env/server';
+import { verifyMinorAuthorizationToken } from '../../lib/minorAuthorization';
+
+const token = Astro.url.searchParams.get('token') ?? '';
+const secret = MINOR_AUTH_SECRET ?? PREVIEW_SECRET ?? '';
+
+let payload: Awaited<ReturnType<typeof verifyMinorAuthorizationToken>>['payload'] | null = null;
+let tokenError = '';
+
+if (!token) {
+  tokenError = 'Falta el enlace de firma. Abre el enlace que recibiste por correo.';
+} else if (!secret) {
+  tokenError = 'La autorización de menores no está configurada.';
+} else {
+  try {
+    ({ payload } = await verifyMinorAuthorizationToken(token, secret));
+  } catch (error) {
+    tokenError = error instanceof Error ? error.message : 'El enlace no es válido.';
+  }
+}
+---
+
+<Layout
+  title="Autorización de menores: Firma - CDEM"
+  description="Firma la autorización para menores."
+>
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20">
+    <div class="mb-8 sm:mb-10 text-center">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-[0.12em] uppercase text-black">
+        Autorización de menores: Firma
+      </h1>
+      <p class="mt-3 text-sm sm:text-base text-black/60">
+        Firma de autorización para menores.
+      </p>
+    </div>
+
+    {tokenError ? (
+      <div class="border-2 border-red-500/50 px-6 py-8 text-center text-sm text-red-500">
+        {tokenError}
+      </div>
+    ) : payload ? (
+      <MinorAuthorizationSignForm
+        client:visible
+        token={token}
+        minorName={payload.minorName}
+        eventName={payload.eventName}
+        parentName={payload.parentName}
+      />
+    ) : null}
+  </section>
+</Layout>

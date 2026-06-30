@@ -29,16 +29,37 @@ echo "▶ Build con claves Turnstile de test (TURNSTILE_SITE_KEY baked in)…"
 # La secret key se sobreescribe en runtime vía --var (ver más abajo).
 TURNSTILE_SITE_KEY=1x00000000000000000000AA \
   TURNSTILE_TEST_MODE=true \
+  KEYSTATIC_STORAGE=github \
   npm run build
 
 echo "▶ Subiendo versión preview a Cloudflare Workers…"
-if [ -z "${PREVIEW_SECRET:-}" ]; then
-  echo "⚠ PREVIEW_SECRET no definida — los endpoints de actions no estarán protegidos."
+if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  echo "✗ CLOUDFLARE_API_TOKEN no definida."
+  exit 1
 fi
+if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+  echo "✗ CLOUDFLARE_ACCOUNT_ID no definida."
+  exit 1
+fi
+export CLOUDFLARE_ACCOUNT_ID
+if [ -z "${PREVIEW_SECRET:-}" ]; then
+  echo "✗ PREVIEW_SECRET es obligatoria en previews (Turnstile test mode activo)."
+  exit 1
+fi
+if [ -z "${KEYSTATIC_GITHUB_CLIENT_ID:-}" ] || [ -z "${KEYSTATIC_GITHUB_CLIENT_SECRET:-}" ] || [ -z "${KEYSTATIC_SECRET:-}" ]; then
+  echo "✗ Faltan secrets de Keystatic (KEYSTATIC_GITHUB_CLIENT_ID, KEYSTATIC_GITHUB_CLIENT_SECRET, KEYSTATIC_SECRET)."
+  exit 1
+fi
+
+SECRETS_FILE=$(mktemp)
+trap 'rm -f "$SECRETS_FILE"' EXIT
+bash scripts/sync-worker-secrets.sh "$SECRETS_FILE"
 
 npx wrangler versions upload \
   --preview-alias "${BRANCH}" \
-  ${PREVIEW_SECRET:+--var PREVIEW_SECRET:"${PREVIEW_SECRET}"} \
+  --secrets-file "$SECRETS_FILE" \
+  --var PREVIEW_SECRET:"${PREVIEW_SECRET}" \
+  --var TURNSTILE_TEST_MODE:true \
   --message "preview: ${BRANCH}"
 
 echo "✓ Preview desplegado."

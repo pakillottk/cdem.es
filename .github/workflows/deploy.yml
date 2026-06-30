@@ -1,0 +1,107 @@
+# Despliegue tras cambios de contenido CMS o assets de eventos.
+# Complementa la integración Git de Cloudflare Workers si existe.
+#
+# Secrets necesarios (Settings → Secrets):
+#   CLOUDFLARE_API_TOKEN          → ver permisos abajo
+#   CLOUDFLARE_ACCOUNT_ID
+#   PREVIEW_SECRET              → solo previews (deploy:preview)
+#   KEYSTATIC_GITHUB_CLIENT_ID
+#   KEYSTATIC_GITHUB_CLIENT_SECRET
+#   KEYSTATIC_SECRET
+#
+# Esos secrets deben existir en GitHub Actions (o en Workers Builds) y pasarse
+# al upload con --secrets-file (scripts/sync-worker-secrets.sh). Sin ellos
+# /keystatic devuelve 404.
+#
+# CLOUDFLARE_API_TOKEN — crear en dash.cloudflare.com/profile/api-tokens
+#   Plantilla: «Edit Cloudflare Workers» + añadir manualmente:
+#     User → Memberships → Read
+#     User → User Details → Read
+#   En la cuenta correcta, permisos mínimos:
+#     Account → Workers Scripts → Edit      (script, versions, assets-upload)
+#     Account → Workers KV Storage → Edit   (binding SESSION de Astro)
+#     Account → Cloudflare Images → Edit    (transformación de imágenes)
+#   Si sigue fallando con error 10000: el usuario del token necesita rol
+#   «Cloudflare Workers Admin» (o Super Administrator) en la cuenta.
+#
+# Variables de repositorio:
+#   CLOUDFLARE_WORKERS_DOMAIN   → ej. cdemtic.workers.dev
+name: Deploy
+
+permissions:
+  contents: read
+  actions: write # caché npm en setup-node
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+    paths:
+      - 'src/content/**'
+      - 'public/eventos/**'
+      - 'keystatic.config.ts'
+      - 'src/content.config.ts'
+      - 'src/pages/eventos.astro'
+      - 'src/components/EventosCard.astro'
+      - 'src/lib/eventos.ts'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Build y deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - name: Deploy producción (master)
+        if: github.ref_name == 'master'
+        id: deploy_prod
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KEYSTATIC_GITHUB_CLIENT_ID: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_ID }}
+          KEYSTATIC_GITHUB_CLIENT_SECRET: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_SECRET }}
+          KEYSTATIC_SECRET: ${{ secrets.KEYSTATIC_SECRET }}
+        run: npm run deploy
+
+      - name: Deploy preview (develop y ramas)
+        if: github.ref_name != 'master'
+        id: deploy_preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
+          KEYSTATIC_GITHUB_CLIENT_ID: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_ID }}
+          KEYSTATIC_GITHUB_CLIENT_SECRET: ${{ secrets.KEYSTATIC_GITHUB_CLIENT_SECRET }}
+          KEYSTATIC_SECRET: ${{ secrets.KEYSTATIC_SECRET }}
+          BRANCH: ${{ github.ref_name }}
+        run: npm run deploy:preview
+
+  smoke-e2e-master:
+    name: Smoke E2E producción
+    needs: deploy
+    if: github.ref_name == 'master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+
+      - name: Smoke /eventos en producción
+        run: npx playwright test e2e/pages/eventos.spec.ts --project=chromium
+        env:
+          E2E_BASE_URL: https://cdem.es
