@@ -1,0 +1,49 @@
+# Normalizar texto a LF en checkout y commit (evita fallos en Linux/Cloudflare).
+* text=auto eol=lf
+
+# Scripts shell — reglas explícitas por ruta (prioridad sobre *).
+# eol=lf fuerza LF al hacer commit aunque el editor guarde CRLF (p. ej. Windows).
+scripts/** text eol=lf
+.github/scripts/** text eol=lf
+*.sh text eol=lf
+*.bash text eol=lf
+
+# CI / despliegue
+.github/workflows/** text eol=lf
+
+# Código fuente
+*.astro text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.jsx text eol=lf
+
+# Config y datos
+*.json text eol=lf
+*.jsonc text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+*.mdx text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.svg text eol=lf
+
+# Binarios: no convertir finales de línea
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.mp4 binary
+*.woff binary
+*.woff2 binary
+*.otf binary
+*.ttf binary
+*.eot binary
+*.node binary
