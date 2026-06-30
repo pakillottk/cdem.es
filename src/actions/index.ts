@@ -14,6 +14,12 @@ import {
   normalizeDni,
   verifyMinorAuthorizationToken,
 } from '../lib/minorAuthorization';
+import {
+  buildMinorAuthorizationPdf,
+  fetchPdfAsset,
+  pdfBytesToBase64,
+  signatureDataUrlToPngBytes,
+} from '../lib/minorAuthorizationPdf';
 
 /**
  * En test mode, verifica que la petición lleve el secret de preview.
@@ -32,6 +38,10 @@ function verifyPreviewAccess(request: Request): void {
       message: 'Formulario no disponible en este entorno.',
     });
   }
+
+  // ponytail: en localhost no exigimos cookie; en preview sí (evita abuso del Turnstile de test).
+  const host = new URL(request.url).hostname;
+  if (host === 'localhost' || host === '127.0.0.1') return;
 
   const cookie = request.headers.get('cookie') ?? '';
   const cookieVal = cookie.split(';').map(c => c.trim())
@@ -181,6 +191,9 @@ function buildMinorAuthorizationCompletedEmailHtml(data: CompletedMinorAuthoriza
                   <p style="margin:4px 0 0;font-size:14px;">${safe.requesterName}</p>
                 </div>
               </div>
+              <p style="margin:0 0 16px;font-size:14px;line-height:1.6;color:#374151;background:#f9fafb;border:1px solid #e5e7eb;padding:12px 14px;">
+                Adjunto encontrarás el documento firmado en PDF con el logo de CDEM.
+              </p>
               <p style="margin:28px 0 0;font-size:16px;line-height:1.7;">
                 Autorizo al menor indicado a acceder al evento <strong>${safe.eventName}</strong>${safe.eventDate ? ` el <strong>${safe.eventDate}</strong>` : ''} y acepto la responsabilidad derivada de su asistencia.
               </p>
@@ -508,6 +521,13 @@ export const server = {
       const signatureLink = new URL('/autorizacion-menores/firma', requestUrl.origin);
       signatureLink.searchParams.set('token', token);
 
+      if (import.meta.env.DEV) {
+        console.log('[autorización menores] Enlace de firma:\n', signatureLink.toString());
+        if (!RESEND_API_KEY || !FROM_EMAIL) {
+          return { sent: true, linkGenerated: true };
+        }
+      }
+
       await sendResendEmail({
         from: `CDEM Web <${FROM_EMAIL}>`,
         to: [input.requesterEmail],
@@ -521,6 +541,28 @@ export const server = {
       });
 
       return { sent: true, linkGenerated: true };
+    },
+  }),
+
+  minorAuthorizationPayload: defineAction({
+    input: z.object({
+      token: z.string().min(1, 'Falta el enlace de firma'),
+    }),
+    handler: async ({ token }) => {
+      const secret = getMinorAuthSecret();
+      try {
+        const { payload } = await verifyMinorAuthorizationToken(token, secret);
+        return {
+          minorName: payload.minorName,
+          eventName: payload.eventName,
+          parentName: payload.parentName,
+        };
+      } catch (error) {
+        throw new ActionError({
+          code: 'BAD_REQUEST',
+          message: error instanceof Error ? error.message : 'El enlace no es válido.',
+        });
+      }
     },
   }),
 
@@ -551,11 +593,59 @@ export const server = {
         year: 'numeric',
       }).format(new Date());
 
+      const origin = new URL(context.request.url).origin;
+      const logoPng = await fetchPdfAsset(origin, '/favicon-cdem.png');
+
+      const pdfBytes = await buildMinorAuthorizationPdf(
+        {
+          requesterName: payload.requesterName,
+          eventName: payload.eventName,
+          eventDate: payload.eventDate,
+          minorName: payload.minorName,
+          minorBirthDate: payload.minorBirthDate,
+          minorDni: payload.minorDni,
+          parentName: payload.parentName,
+          parentDni: normalizeDni(payload.parentDni),
+          parentPhone: payload.parentPhone,
+          parentAddress: payload.parentAddress,
+          companionName: payload.companionName,
+          companionDni: payload.companionDni,
+          companionPhone: payload.companionPhone,
+          locality,
+          signedAt,
+          signaturePng: signatureDataUrlToPngBytes(signatureDataUrl),
+        },
+        logoPng,
+      );
+
+      const pdfFilename = `autorizacion-${payload.minorName.trim().replace(/\s+/g, '-').toLowerCase()}.pdf`;
+
+      if (import.meta.env.DEV && (!RESEND_API_KEY || !FROM_EMAIL)) {
+        try {
+          const { writeFileSync } = await import('node:fs');
+          writeFileSync('public/dev-autorizacion.pdf', pdfBytes);
+          const previewOrigin = new URL(context.request.url).origin;
+          console.log(`[autorización menores] PDF de prueba: ${previewOrigin}/dev-autorizacion.pdf`);
+        } catch {
+          console.log(`[autorización menores] PDF generado: ${pdfFilename} (${pdfBytes.length} bytes)`);
+        }
+        return {
+          signed: true,
+          parentDni: normalizeDni(payload.parentDni),
+        };
+      }
+
       await sendResendEmail({
         from: `CDEM Web <${FROM_EMAIL}>`,
         to: CONTACT_EMAIL_TO ? [payload.requesterEmail, CONTACT_EMAIL_TO] : [payload.requesterEmail],
         reply_to: payload.requesterEmail,
         subject: `Autorización firmada: ${payload.minorName}`,
+        attachments: [
+          {
+            filename: pdfFilename,
+            content: pdfBytesToBase64(pdfBytes),
+          },
+        ],
         html: buildMinorAuthorizationCompletedEmailHtml({
           requesterName: payload.requesterName,
           eventName: payload.eventName,
