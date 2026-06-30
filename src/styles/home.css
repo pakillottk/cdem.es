@@ -22,10 +22,13 @@
 
 .home-hero__title {
   @apply text-5xl font-extrabold leading-tight tracking-wide drop-shadow-xl sm:text-6xl lg:text-7xl;
+  min-height: 2.1lh;
+  text-wrap: balance;
 }
 
 .home-hero__subtitle {
   @apply font-secondary mt-4 text-xl uppercase tracking-[0.3em] sm:text-2xl;
+  min-height: 1.2em;
 }
 
 .home-hero__actions {

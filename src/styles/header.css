@@ -4,10 +4,12 @@
 
 .site-header__brand {
   @apply flex w-30 items-center gap-3;
+  aspect-ratio: 400 / 261;
 }
 
 .site-header__logo {
-  @apply h-full w-full;
+  @apply h-auto w-full;
+  aspect-ratio: 400 / 261;
 }
 
 .site-nav {
