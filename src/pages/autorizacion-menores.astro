@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MinorAuthorizationForm from '../components/MinorAuthorizationForm';
+import { getCollection } from 'astro:content';
+import { sortEventos } from '../lib/eventos';
+import { HERO_IMG_SRC, HERO_IMG_SRCSET, HERO_IMG_SIZES } from '../data/hero-image';
+
+const allEventos = await getCollection('eventos');
+const published = sortEventos(allEventos.filter((evento) => evento.data.published !== false));
+const eventos = published.map((evento) => ({
+  id: evento.id,
+  title: evento.data.title,
+  category: evento.data.category,
+}));
+---
+
+<Layout
+  title="Autorización de menores - CDEM"
+  description="Formulario de autorización de menores para asistir a eventos y conciertos organizados por CDEM."
+>
+  <div class="contacto-page">
+    <section class="contacto-hero">
+      <div class="contacto-hero__banner">
+        <img
+          src={HERO_IMG_SRC}
+          srcset={HERO_IMG_SRCSET}
+          sizes={HERO_IMG_SIZES}
+          alt="CDEM Producciones"
+          width="1920"
+          height="1080"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </div>
+    </section>
+
+    <section class="contacto-quote">
+      <div class="contacto-quote__banner">
+        <div class="contacto-quote__overlay">
+          <p class="contacto-quote__text">Autorización de menores</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="contacto-section">
+      <div class="contacto-wrapper contacto-wrapper--form-only">
+        <div class="autorizacion-intro">
+          <h1 class="autorizacion-intro__title">Autorización de menores</h1>
+          <p class="autorizacion-intro__text">
+            Completa este formulario para autorizar la asistencia de menores a un evento de CDEM.
+            Los campos marcados con asterisco son obligatorios.
+          </p>
+        </div>
+
+        <MinorAuthorizationForm client:visible eventos={eventos} />
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .contacto-wrapper--form-only {
+    max-width: 48rem;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: left;
+  }
+
+  .autorizacion-intro {
+    width: 100%;
+    margin-bottom: 2rem;
+    font-family: var(--font-secondary);
+  }
+
+  .autorizacion-intro__title {
+    margin: 0 0 1rem;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #000;
+  }
+
+  .autorizacion-intro__text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgb(0 0 0 / 0.7);
+    letter-spacing: 0.05em;
+  }
+</style>
