@@ -39,7 +39,7 @@ const optionalString = z
  */
 function verifyPreviewAccess(request: Request): void {
   const isTestMode = TURNSTILE_TEST_MODE === 'true';
-  if (!isTestMode) return;
+  if (!isTestMode || import.meta.env.DEV) return;
 
   const secret = PREVIEW_SECRET ?? '';
   if (!secret) {
