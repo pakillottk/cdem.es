@@ -14,9 +14,28 @@
 
 
 :root {
-  --font-primary: "ITC Eras", sans-serif;
-  --font-secondary: "Bebas Neue", sans-serif;
+  --font-primary: "ITC Eras", "ITC Eras Fallback", sans-serif;
+  --font-secondary: "Bebas Neue", "Bebas Neue Fallback", sans-serif;
   --color-primary: #59a1dc;
+}
+
+/* Fallbacks con métricas ajustadas para reducir CLS durante la carga de fuentes */
+@font-face {
+  font-family: "ITC Eras Fallback";
+  src: local("Arial");
+  ascent-override: 66.7%;
+  descent-override: 22%;
+  line-gap-override: 7.5%;
+  size-adjust: 93.4%;
+}
+
+@font-face {
+  font-family: "Bebas Neue Fallback";
+  src: local("Arial Narrow"), local("Arial");
+  ascent-override: 90%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+  size-adjust: 98%;
 }
 
 @font-face {
@@ -26,60 +45,82 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  ascent-override: 90%;
+  descent-override: 30%;
+  line-gap-override: 0%;
+  size-adjust: 98%;
 }
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Light Regular.woff2") format("woff2"),
-       url("/fonts/itc-eras-ultra/ITC Eras Light Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Light Regular.woff2") format("woff2");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
+  ascent-override: 66.7%;
+  descent-override: 22%;
+  line-gap-override: 7.5%;
+  size-adjust: 93.4%;
 }
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Book Regular.woff2") format("woff2"),
-       url("/fonts/itc-eras-ultra/ITC Eras Book Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Book Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  ascent-override: 66.7%;
+  descent-override: 21.9%;
+  line-gap-override: 7.1%;
+  size-adjust: 93.4%;
 }
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Medium.woff2") format("woff2"),
-       url("/fonts/itc-eras-ultra/ITC Eras Medium.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
+  ascent-override: 66.7%;
+  descent-override: 22%;
+  line-gap-override: 7.5%;
+  size-adjust: 93.4%;
 }
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.woff2") format("woff2"),
-       url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Demi Regular.woff2") format("woff2");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
+  ascent-override: 66.7%;
+  descent-override: 22%;
+  line-gap-override: 7.5%;
+  size-adjust: 93.4%;
 }
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Bold.woff2") format("woff2"),
-       url("/fonts/itc-eras-ultra/ITC Eras Bold.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
+  ascent-override: 66.7%;
+  descent-override: 22%;
+  line-gap-override: 7.5%;
+  size-adjust: 93.4%;
 }
 
 @font-face {
   font-family: "ITC Eras";
-  src: url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.woff2") format("woff2"),
-       url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.otf") format("opentype");
+  src: url("/fonts/itc-eras-ultra/ITC Eras Ultra Regular.woff2") format("woff2");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
+  ascent-override: 66.7%;
+  descent-override: 23.2%;
+  line-gap-override: 8.2%;
+  size-adjust: 93.4%;
 }
 
 html,

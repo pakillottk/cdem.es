@@ -11,7 +11,9 @@
 }
 
 .site-footer__logo {
-  @apply h-auto w-48 mx-auto lg:mx-0 lg:w-full;
+  @apply w-48 mx-auto lg:mx-0 lg:w-full;
+  aspect-ratio: 400 / 261;
+  height: auto;
 }
 
 .site-footer__links {
@@ -86,6 +88,10 @@
 
 .site-footer__submit {
   @apply flex justify-end;
+}
+
+.site-footer__turnstile {
+  min-height: 65px;
 }
 
 .site-footer__button {
