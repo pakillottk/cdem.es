@@ -34,7 +34,8 @@ interface SignedTokenEnvelope {
   expiresAt: number;
 }
 
-const TOKEN_TTL_MS = 1000 * 60 * 60 * 72;
+export const SIGNATURE_TOKEN_TTL_MINUTES = 15;
+const TOKEN_TTL_MS = SIGNATURE_TOKEN_TTL_MINUTES * 60 * 1000;
 
 function toBase64Url(input: string | Uint8Array): string {
   const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input;
@@ -201,7 +202,7 @@ export async function verifyMinorAuthorizationToken(
   const json = new TextDecoder().decode(fromBase64Url(body));
   const envelope = JSON.parse(json) as SignedTokenEnvelope;
   if (Date.now() > envelope.expiresAt) {
-    throw new Error('El enlace ha caducado.');
+    throw new Error(`El enlace ha caducado (válido ${SIGNATURE_TOKEN_TTL_MINUTES} minutos).`);
   }
   return envelope;
 }
