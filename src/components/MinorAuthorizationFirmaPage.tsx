@@ -1,24 +1,14 @@
 import { actions } from 'astro:actions';
 import { useEffect, useState } from 'react';
-import MinorAuthorizationSignForm from './MinorAuthorizationSignForm';
+import MinorAuthorizationSignForm, { type SignPayload } from './MinorAuthorizationSignForm';
 
 type PageState = 'loading' | 'ready' | 'error';
-
-interface Payload {
-  minorName: string;
-  minorCount: number;
-  eventName: string;
-  entryCode?: string;
-  parentName: string;
-  hasSecondTutor: boolean;
-  secondParentName?: string;
-}
 
 export default function MinorAuthorizationFirmaPage() {
   const [state, setState] = useState<PageState>('loading');
   const [token, setToken] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [payload, setPayload] = useState<Payload | null>(null);
+  const [payload, setPayload] = useState<SignPayload | null>(null);
 
   useEffect(() => {
     const urlToken = new URLSearchParams(window.location.search).get('token') ?? '';
@@ -61,16 +51,5 @@ export default function MinorAuthorizationFirmaPage() {
 
   if (!payload) return null;
 
-  return (
-    <MinorAuthorizationSignForm
-      token={token}
-      minorName={payload.minorName}
-      minorCount={payload.minorCount}
-      eventName={payload.eventName}
-      entryCode={payload.entryCode}
-      parentName={payload.parentName}
-      hasSecondTutor={payload.hasSecondTutor}
-      secondParentName={payload.secondParentName}
-    />
-  );
+  return <MinorAuthorizationSignForm token={token} payload={payload} />;
 }

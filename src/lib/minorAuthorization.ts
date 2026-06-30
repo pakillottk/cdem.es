@@ -149,7 +149,7 @@ export async function createMinorAuthorizationToken(
   secret: string,
 ): Promise<string> {
   const now = Date.now();
-  const minors = normalizeMinorRecords(payload.minors);
+  const minors = normalizeMinorRecords(getMinorsFromPayload(payload));
   const firstMinor = minors[0];
   const envelope: SignedTokenEnvelope = {
     payload: {
@@ -183,6 +183,22 @@ export async function createMinorAuthorizationToken(
   const body = toBase64Url(JSON.stringify(envelope));
   const signature = await sign(body, secret);
   return `${body}.${signature}`;
+}
+
+const PDF_MAX_BYTES = 2_000_000;
+
+/** Valida cabecera y tamaño de un PDF en base64 sin pdf-lib, apto para el Worker. */
+export function assertValidPdfBase64(base64: string): void {
+  let binary: string;
+  try {
+    binary = atob(base64);
+  } catch {
+    throw new Error('El PDF no es válido.');
+  }
+  // ponytail: solo comprobamos cabecera %PDF- y tamaño, no estructura completa.
+  if (binary.length < 5 || binary.length > PDF_MAX_BYTES || binary.slice(0, 5) !== '%PDF-') {
+    throw new Error('El PDF no es válido.');
+  }
 }
 
 export async function verifyMinorAuthorizationToken(
