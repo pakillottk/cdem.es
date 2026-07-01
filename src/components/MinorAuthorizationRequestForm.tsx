@@ -2,6 +2,7 @@ import { actions, isInputError } from 'astro:actions';
 import { TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { useState } from 'react';
 import type { EventoFormOption } from '../lib/eventos';
+import { formatIsoDateLabel } from '../lib/eventos';
 import { SIGNATURE_TOKEN_TTL_MINUTES } from '../lib/minorAuthorization';
 import Turnstile from './Turnstile';
 
@@ -12,7 +13,10 @@ interface Props {
 }
 
 const inputClass =
-  'mt-1 w-full bg-transparent border border-black px-3 py-2 text-sm text-black outline-none focus:border-[var(--color-primary)] transition-colors';
+  'mt-1 w-full min-w-0 max-w-full box-border bg-transparent border border-black px-3 py-2 text-sm text-black outline-none focus:border-[var(--color-primary)] transition-colors';
+
+const dateInputClass =
+  `${inputClass} [&::-webkit-date-and-time-value]:min-w-0 [&::-webkit-date-and-time-value]:text-left`;
 
 const labelClass =
   'block text-sm sm:text-xs uppercase tracking-[0.25em] text-black/70';
@@ -21,7 +25,7 @@ const requiredMark = <span className="text-red-500 normal-case tracking-normal">
 
 const radioGroupClass = 'mt-2 flex flex-wrap gap-4';
 const radioLabelClass = 'inline-flex items-center gap-2 text-sm text-black cursor-pointer';
-const halfGridClass = 'grid gap-6 sm:grid-cols-2';
+const halfGridClass = 'grid min-w-0 gap-6 sm:grid-cols-2 [&>*]:min-w-0';
 
 export default function MinorAuthorizationRequestForm({ events }: Props) {
   const [state, setState] = useState<FormState>('idle');
@@ -95,7 +99,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="border-2 border-black px-6 sm:px-8 py-8 sm:py-10 space-y-6 font-secondary">
+    <form onSubmit={handleSubmit} noValidate className="min-w-0 overflow-x-hidden border-2 border-black px-6 sm:px-8 py-8 sm:py-10 space-y-6 font-secondary">
       {state === 'error' && (
         <div className="border border-red-500/60 bg-red-500/10 px-4 py-3 text-xs text-red-400 tracking-wide">
           {errorMessage}
@@ -121,16 +125,12 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
         {fieldErrors.eventName && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.eventName}</p>}
       </div>
 
-      <div className="space-y-1">
-        <label htmlFor="eventDate" className={labelClass}>Fecha del evento</label>
-        <input
-          id="eventDate"
-          name="eventDate"
-          type="date"
-          readOnly
-          value={selectedEventDate}
-          className={`${inputClass} bg-black/5`}
-        />
+      <div className="space-y-1 min-w-0">
+        <p className={labelClass}>Fecha del evento</p>
+        <p className={`${inputClass} bg-black/5`}>
+          {formatIsoDateLabel(selectedEventDate) || '—'}
+        </p>
+        <input type="hidden" name="eventDate" value={selectedEventDate} />
       </div>
 
       <div className="space-y-1">
@@ -166,7 +166,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
       </fieldset>
 
       {minorCount >= 1 && (
-        <div className="space-y-4 border border-black/10 px-4 py-4">
+        <div className="space-y-4 border border-black/10 px-4 py-4 min-w-0">
           <p className="text-xs uppercase tracking-[0.2em] text-black/60">Menor 1</p>
           <div className="space-y-1">
             <label htmlFor="minorName" className={labelClass}>Nombre y apellidos{requiredMark}</label>
@@ -176,7 +176,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
           <div className={halfGridClass}>
             <div className="space-y-1">
               <label htmlFor="minorBirthDate" className={labelClass}>Fecha de nacimiento{requiredMark}</label>
-              <input id="minorBirthDate" name="minorBirthDate" type="date" required className={`${inputClass} ${fieldErrors.minorBirthDate ? 'border-red-500' : ''}`} />
+              <input id="minorBirthDate" name="minorBirthDate" type="date" required className={`${dateInputClass} ${fieldErrors.minorBirthDate ? 'border-red-500' : ''}`} />
               {fieldErrors.minorBirthDate && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.minorBirthDate}</p>}
             </div>
             <div className="space-y-1">
@@ -188,7 +188,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
       )}
 
       {minorCount >= 2 && (
-        <div className="space-y-4 border border-black/10 px-4 py-4">
+        <div className="space-y-4 border border-black/10 px-4 py-4 min-w-0">
           <p className="text-xs uppercase tracking-[0.2em] text-black/60">Menor 2</p>
           <div className="space-y-1">
             <label htmlFor="minor2Name" className={labelClass}>Nombre y apellidos{requiredMark}</label>
@@ -198,7 +198,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
           <div className={halfGridClass}>
             <div className="space-y-1">
               <label htmlFor="minor2BirthDate" className={labelClass}>Fecha de nacimiento{requiredMark}</label>
-              <input id="minor2BirthDate" name="minor2BirthDate" type="date" required className={`${inputClass} ${fieldErrors.minor2BirthDate ? 'border-red-500' : ''}`} />
+              <input id="minor2BirthDate" name="minor2BirthDate" type="date" required className={`${dateInputClass} ${fieldErrors.minor2BirthDate ? 'border-red-500' : ''}`} />
               {fieldErrors.minor2BirthDate && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.minor2BirthDate}</p>}
             </div>
             <div className="space-y-1">
@@ -210,7 +210,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
       )}
 
       {minorCount >= 3 && (
-        <div className="space-y-4 border border-black/10 px-4 py-4">
+        <div className="space-y-4 border border-black/10 px-4 py-4 min-w-0">
           <p className="text-xs uppercase tracking-[0.2em] text-black/60">Menor 3</p>
           <div className="space-y-1">
             <label htmlFor="minor3Name" className={labelClass}>Nombre y apellidos{requiredMark}</label>
@@ -220,7 +220,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
           <div className={halfGridClass}>
             <div className="space-y-1">
               <label htmlFor="minor3BirthDate" className={labelClass}>Fecha de nacimiento{requiredMark}</label>
-              <input id="minor3BirthDate" name="minor3BirthDate" type="date" required className={`${inputClass} ${fieldErrors.minor3BirthDate ? 'border-red-500' : ''}`} />
+              <input id="minor3BirthDate" name="minor3BirthDate" type="date" required className={`${dateInputClass} ${fieldErrors.minor3BirthDate ? 'border-red-500' : ''}`} />
               {fieldErrors.minor3BirthDate && <p className="text-[10px] text-red-400 mt-1">{fieldErrors.minor3BirthDate}</p>}
             </div>
             <div className="space-y-1">
@@ -280,7 +280,7 @@ export default function MinorAuthorizationRequestForm({ events }: Props) {
       </fieldset>
 
       {hasSecondTutor && (
-        <div className="space-y-4 border border-black/10 px-4 py-4">
+        <div className="space-y-4 border border-black/10 px-4 py-4 min-w-0">
           <p className="text-xs uppercase tracking-[0.2em] text-black/60">Segundo tutor</p>
           <div className="space-y-1">
             <label htmlFor="secondParentName" className={labelClass}>Nombre y apellidos{requiredMark}</label>

@@ -9,7 +9,19 @@ export default function SignaturePad({ onChange }: SignaturePadProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const drawingRef = useRef(false);
   const emptyRef = useRef(true);
+  const onChangeRef = useRef(onChange);
   const [hasSignature, setHasSignature] = useState(false);
+
+  onChangeRef.current = onChange;
+
+  function emitChange() {
+    const canvas = canvasRef.current;
+    if (!canvas || emptyRef.current) {
+      onChangeRef.current('');
+      return;
+    }
+    onChangeRef.current(canvas.toDataURL('image/png'));
+  }
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -22,6 +34,10 @@ export default function SignaturePad({ onChange }: SignaturePadProps) {
     const resize = () => {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
       const { width, height } = wrapper.getBoundingClientRect();
+      if (width <= 0 || height <= 0) return;
+
+      const previous = emptyRef.current ? null : canvas.toDataURL('image/png');
+
       canvas.width = Math.floor(width * ratio);
       canvas.height = Math.floor(height * ratio);
       canvas.style.width = `${width}px`;
@@ -33,60 +49,132 @@ export default function SignaturePad({ onChange }: SignaturePadProps) {
       context.strokeStyle = '#111111';
       context.fillStyle = '#ffffff';
       context.fillRect(0, 0, width, height);
-      emptyRef.current = true;
-      setHasSignature(false);
-      onChange('');
+
+      if (!previous) {
+        emptyRef.current = true;
+        setHasSignature(false);
+        onChangeRef.current('');
+        return;
+      }
+
+      const image = new Image();
+      image.onload = () => {
+        context.drawImage(image, 0, 0, width, height);
+        emptyRef.current = false;
+        setHasSignature(true);
+        emitChange();
+      };
+      image.src = previous;
+    };
+
+    const pointFromPointer = (event: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    };
+
+    const pointFromTouch = (touch: Touch) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+    };
+
+    const startStroke = (point: { x: number; y: number }) => {
+      drawingRef.current = true;
+      context.beginPath();
+      context.moveTo(point.x, point.y);
+      context.lineTo(point.x + 0.1, point.y + 0.1);
+      context.stroke();
+      emptyRef.current = false;
+      setHasSignature(true);
+    };
+
+    const continueStroke = (point: { x: number; y: number }) => {
+      if (!drawingRef.current) return;
+      context.lineTo(point.x, point.y);
+      context.stroke();
+      emptyRef.current = false;
+      setHasSignature(true);
+    };
+
+    const endStroke = () => {
+      if (!drawingRef.current) return;
+      drawingRef.current = false;
+      emitChange();
+    };
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      event.preventDefault();
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      try {
+        canvas.setPointerCapture(event.pointerId);
+      } catch {
+        // ponytail: algunos WebViews iOS rechazan capture; window pointermove cubre el trazo
+      }
+      startStroke(pointFromPointer(event));
+    };
+
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType === 'touch' || !drawingRef.current) return;
+      event.preventDefault();
+      continueStroke(pointFromPointer(event));
+    };
+
+    const onPointerEnd = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return;
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+      endStroke();
+    };
+
+    const onTouchStart = (event: TouchEvent) => {
+      event.preventDefault();
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      startStroke(pointFromTouch(touch));
+    };
+
+    const onTouchMove = (event: TouchEvent) => {
+      if (!drawingRef.current) return;
+      event.preventDefault();
+      const touch = event.touches[0];
+      if (!touch) return;
+      continueStroke(pointFromTouch(touch));
+    };
+
+    const onTouchEnd = (event: TouchEvent) => {
+      event.preventDefault();
+      endStroke();
     };
 
     resize();
     const observer = new ResizeObserver(resize);
     observer.observe(wrapper);
-    return () => observer.disconnect();
-  }, [onChange]);
 
-  function pointFromEvent(event: React.PointerEvent<HTMLCanvasElement>) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
+    const passiveFalse = { passive: false } as const;
+    canvas.addEventListener('touchstart', onTouchStart, passiveFalse);
+    canvas.addEventListener('touchmove', onTouchMove, passiveFalse);
+    canvas.addEventListener('touchend', onTouchEnd, passiveFalse);
+    canvas.addEventListener('touchcancel', onTouchEnd, passiveFalse);
+    canvas.addEventListener('pointerdown', onPointerDown, passiveFalse);
+    canvas.addEventListener('pointermove', onPointerMove, passiveFalse);
+    canvas.addEventListener('pointerup', onPointerEnd);
+    canvas.addEventListener('pointerleave', onPointerEnd);
+    canvas.addEventListener('pointercancel', onPointerEnd);
+
+    return () => {
+      observer.disconnect();
+      canvas.removeEventListener('touchstart', onTouchStart);
+      canvas.removeEventListener('touchmove', onTouchMove);
+      canvas.removeEventListener('touchend', onTouchEnd);
+      canvas.removeEventListener('touchcancel', onTouchEnd);
+      canvas.removeEventListener('pointerdown', onPointerDown);
+      canvas.removeEventListener('pointermove', onPointerMove);
+      canvas.removeEventListener('pointerup', onPointerEnd);
+      canvas.removeEventListener('pointerleave', onPointerEnd);
+      canvas.removeEventListener('pointercancel', onPointerEnd);
     };
-  }
-
-  function startDrawing(event: React.PointerEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
-    if (!canvas || !context) return;
-    const point = pointFromEvent(event);
-    drawingRef.current = true;
-    canvas.setPointerCapture(event.pointerId);
-    context.beginPath();
-    context.moveTo(point.x, point.y);
-  }
-
-  function draw(event: React.PointerEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext('2d');
-    if (!drawingRef.current || !canvas || !context) return;
-    const point = pointFromEvent(event);
-    context.lineTo(point.x, point.y);
-    context.stroke();
-    emptyRef.current = false;
-    setHasSignature(true);
-  }
-
-  function stopDrawing(event?: React.PointerEvent<HTMLCanvasElement>) {
-    const canvas = canvasRef.current;
-    if (event && canvas?.hasPointerCapture(event.pointerId)) {
-      canvas.releasePointerCapture(event.pointerId);
-    }
-    if (!drawingRef.current) return;
-    drawingRef.current = false;
-    if (emptyRef.current || !canvas) {
-      onChange('');
-      return;
-    }
-    onChange(canvas.toDataURL('image/png'));
-  }
+  }, []);
 
   function clearSignature() {
     const canvas = canvasRef.current;
@@ -110,12 +198,8 @@ export default function SignaturePad({ onChange }: SignaturePadProps) {
       >
         <canvas
           ref={canvasRef}
-          className="block h-full w-full touch-none"
-          onPointerDown={startDrawing}
-          onPointerMove={draw}
-          onPointerUp={stopDrawing}
-          onPointerLeave={stopDrawing}
-          onPointerCancel={stopDrawing}
+          className="block h-full w-full touch-none select-none"
+          style={{ touchAction: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
         />
       </div>
       <div className="flex items-center justify-between gap-3">
