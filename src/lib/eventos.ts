@@ -76,6 +76,17 @@ export function toEventoFormDateValue(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+export function formatIsoDateLabel(isoDate: string | undefined): string {
+  if (!isoDate) return '';
+  const parsed = new Date(`${isoDate}T12:00:00`);
+  if (Number.isNaN(parsed.getTime())) return isoDate;
+  return new Intl.DateTimeFormat('es-ES', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  }).format(parsed);
+}
+
 function isPublishedWithFutureDate(data: EventoData, today: Date): boolean {
   if (data.published === false) return false;
   if (!data.eventDate) return false;
