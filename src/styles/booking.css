@@ -37,12 +37,12 @@
 }
 
 .booking-grid__inner {
-  @apply max-w-6xl mx-auto;
+  @apply max-w-7xl mx-auto;
 }
 
 /* Grid solo en lg+; por debajo usa Swiper en BookingGridSwiper */
 .booking-grid__list {
-  @apply hidden gap-10 lg:grid lg:grid-cols-3;
+  @apply hidden gap-10 lg:grid lg:grid-cols-4;
 }
 
 .booking-grid__swiper-wrap {

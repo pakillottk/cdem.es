@@ -58,6 +58,35 @@ const eventoFields = {
   }),
 };
 
+const bookingItemFields = {
+  title: fields.slug({ name: { label: 'Artista / acto' } }),
+  image: fields.image({
+    label: 'Imagen de portada',
+    directory: 'public/booking/img',
+    publicPath: '/booking/img/',
+    description: 'Sube JPG o PNG; en el deploy se convierte a WebP optimizado.',
+    validation: { isRequired: true },
+  }),
+  imageAlt: fields.text({
+    label: 'Texto alternativo (alt)',
+    validation: { isRequired: true },
+  }),
+  pdf: fields.file({
+    label: 'Dossier PDF',
+    directory: 'public/booking/docs',
+    publicPath: '/booking/docs/',
+  }),
+  published: fields.checkbox({
+    label: 'Publicado',
+    defaultValue: true,
+  }),
+  order: fields.integer({
+    label: 'Orden en el grid',
+    validation: { min: 0 },
+    defaultValue: 0,
+  }),
+};
+
 export default config({
   storage: getStorage(),
   collections: {
@@ -69,6 +98,15 @@ export default config({
       entryLayout: 'form',
       columns: ['category', 'eventDate', 'published', 'order'],
       schema: eventoFields,
-    })
-  },    
+    }),
+    booking: collection({
+      label: 'Booking',
+      slugField: 'title',
+      path: 'src/content/booking/*/',
+      format: 'yaml',
+      entryLayout: 'form',
+      columns: ['published', 'order'],
+      schema: bookingItemFields,
+    }),
+  },
 });
