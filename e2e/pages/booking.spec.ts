@@ -8,7 +8,7 @@ test.describe('Booking', () => {
     await expect(grid).toBeVisible();
     await expect(grid.locator('.booking-grid__item')).toHaveCount(3);
 
-    const pdfLink = page.locator('a[href*="Play%20star"][target="_blank"]').first();
+    const pdfLink = page.locator('.booking-grid__list a[target="_blank"]').first();
     await expect(pdfLink).toBeVisible();
   });
 

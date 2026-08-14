@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { bookingItemSchema } from './lib/booking';
 import { eventoSchema } from './lib/eventos';
 
 const posts = defineCollection({
@@ -17,4 +18,9 @@ const eventos = defineCollection({
   schema: eventoSchema,
 });
 
-export const collections = { posts, eventos };
+const booking = defineCollection({
+  loader: glob({ pattern: '**/index.yaml', base: './src/content/booking' }),
+  schema: bookingItemSchema,
+});
+
+export const collections = { posts, eventos, booking };

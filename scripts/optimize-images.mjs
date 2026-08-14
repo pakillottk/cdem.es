@@ -46,7 +46,7 @@ const TASKS = {
     full: { width: 2200, quality: 85 },
     removeOriginals: true,
   },
-  // Booking (grid 3 cols, sin modal → 800px)
+  // Booking (grid 4 cols, sin modal → 800px)
   booking: {
     srcDir: join(PUBLIC, "booking", "img"),
     recursive: false,

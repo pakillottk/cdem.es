@@ -40,11 +40,14 @@ on:
     paths:
       - 'src/content/**'
       - 'public/eventos/**'
+      - 'public/booking/**'
       - 'keystatic.config.ts'
       - 'src/content.config.ts'
       - 'src/pages/eventos.astro'
+      - 'src/pages/booking.astro'
       - 'src/components/EventosCard.astro'
       - 'src/lib/eventos.ts'
+      - 'src/lib/booking.ts'
   workflow_dispatch:
 
 jobs:
